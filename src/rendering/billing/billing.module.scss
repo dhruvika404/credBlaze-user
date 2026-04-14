@@ -1,0 +1,180 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.billingpage {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    .title {
+
+        p {
+            color: #A6A7A7;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16px;
+        }
+
+        h2 {
+            color: #2C3333;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 24px;
+            margin: 0 0 4px 0;
+        }
+    }
+
+    .planbox {
+        border-radius: 20.174px;
+        border: 1.261px solid #F5F5F5;
+        background: #FFF;
+        padding: 20px;
+
+        p {
+            color: #666D80;
+            font-size: 17.652px;
+            font-weight: 600;
+            line-height: 150%;
+            letter-spacing: 0.353px;
+        }
+
+        h3 {
+            color: #0D0D12;
+            font-size: 30.261px;
+            font-weight: 600;
+            line-height: 130%;
+
+            sub {
+                color: #666D80;
+                position: relative;
+                bottom: 8px;
+                font-size: 17.652px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: 0.353px;
+
+            }
+        }
+
+        .boxheader {
+            display: flex;
+            align-items: center;
+            padding: 0 0 10px 0;
+            justify-content: space-between;
+
+            h2 {
+                color: #0D0D12;
+                font-size: 20.174px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: 0.403px;
+            }
+
+            button {
+                border: none;
+                color: #0D0D12;
+                font-size: 15.13px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: 0.303px;
+                padding: 8px 16px;
+                border-radius: 126.087px;
+                border: 1.261px solid #DFE1E7;
+                background: #FFF;
+                box-shadow: 0 1.261px 2.522px 0 rgba(13, 13, 18, 0.06);
+            }
+        }
+    }
+
+    .tableResponsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #E9E9E9;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+
+            thead {
+                background: #F9FAFB;
+                border-bottom: 1px solid #E9E9E9;
+
+                th {
+                    color: #666D80;
+                    font-size: 15.13px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 150%;
+                    letter-spacing: 0.303px;
+                    padding: 12px;
+                }
+            }
+
+            tbody {
+                .alignment {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    p {
+                        color: #020204;
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 150%;
+                        letter-spacing: 0.28px;
+                    }
+
+                    button {
+                        overflow: hidden;
+                        color: #020204;
+                        font-size: 12px;
+                        padding: 6px 16px;
+                        border-radius: 8px;
+                        border: 1px solid #E6E8EA;
+                        background: #FFF;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: 16px;
+                    }
+                }
+
+                tr {
+                    border-bottom: 1px solid #E9E9E9;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    td {
+                        padding: 12px;
+                        color: #0D0D12;
+                        font-size: 17.652px;
+                        font-weight: 600;
+                        line-height: 150%;
+                        letter-spacing: 0.353px;
+
+                        .icon {
+                            width: 40px;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 10.087px;
+                            border: 1.261px solid #DFE1E7;
+                            background: #FFF;
+                            box-shadow: 0 1.261px 2.522px 0 rgba(13, 13, 18, 0.06);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

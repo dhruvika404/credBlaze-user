@@ -1,0 +1,61 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.legalSupport {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .legalCard {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid #E9E9E9;
+        background: #FFF;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        text-decoration: none;
+
+        &:hover {
+            background-color: #F9FAFB;
+            border-color: #D1D5DB;
+            transform: translateY(-1px);
+        }
+
+        .title {
+            color: #2C3333;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 24px;
+        }
+
+        .iconWrapper {
+            width: 30px;
+            height: 32px;
+            border-radius: 5px;
+            border: 1px solid #3D3D3D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            transition: all 0.2s;
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        &:hover .iconWrapper {
+            background-color: #FFF;
+            border-color: #9CA3AF;
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.termsConditions {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 20px;
+
+    h1 {
+        color: #2C3333;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 24px;
+    }
+
+    h2 {
+        color: #2C3333;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 14px 0;
+
+
+    }
+
+    .meta {
+        color: #3D3D3D;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+
+    .content {
+        p {
+            color: #3D3D3D;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            margin: 0 0 10px 0;
+            line-height: normal;
+        }
+
+        h3 {
+            color: #3D3D3D;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            line-height: normal;
+        }
+    }
+}

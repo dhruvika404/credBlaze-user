@@ -1,0 +1,35 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.loginwithGoogle {
+    padding: 0 0 20px 0;
+
+    button {
+        padding: 11px;
+        border-radius: 10px;
+        border: 1px solid #E8E8E8;
+        background: #FFF;
+        padding: 11px;
+        color: #000;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 150%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        letter-spacing: -0.176px;
+        transition: .3s ease-in-out;
+        width: 100%;
+
+        img {
+            display: block;
+        }
+
+        &:hover {
+            border: 1px solid #0040C1;
+        }
+    }
+}

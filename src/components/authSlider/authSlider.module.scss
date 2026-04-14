@@ -1,0 +1,119 @@
+.authSlider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    border-radius: 20px;
+    border: 10px solid var(--stroke-white-fixed, #FFF);
+    background: linear-gradient(180deg, rgba(190, 219, 255, 0.30) 0%, rgba(20, 71, 230, 0.30) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.imageWrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+// Decorative placeholder to mimic the screenshot
+.placeholderImg {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .coupon {
+        position: absolute;
+        top: 50px;
+        left: 20px;
+        width: 220px;
+        height: 140px;
+        background: #8FC0FF;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 72px;
+        font-weight: 800;
+        color: #175FFF;
+        transform: rotate(-15deg);
+        box-shadow: 0 20px 40px rgba(0, 50, 200, 0.1), inset 0 2px 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .gift {
+        position: absolute;
+        bottom: 50px;
+        right: 20px;
+        font-size: 90px;
+        transform: rotate(15deg);
+        filter: drop-shadow(0 20px 20px rgba(0, 50, 200, 0.2));
+    }
+}
+
+.image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.bottomContent {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 40px;
+}
+
+.textContent {
+    color: var(--Black-100, #171717);
+    text-align: center;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.pagination {
+    position: absolute;
+    bottom: 85px; // Positions right above the text
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    &.active {
+        width: 24px;
+        background-color: #002DFF; // Deep blue for active tab
+    }
+}

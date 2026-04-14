@@ -1,0 +1,74 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.uploadDocumnentList {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 16px;
+
+    .twocol {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1fr 1fr;
+        padding: 0 0 16px 0;
+
+        .items {
+            h6 {
+                color: #586162;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 150%;
+                margin: 0 0 8px 0;
+                letter-spacing: -0.28px;
+            }
+
+            .documentImage {
+                padding: 8px 0 0 0;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                img {
+                    width: 52px;
+                    height: 52px;
+                    display: block;
+                    border-radius: 6px;
+                    object-fit: cover;
+                }
+            }
+
+            .idnumber {
+                margin: 8px 0 0 0;
+                padding: 15px 12px;
+                border-radius: 8px;
+                border: 1px solid #E9E9E9;
+                background: #F5F5F5;
+
+                p {
+                    color: #586162;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: 20px;
+                }
+            }
+        }
+    }
+
+    .yourDocument {
+        border-radius: 4px;
+        border: 1px solid #BEDBFF;
+        background: #EFF6FF;
+        padding: 10px 14px;
+
+        p {
+            color: #193CB8;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+        }
+    }
+}

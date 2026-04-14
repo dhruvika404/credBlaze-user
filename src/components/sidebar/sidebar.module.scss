@@ -1,0 +1,150 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+
+.sidebar {
+    background-color: #fff;
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 100;
+
+    .logo {
+        padding: 16px;
+
+        img {
+            display: block;
+            cursor: pointer;
+        }
+    }
+
+    .allMenubody {
+        padding: 20px 12px;
+        height: calc(100dvh - 348px);
+        overflow: auto;
+        scrollbar-width: none;
+
+        .menu {
+            &:last-child {
+                margin: 0;
+            }
+        }
+
+
+    }
+
+    .menu {
+        padding: 8px 12px;
+        display: flex;
+        margin: 0 0 12px 0;
+        align-items: center;
+        gap: 12px;
+        border-radius: 6px;
+        transition: .3s ease-in-out;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:hover {
+            background-color: #EFF4FF;
+
+            span {
+                color: #00E;
+            }
+
+            svg {
+                path {
+                    stroke: #00E;
+                }
+            }
+        }
+
+        span {
+            display: block;
+            color: #6B7280;
+            font-size: 14px;
+            transition: .3s ease-in-out;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        svg {
+            path {
+                transition: .3s ease-in-out;
+
+            }
+        }
+    }
+
+    .asideFooter {
+        .menu {
+            &:last-child {
+                margin: 0;
+
+                span {
+                    color: #EC221F;
+                }
+
+                svg {
+                    path {
+
+                        stroke: #EC221F;
+                    }
+                }
+            }
+        }
+    }
+
+    .sidebarFooter {
+        padding: 0 12px 20px 12px;
+
+        .featuresBox {
+            border-radius: 19px;
+            background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+            padding: 20px;
+            margin: 0 0 24px 0;
+
+            p {
+                color: #FFF;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 18px;
+                margin: 0 0 16px 0;
+                text-transform: capitalize;
+            }
+
+            button {
+                border: none;
+                cursor: pointer;
+                border-radius: 8px;
+                color: #171717;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 600;
+                width: 100%;
+                line-height: normal;
+                background-color: #fff;
+                padding: 10px;
+            }
+
+            .boxHeaderAlignment {
+                display: flex;
+                gap: 11px;
+                align-items: center;
+                padding: 0 0 11px 0;
+
+                h3 {
+                    color: #FFF;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                    text-transform: capitalize;
+                }
+            }
+        }
+
+    }
+}

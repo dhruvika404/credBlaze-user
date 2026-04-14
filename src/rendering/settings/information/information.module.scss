@@ -1,0 +1,120 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.information {
+    display: grid;
+    // grid-template-columns: 256px 1fr;
+    gap: 26px;
+
+    .informationBox {
+        border-radius: 12px;
+        border: 1px solid #E9E9E9;
+        background: #FFF;
+        padding: 22px;
+
+        .spacingGrid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .informationHeader {
+            padding: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .idnumber {
+                button {
+                    padding: 2px 10px;
+                    border: none;
+                    border-radius: 90px;
+                    background: #F5F5F5;
+                    color: #586162;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                }
+            }
+
+            .namecountry {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 0 0 4px 0;
+
+                h3 {
+                    color: #2C3333;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 20px;
+                }
+
+                img {
+                    display: block;
+                    max-width: 20px;
+                }
+            }
+
+            .leftAlignment {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+
+                .profileImageWrap {
+                    position: relative;
+                    width: 44px;
+                    height: 44px;
+                    border: 3px solid #EFF4FF;
+                    border-radius: 50%;
+                    padding: 2px;
+
+                    img {
+                        display: block;
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    .onlineDot {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                        width: 12px;
+                        height: 12px;
+                        background: #3DB042;
+                        border: 2px solid #fff;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            .flagEmoji {
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .edit {
+                button {
+                    cursor: pointer;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    border: 1px solid #E9E9E9;
+                    background: #FFF;
+                    display: flex;
+                    align-items: center;
+                    overflow: hidden;
+                    color: #586162;
+                    font-size: 14px;
+                    font-weight: 600;
+                    line-height: 20px;
+                    gap: 8px;
+                    box-shadow: 0 0 0 2px #FAFAFA;
+                }
+            }
+        }
+    }
+}

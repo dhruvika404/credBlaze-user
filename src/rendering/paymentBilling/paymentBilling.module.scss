@@ -1,0 +1,67 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.paymentBilling {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+
+    .boxFooter {
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .spacingGrid {
+        padding: 20px;
+        display: grid;
+        border-bottom: 1px solid #E9E9E9;
+
+        grid-template-columns: 1fr;
+        gap: 20px;
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            h2 {
+                color: #2C3333;
+                font-size: 24px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 32px;
+            }
+
+            .edit {
+                button {
+                    cursor: pointer;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    border: 1px solid #E9E9E9;
+                    background: #FFF;
+                    display: flex;
+                    align-items: center;
+                    overflow: hidden;
+                    color: #586162;
+                    font-size: 14px;
+                    font-weight: 600;
+                    line-height: 20px;
+                    gap: 8px;
+                    box-shadow: 0 0 0 2px #FAFAFA;
+                }
+            }
+        }
+
+        .outlineBox {
+            border-radius: 12px;
+            border: 1px solid var(--Stroke-Primary, #E9E9E9);
+            background: var(--Background-Surface-Default, #FFF);
+            padding: 16px;
+            gap: 16px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+}

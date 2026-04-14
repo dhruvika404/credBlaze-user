@@ -1,0 +1,42 @@
+@use '../../../../scss/main.scss' as *;
+@use '../../../../scss/breakpoints/breakpoints.scss' as *;
+
+.linkAccounts {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 16px;
+
+    .content {
+        padding: 0 0 16px 0;
+
+        h2 {
+            color: #2C3333;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            line-height: 24px;
+        }
+
+        p {
+            color: #A6A7A7;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16px;
+        }
+    }
+
+    .twocol {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        .colchange {
+            grid-column: span 2;
+        }
+
+
+    }
+}

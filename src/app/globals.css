@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+::placeholder,
+textarea,
+body,
+a,
+button {
+  font-family: var(--font-manrope);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+.bg-light {
+  background: #f5f6fa;
+}
+.user-layout {
+  min-height: 100dvh;
+  display: flex;
+}
+
+.user-sidebar {
+  width: 275px;
+}
+.user-children {
+  width: calc(100% - 275px);
+}

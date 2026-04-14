@@ -1,0 +1,167 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.flexbox {
+    display: flex;
+    gap: 0;
+
+    .items {
+        width: 50%;
+        height: 100dvh;
+
+        &:first-child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+
+            .logo {
+                position: absolute;
+                top: 40px;
+                left: 40px;
+
+                img {
+                    display: block;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .box {
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 460px;
+            width: 100%;
+            border: 1px solid #E6E8EA;
+            background: #FFFFFF;
+            box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(20, 21, 26, 0.06);
+
+            .topAlignment {
+                padding: 20px 0 0 0;
+            }
+
+            .errorMsg {
+                color: #E53935;
+                font-size: 12px;
+                font-weight: 500;
+                margin: 8px 0 0 0;
+                text-align: center;
+            }
+
+            .apiError {
+                color: #E53935;
+                font-size: 13px;
+                font-weight: 500;
+                margin: 8px 0 0 0;
+                text-align: center;
+            }
+
+            .successMsg {
+                color: #2E7D32;
+                font-size: 13px;
+                font-weight: 500;
+                margin: 8px 0 0 0;
+                text-align: center;
+            }
+
+            .bottomText {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                justify-content: center;
+                padding: 20px 0 0 0;
+
+                p {
+                    color: #99A0AE;
+                    font-size: 16px;
+                    font-weight: 600;
+                    line-height: 150%;
+                    letter-spacing: -0.176px;
+                }
+
+                .resendBtn {
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    color: #00E;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-family: var(--font-manrope);
+                    text-decoration: underline;
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+            .otp {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 12px;
+
+                input {
+                    padding: 0 5px;
+                    text-align: center;
+                    outline: none;
+                    height: 40px;
+                    width: 100%;
+                    border-radius: 8px;
+                    border: 1px solid #E6E8EA;
+                    background: #FFF;
+                    color: #0E121B;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 20px;
+                    transition: .3s ease-in-out;
+
+                    &:focus {
+                        border: 1px solid #0040C1;
+                    }
+                }
+
+                ::placeholder {
+                    color: #0E121B;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 20px;
+                    transition: .3s ease-in-out;
+                }
+            }
+
+
+
+            .text {
+                padding: 0 0 20px 0;
+
+                h1 {
+                    color: #0E121B;
+                    font-size: 28px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 150%;
+                    margin: 0 0 12px 0;
+                    text-align: center;
+                }
+
+                p {
+                    color: #99A0AE;
+                    text-align: center;
+                    font-size: 16px;
+                    font-style: normal;
+                    max-width: 260px;
+                    margin: 0 auto;
+                    font-weight: 600;
+                    line-height: 150%;
+                    letter-spacing: -0.176px;
+
+                }
+            }
+        }
+    }
+}

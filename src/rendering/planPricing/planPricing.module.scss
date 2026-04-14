@@ -1,0 +1,97 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.planPricing {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+
+    .planbox {
+        border-radius: 10px;
+        border: 1px solid #DFE1E7;
+        background: #FFF;
+
+        .boxheader {
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            border-bottom: 1px solid #DFE1E7;
+            align-items: center;
+            justify-content: space-between;
+
+            h2 {
+                color: #171717;
+                font-size: 20.174px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: 0.403px;
+            }
+
+            button {
+                color: #6B7280;
+                padding: 8px 15px;
+                border-radius: 126.087px;
+                border: 1.261px solid #DFE1E7;
+                background: #F5F5F5;
+                text-align: center;
+                font-size: 15.13px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: 0.303px;
+            }
+        }
+
+        .boxbody {
+            padding: 20px;
+
+            .content {
+                padding: 20px 0 0 0;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+
+                .list {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    span {
+                        display: block;
+                        color: #171717;
+                        font-size: 15.13px;
+                        font-weight: 600;
+                        line-height: 150%;
+                        letter-spacing: 0.303px;
+                    }
+                }
+            }
+
+            .title {
+                padding: 0 0 20px 0;
+                border-bottom: 1px solid #DFE1E7;
+
+                h2 {
+
+                    color: #171717;
+                    font-size: 30.261px;
+                    font-weight: 600;
+                    line-height: 130%;
+
+                    sub {
+                        color: #6B7280;
+                        position: relative;
+                        bottom: 8px;
+                        font-size: 17.652px;
+                        font-weight: 600;
+                        line-height: 150%;
+                        letter-spacing: 0.353px;
+                    }
+                }
+            }
+        }
+    }
+}

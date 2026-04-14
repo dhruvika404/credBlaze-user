@@ -1,0 +1,148 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.deliveryAddresses {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+
+    .boxFooter {
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .spacingGrid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        border-bottom: 1px solid #E9E9E9;
+
+        padding: 20px;
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            h2 {
+                color: #2C3333;
+                margin: 0 0 4px 0;
+                font-size: 18px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 24px;
+            }
+
+            p {
+                color: #A6A7A7;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 16px;
+
+            }
+        }
+    }
+
+    .locationBox {
+        border-radius: 8px;
+        border: 1px solid #E9E9E9;
+        background: #FFF;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            svg {
+                cursor: pointer;
+            }
+        }
+
+        .left {
+            .location {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                h6 {
+                    color: #52525B;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                }
+            }
+
+            p {
+                color: #18181B;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+                margin: 0 0 4px 0;
+
+                span {
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 600;
+                    background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    line-height: normal;
+                }
+            }
+        }
+    }
+
+    .loadingText,
+    .emptyText {
+        color: #A6A7A7;
+        font-size: 14px;
+        text-align: center;
+        padding: 12px 0;
+    }
+
+    .formBox {
+        border-radius: 8px;
+        border: 1px solid #E9E9E9;
+        padding: 16px;
+
+        h4 {
+            color: #2C3333;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+        }
+    }
+
+    .formGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .defaultCheck {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        color: #2C3333;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+
+        input[type='checkbox'] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+    }
+}

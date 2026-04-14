@@ -1,0 +1,249 @@
+@use '../../../../scss/main.scss' as *;
+@use '../../../../scss/breakpoints/breakpoints.scss' as *;
+
+.personalInformation {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+
+    .spacingGrid {
+        padding: 16px;
+        border-bottom: 1px solid #E9E9E9;
+    }
+
+    .content {
+        padding: 0 0 16px 0;
+
+        h2 {
+            color: #2C3333;
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            line-height: 24px;
+        }
+
+        p {
+            color: #A6A7A7;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 16px;
+        }
+    }
+
+    .twocol {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        .colchange {
+            grid-column: span 2;
+        }
+    }
+
+    // ── Error message ────────────────────────────────────────────────────────
+    .errorMsg {
+        color: #E53935;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 4px 0 0 0;
+        line-height: 1.4;
+    }
+
+    // ── Phone field ──────────────────────────────────────────────────────────
+    .phoneField {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .phoneLabel {
+        color: #586162;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 150%;
+        letter-spacing: -0.02em;
+    }
+
+    .phoneInput {
+        :global(.PhoneInputInput) {
+            height: 40px;
+            border: 1px solid #F5F5F5;
+            border-left: 1px solid #E9E9E9;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: #6B7280;
+            outline: none;
+            background: #fff;
+            width: 100%;
+
+            &::placeholder {
+                color: #6B7280;
+            }
+
+            &:focus {
+                border-color: #E9E9E9;
+                outline: none;
+            }
+        }
+
+        :global(.PhoneInputCountry) {
+            border: 1px solid #F5F5F5;
+            border-radius: 8px 0 0 8px;
+            padding: 0 8px 0 10px;
+            height: 40px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0px 1px 2px rgba(10, 13, 20, 0.03);
+        }
+
+        :global(.PhoneInput) {
+            display: flex;
+            border: 1px solid #F5F5F5;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 1px 2px rgba(10, 13, 20, 0.03);
+        }
+    }
+
+    .phoneInputError {
+        @extend .phoneInput;
+
+        :global(.PhoneInput) {
+            border: 1px solid #E53935;
+        }
+    }
+
+    // ── Phone readonly ───────────────────────────────────────────────────────
+    .phoneReadonly {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+            color: #586162;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 150%;
+            letter-spacing: -0.02em;
+        }
+    }
+
+    .phoneInputDisabled {
+        :global(.PhoneInputInput) {
+            height: 40px;
+            border: 1px solid #F5F5F5;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #6B7280;
+            background: #F9FAFB;
+            cursor: not-allowed;
+        }
+
+        :global(.PhoneInputCountry) {
+            border: 1px solid #F5F5F5;
+            border-radius: 8px;
+            padding: 0 8px;
+            height: 40px;
+            background: #F9FAFB;
+        }
+    }
+
+    // ── Date picker field ────────────────────────────────────────────────────
+    .dateField {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .dateLabel {
+        color: #586162;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 150%;
+        letter-spacing: -0.02em;
+    }
+
+    .dateInputWrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .dateInput {
+        width: 100%;
+        height: 40px;
+        border: 1px solid #E9E9E9;
+        border-radius: 8px;
+        padding: 10px 40px 10px 12px;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        color: #0E121B;
+        background: #fff;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: #E9E9E9;
+        }
+
+        // Hide the native calendar icon in webkit
+        &::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            width: 40px;
+            height: 100%;
+            cursor: pointer;
+        }
+    }
+
+    .calendarIcon {
+        position: absolute;
+        right: 12px;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+    }
+
+    // ── Skeleton loader ──────────────────────────────────────────────────────
+    .skeleton {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .skeletonField {
+        height: 69px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite;
+    }
+
+    @keyframes shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+}
+
+// ── Save / Cancel row ────────────────────────────────────────────────────
+.actions {
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}

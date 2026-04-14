@@ -1,0 +1,89 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.faqSectionAlignment {
+    border-radius: 12px;
+    border: 1px solid #E9E9E9;
+    background: #FFF;
+    padding: 20px;
+
+    .header {
+        padding: 0 0 14px 0;
+
+        h1 {
+            color: #171717;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            line-height: normal;
+        }
+
+        p {
+            color: #676665;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+    }
+}
+
+.tabs {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+
+    .tab {
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #9CA3AF;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+
+        &:hover {
+            color: #4B5563;
+        }
+
+        &.active {
+            background-color: #0000FF;
+            color: #FFF;
+        }
+    }
+}
+
+.faqGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+
+    .faqItem {
+        padding: 10px;
+
+        h3 {
+            color: #171717;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 150%;
+            margin: 0 0 16px 0;
+        }
+
+        p {
+            color: #3D3D3D;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 150%;
+        }
+    }
+}

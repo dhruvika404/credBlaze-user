@@ -1,0 +1,163 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.myLoginsContainer {
+    border-radius: 12px;
+    border: 1px solid var(--Stroke-Primary, #E9E9E9);
+    background: var(--Background-Surface-Default, #FFF);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+
+    .section {
+        border-radius: 12px;
+        border: 1px solid #E9E9E9;
+        background: #FFF;
+        padding: 16px;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .titleInfo {
+                h2 {
+                    color: #2C3333;
+                    margin: 0 0 4px 0;
+                    font-size: 18px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 24px;
+                }
+
+                p {
+                    color: #A6A7A7;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: 16px;
+                }
+            }
+        }
+    }
+
+    .primaryBtn {
+        padding: 12px 24px;
+        background: #EC221F;
+        color: #FFF;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+            background: #EC221F;
+        }
+    }
+
+    .tableContainer {
+        border: 1px solid #E9E9E9;
+        border-radius: 12px;
+        overflow: auto;
+        margin: 16px 0 0 0;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            thead {
+                background-color: #F8F8F8;
+
+                th {
+                    text-align: left;
+                    padding: 12px 16px;
+                    color: #171717;
+                    font-size: 12px;
+                    font-weight: 600;
+                    border-bottom: 1px solid #E9E9E9;
+                }
+            }
+
+            tbody {
+                tr {
+                    border-bottom: 1px solid #E9E9E9;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    td {
+                        padding: 16px;
+                        color: #6B7280;
+                        font-size: 14px;
+                        font-weight: 600;
+                        vertical-align: middle;
+
+                        &.browserCell {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            color: #171717;
+                            font-weight: 500;
+
+                            .iconWrapper {
+                                width: 32px;
+                                height: 32px;
+                                background: rgba(0, 0, 255, 0.05);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .actionBtn {
+        background: #FFF1F0;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+            background: #FFD8D6;
+        }
+    }
+
+    .checkboxColumn {
+        width: 48px;
+        text-align: center;
+    }
+
+    .customCheckbox {
+        width: 18px;
+        height: 18px;
+        border: 1px solid #D4D4D4;
+        border-radius: 4px;
+        cursor: pointer;
+        appearance: none;
+        outline: none;
+        display: block;
+
+        &:checked {
+            background-color: #0000FF;
+            border-color: #0000FF;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    }
+}

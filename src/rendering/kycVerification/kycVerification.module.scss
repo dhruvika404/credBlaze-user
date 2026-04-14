@@ -1,0 +1,57 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+
+.kycVerification {
+    padding: 20px 32px;
+
+    .title {
+        padding: 0 0 20px 0;
+
+        p {
+            color: #625F6E;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+
+        }
+
+        h1 {
+            color: #020204;
+            margin: 0 0 4px 0;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 256px 1fr;
+        gap: 26px;
+
+        .outlinebox {
+            border-radius: 12px;
+            border: 1px solid #E9E9E9;
+            background: #FFF;
+
+
+            .spacingGrid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 20px;
+                border-bottom: 1px solid #E9E9E9;
+                padding: 20px;
+            }
+
+            .boxFooter {
+                padding: 16px 20px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+        }
+    }
+}

@@ -1,0 +1,72 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.settingSidebar {
+    border-radius: 12px;
+    border: 1px solid #F5F5F5;
+    background: #FFF;
+    padding: 14px;
+    position: sticky;
+    top: 110px;
+    left: 0;
+    z-index: 100;
+
+    .menu {
+        padding: 8px 12px;
+        display: flex;
+        margin: 0 0 12px 0;
+        align-items: center;
+        gap: 12px;
+        border-radius: 6px;
+        transition: .3s ease-in-out;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:last-child {
+            margin: 0;
+        }
+
+        &.active {
+            background-color: #F5F5F5;
+
+            // span {
+            //     color: #111827;
+            // }
+        // }
+
+        // &.inactive {
+        //     opacity: 0.45;
+        }
+
+        &:hover {
+            background-color: #F5F5F5;
+
+            // span {
+            //     color: #00E;
+            // }
+
+            // svg {
+            //     path {
+            //         stroke: #00E;
+            //     }
+            // }
+        }
+
+        span {
+            display: block;
+            color: #6B7280;
+            font-size: 14px;
+            transition: .3s ease-in-out;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        svg {
+            path {
+                transition: .3s ease-in-out;
+
+            }
+        }
+    }
+}

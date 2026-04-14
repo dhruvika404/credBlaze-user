@@ -1,0 +1,50 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.button {
+    &.lightbutton {
+        button {
+            background: #F5F5F5;
+            color: #171717;
+
+            &:hover {
+                background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                color: #fff;
+            }
+        }
+    }
+
+    &.iconwithText {
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: auto;
+        }
+    }
+
+    button {
+        border-radius: 8px;
+        border: 1px solid rgba(89, 59, 242, 0.10);
+        background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+        padding: 12px;
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        width: 100%;
+        cursor: pointer;
+        transition: .3s ease-in-out;
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(90deg, #6475F6 -4.55%, #0040C1 102.73%);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}

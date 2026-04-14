@@ -1,0 +1,128 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.input {
+    &.labelChange {
+        label {
+            color: #586162;
+            letter-spacing: -0.28px;
+            font-weight: 400;
+        }
+    }
+
+    label {
+        color: #0E121B;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        display: block;
+        padding: 0 0 8px 0;
+    }
+
+    .inputrelative {
+        position: relative;
+
+        &.righticonSpacing {
+            input {
+                padding-right: 40px;
+            }
+        }
+
+        &.leftSpacing {
+            input {
+                padding-left: 40px;
+            }
+        }
+
+        &.heightChange {
+            input {
+                height: 47px;
+
+                @include respond-to("xl") {
+                    height: 42px;
+                }
+            }
+        }
+
+        .lefticon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+
+            img {
+                display: block;
+            }
+        }
+
+        .rightIcon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+
+            img {
+                display: block;
+                cursor: pointer;
+                width: 20px;
+                height: 20px;
+                object-fit: contain;
+            }
+        }
+
+        input {
+            padding: 0 16px;
+            outline: none;
+            height: 40px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #E6E8EA;
+            background: #FFF;
+            color: #0E121B;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            transition: .3s ease-in-out;
+
+            &:disabled {
+                background: #F9FAFB;
+                color: #9CA3AF;
+                -webkit-text-fill-color: #9CA3AF;
+                cursor: not-allowed;
+                opacity: 1;
+            }
+        }
+
+        ::placeholder {
+            color: #625F6E;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+        }
+    }
+
+    &.hasError input {
+        // border-color: #E53935;
+
+        // &:focus {
+        //     border-color: #E53935;
+        //     box-shadow: none;
+        //     outline: none;
+        // }
+    }
+}
+
+.errorMsg {
+    color: #E53935;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+}
