@@ -45,6 +45,7 @@
         cursor: pointer;
         text-decoration: none;
 
+        &.active,
         &:hover {
             background-color: #EFF4FF;
 

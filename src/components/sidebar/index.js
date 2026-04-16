@@ -1,5 +1,7 @@
+'use client'
 import React from 'react'
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './sidebar.module.scss';
 import DashboardIcon from '@/icons/dashboardIcon';
 import TasksIcon from '@/icons/tasksIcon';
@@ -13,50 +15,43 @@ import SettingIcon from '@/icons/settingIcon';
 import StarGroupIcon from '@/icons/starGroupIcon';
 import HelpIcon from '@/icons/helpIcon';
 import LogoutIcon from '@/icons/logoutIcon';
+
 const BlackLogo = '/assets/logo/black-logo.svg';
+
+const menuItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+    { href: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
+    { href: '/utilities', label: 'Utilities', icon: <UtilitiesIcon /> },
+    { href: '/shop', label: 'Shop', icon: <ShopIcon /> },
+    { href: '/spin-earn', label: 'Spin & Earn', icon: <SpinIcon /> },
+    { href: '/referrals', label: 'Referrals', icon: <ReferralsIcon /> },
+    { href: '/business-card', label: 'Business Card', icon: <CardIcon /> },
+    { href: '/wallet', label: 'Wallet', icon: <WalletIcon /> },
+    { href: '/settings', label: 'Settings', icon: <SettingIcon /> },
+]
+
 export default function Sidebar() {
+    const pathname = usePathname();
+
     return (
         <aside className={styles.sidebar}>
             <div className={styles.logo}>
                 <img src={BlackLogo} alt='BlackLogo' />
             </div>
             <div className={styles.allMenubody}>
-                <Link href='/dashboard' className={styles.menu}>
-                    <DashboardIcon />
-                    <span>Dashboard</span>
-                </Link>
-                <Link href='/tasks' className={styles.menu}>
-                    <TasksIcon />
-                    <span>Tasks</span>
-                </Link>
-                <Link href='/utilities' className={styles.menu}>
-                    <UtilitiesIcon />
-                    <span>Utilities</span>
-                </Link>
-                <Link href='/shop' className={styles.menu}>
-                    <ShopIcon />
-                    <span>Shop</span>
-                </Link>
-                <Link href='/spin-earn' className={styles.menu}>
-                    <SpinIcon />
-                    <span>Spin & Earn</span>
-                </Link>
-                <Link href='/referrals' className={styles.menu}>
-                    <ReferralsIcon />
-                    <span>Referrals</span>
-                </Link>
-                <Link href='/business-card' className={styles.menu}>
-                    <CardIcon />
-                    <span>Business Card</span>
-                </Link>
-                <Link href='/wallet' className={styles.menu}>
-                    <WalletIcon />
-                    <span>Wallet</span>
-                </Link>
-                <Link href='/settings' className={styles.menu}>
-                    <SettingIcon />
-                    <span>Settings</span>
-                </Link>
+                {menuItems.map((item, index) => {
+                    const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                    return (
+                        <Link
+                            key={index}
+                            href={item.href}
+                            className={`${styles.menu} ${isActive ? styles.active : ''}`}
+                        >
+                            {item.icon}
+                            <span>{item.label}</span>
+                        </Link>
+                    )
+                })}
             </div>
             <div>
                 <div className={styles.sidebarFooter}>

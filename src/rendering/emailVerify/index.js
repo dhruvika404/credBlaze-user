@@ -88,6 +88,7 @@ export default function EmailVerify() {
               value={email}
               onChange={setEmail}
               error={error}
+              required
             />
             {apiError && <p className={styles.apiError} role="alert">{apiError}</p>}
             <div className={styles.topAlignment}>

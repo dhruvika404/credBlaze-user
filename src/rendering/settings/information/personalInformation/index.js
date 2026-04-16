@@ -1,13 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styles from './personalInformation.module.scss';
 import Input from '@/components/input';
 import Dropdown from '@/components/dropdown';
 import Button from '@/components/button';
 import PhoneInput, { parsePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { COUNTRIES } from '@/utils/countries';
-import toast from 'react-hot-toast';
+import { Country } from 'country-state-city'; import toast from 'react-hot-toast';
 import { updateProfileDetails } from '@/services/profile';
 
 const GENDER_OPTIONS = [
@@ -32,13 +31,17 @@ function pick(obj, ...keys) {
 
 function toDateInput(val) {
   if (!val) return '';
-  const d = new Date(val);
-  if (isNaN(d.getTime())) return val;
-  return d.toISOString().slice(0, 10);
+  if (typeof val === 'string') return val.slice(0, 10);
+  return '';
 }
 
 function sanitizeName(val) {
   return val.replace(/[^a-zA-Z\s'\-]/g, '');
+}
+
+function capitaliseName(val) {
+  if (!val) return val;
+  return val.charAt(0).toUpperCase() + val.slice(1);
 }
 
 function validate(form) {
@@ -72,8 +75,8 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
       : rawPhone || '';
 
     setForm({
-      first_name: pick(profile, 'first_name', 'firstName'),
-      last_name: pick(profile, 'last_name', 'lastName'),
+      first_name: capitaliseName(pick(profile, 'first_name', 'firstName')),
+      last_name: capitaliseName(pick(profile, 'last_name', 'lastName')),
       email: pick(profile, 'email'),
       phone: phoneVal,
       dob: toDateInput(pick(profile, 'birthday', 'dob', 'date_of_birth', 'dateOfBirth')),
@@ -89,7 +92,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
   };
 
   const setName = (field) => (v) => {
-    set(field)(sanitizeName(v));
+    set(field)(capitaliseName(sanitizeName(v)));
   };
 
   const handleSave = async () => {
@@ -105,13 +108,14 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
         country_code = `+${parsed.countryCallingCode}`;
         phone = parsed.nationalNumber;
       }
+      const dobISO = form.dob ? form.dob + 'T00:00:00' : undefined;
 
       const payload = {
         firstName: form.first_name.trim(),
         lastName: form.last_name.trim(),
         gender: form.gender,
         country: form.country,
-        ...(form.dob && { birthday: form.dob }),
+        ...(dobISO && { birthday: dobISO }),
         ...(phone && { phone }),
         ...(country_code && { countryCode: country_code }),
       };
@@ -125,8 +129,13 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
     }
   };
 
+  const countryOptions = useMemo(
+    () => Country.getAllCountries().map((c) => ({ value: c.isoCode, label: c.name })),
+    []
+  );
+
   const selectedGender = GENDER_OPTIONS.find((o) => o.value === form.gender?.toLowerCase()) || null;
-  const selectedCountry = COUNTRIES.find((o) => o.value === form.country) || null;
+  const selectedCountry = countryOptions.find((o) => o.value === form.country) || null;
 
   if (!isEditing) {
     return (
@@ -143,8 +152,8 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
             <label>Phone Number</label>
             <PhoneInput international disabled value={form.phone || '+1'} className={styles.phoneInputDisabled} />
           </div>
-          <Input label="Date of Birth" labelChange value={form.dob ? new Date(form.dob + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''} placeholder="July 12, 1998" disabled />
-          <Input label="Gender" labelChange value={form.gender} placeholder="Male" disabled />
+          <Input label="Date of Birth" labelChange value={form.dob ? (() => { const [y, m, d] = form.dob.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })() : ''} placeholder="July 12, 1998" disabled />
+          <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Male" disabled />
           <Input label="Country" labelChange value={selectedCountry?.label || form.country}
             placeholder="United States of America" disabled />
         </div>
@@ -154,60 +163,58 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
 
   return (
     <div className={styles.personalInformation}>
-      <div className={styles.spacingGrid}>
-        <div className={styles.content}>
-          <h2>Personal Information</h2>
-          <p>Modify Your Personal Information</p>
+      <div className={styles.content}>
+        <h2>Personal Information</h2>
+        <p>Modify Your Personal Information</p>
+      </div>
+      <div className={styles.twocol}>
+        <Input label="First Name" labelChange placeholder="Naitik" name="first_name"
+          value={form.first_name} onChange={setName('first_name')}
+          error={errors.first_name} maxLength={50} required />
+
+        <Input label="Last Name" labelChange placeholder="Kumar" name="last_name"
+          value={form.last_name} onChange={setName('last_name')}
+          error={errors.last_name} maxLength={50} required />
+
+        <div className={styles.phoneField}>
+          <label className={styles.phoneLabel}>Phone Number</label>
+          <PhoneInput
+            international
+            defaultCountry="US"
+            placeholder="(555) 000-0000"
+            value={form.phone || '+1'}
+            onChange={(val) => {
+              set('phone')(val === '+1' ? '' : (val || ''));
+            }}
+            className={errors.phone ? styles.phoneInputError : styles.phoneInput}
+          />
+          {errors.phone && <p className={styles.errorMsg} role="alert">{errors.phone}</p>}
         </div>
-        <div className={styles.twocol}>
-          <Input label="First Name" labelChange placeholder="Naitik" name="first_name"
-            value={form.first_name} onChange={setName('first_name')}
-            error={errors.first_name} maxLength={50} />
 
-          <Input label="Last Name" labelChange placeholder="Kumar" name="last_name"
-            value={form.last_name} onChange={setName('last_name')}
-            error={errors.last_name} maxLength={50} />
-
-          <div className={styles.phoneField}>
-            <label className={styles.phoneLabel}>Phone Number</label>
-            <PhoneInput
-              international
-              defaultCountry="US"
-              placeholder="(555) 000-0000"
-              value={form.phone || '+1'}
-              onChange={(val) => {
-                set('phone')(val === '+1' ? '' : (val || ''));
-              }}
-              className={errors.phone ? styles.phoneInputError : styles.phoneInput}
+        <div className={styles.dateField}>
+          <label className={styles.dateLabel}>Date of Birth</label>
+          <div className={styles.dateInputWrap}>
+            <input
+              type="date"
+              value={form.dob}
+              onChange={(e) => set('dob')(e.target.value)}
+              className={styles.dateInput}
             />
-            {errors.phone && <p className={styles.errorMsg} role="alert">{errors.phone}</p>}
+            <span className={styles.calendarIcon}><CalendarIcon /></span>
           </div>
-
-          <div className={styles.dateField}>
-            <label className={styles.dateLabel}>Date of Birth</label>
-            <div className={styles.dateInputWrap}>
-              <input
-                type="date"
-                value={form.dob}
-                onChange={(e) => set('dob')(e.target.value)}
-                className={styles.dateInput}
-              />
-              <span className={styles.calendarIcon}><CalendarIcon /></span>
-            </div>
-          </div>
-
-          <Dropdown label="Gender" labelChange options={GENDER_OPTIONS}
-            value={selectedGender} onChange={(opt) => set('gender')(opt?.value || '')}
-            placeholder="Male" />
-
-          <Dropdown label="Country" labelChange options={COUNTRIES} searchable
-            value={selectedCountry} onChange={(opt) => set('country')(opt?.value || '')}
-            placeholder="United States of America" />
         </div>
+
+        <Dropdown label="Gender" labelChange options={GENDER_OPTIONS}
+          value={selectedGender} onChange={(opt) => set('gender')(opt?.value || '')}
+          placeholder="Male" />
+
+        <Dropdown label="Country" labelChange options={countryOptions} searchable
+          value={selectedCountry} onChange={(opt) => set('country')(opt?.value || '')}
+          placeholder="United States of America" />
       </div>
 
       <div className={styles.actions}>
-        <Button text="Cancel" lightbutton onClick={() => { setErrors({}); onSaved?.(null); }} />
+        <button className={styles.cancelBtn} onClick={() => { setErrors({}); onSaved?.(null); }}>Cancel</button>
         <Button text={saving ? 'Saving...' : 'Save Changes'} disabled={saving}
           onClick={handleSave} type="button" />
       </div>

@@ -19,7 +19,7 @@ const menuItems = [
     { icon: <SettingIcon />, label: 'Profile Info', href: '/settings' },
     { icon: <KycIcon />, label: 'KYC & Verification', href: '/settings/kyc-verification' },
     { icon: <KeyIcon />, label: 'Change Password', href: '/settings/change-password' },
-    { icon: <LocationIcon />, label: 'Address', href: '/settings/address' },
+    { icon: <LocationIcon />, label: 'Delivery Addresses', href: '/settings/delivery-addresses' },
     { icon: <PayoutIcon />, label: 'Payout Accounts', href: '/settings/payout-accounts' },
     { icon: <PlanIcon />, label: 'Plan & Pricing', href: '/settings/plan-pricing' },
     { icon: <BillingIcon />, label: 'Billing', href: '/settings/billing' },

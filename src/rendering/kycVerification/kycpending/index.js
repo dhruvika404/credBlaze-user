@@ -10,7 +10,7 @@ export default function Kycpending() {
                     KYC Pending
                 </h2>
                 <p>
-                    Your KYC information needs to be updated to ensure continued access to 
+                    Your KYC information needs to be updated to ensure continued access to
                     all features. Please provide the latest documents for verification
                 </p>
             </div>

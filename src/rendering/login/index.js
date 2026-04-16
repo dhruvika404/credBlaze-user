@@ -75,6 +75,7 @@ export default function Login() {
                 value={form.email}
                 onChange={set('email')}
                 error={errors.email}
+                required
               />
               <Input
                 label="Password"
@@ -85,6 +86,8 @@ export default function Login() {
                 value={form.password}
                 onChange={set('password')}
                 error={errors.password}
+                required
+                maxLength={12}
               />
               <div className={styles.forgotpassword}>
                 <Link href="/email-verify">Forgot Password?</Link>

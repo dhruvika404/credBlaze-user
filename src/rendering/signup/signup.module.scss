@@ -134,6 +134,12 @@
                     padding: 0 0 8px 0;
                 }
 
+                .requiredStar {
+                    color: #E53935;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
                 .phoneInput,
                 .phoneInputError {
                     display: flex;

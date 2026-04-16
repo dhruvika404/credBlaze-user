@@ -20,7 +20,7 @@ const DropdownIndicator = (props) => {
     );
 };
 
-export default function Dropdown({ labelChange, label, options = defaultOptions, placeholder, defaultValue, onChange, value, name, heightChange, error, searchable }) {
+export default function Dropdown({ labelChange, label, options = defaultOptions, placeholder, defaultValue, onChange, value, name, heightChange, error, searchable, required }) {
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
@@ -78,11 +78,6 @@ export default function Dropdown({ labelChange, label, options = defaultOptions,
             padding: '4px',
             zIndex: 99,
         }),
-        menuList: (provided) => ({
-            ...provided,
-            maxHeight: '220px',
-            overflowY: 'auto',
-        }),
         option: (provided, state) => ({
             ...provided,
             fontSize: '14px',
@@ -104,7 +99,12 @@ export default function Dropdown({ labelChange, label, options = defaultOptions,
 
     return (
         <div className={classNames(styles.dropdown, labelChange ? styles.labelChange : '')}>
-            {label && <label>{label}</label>}
+            {label && (
+                <label>
+                    {label}
+                    {required && <span className={styles.requiredStar} aria-hidden="true"> *</span>}
+                </label>
+            )}
             <Select
                 options={options}
                 styles={customStyles}

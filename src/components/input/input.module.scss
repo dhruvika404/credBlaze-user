@@ -109,13 +109,13 @@
     }
 
     &.hasError input {
-        // border-color: #E53935;
+        border-color: #E53935;
 
-        // &:focus {
-        //     border-color: #E53935;
-        //     box-shadow: none;
-        //     outline: none;
-        // }
+        &:focus {
+            border-color: #E53935;
+            box-shadow: none;
+            outline: none;
+        }
     }
 }
 
@@ -125,4 +125,19 @@
     font-weight: 500;
     margin: 4px 0 0 0;
     line-height: 1.4;
+}
+
+.requiredStar {
+    color: #E53935;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.charCount {
+    color: #9CA3AF;
+    font-size: 11px;
+    font-weight: 400;
+    margin: 3px 0 0 0;
+    text-align: right;
+    line-height: 1.2;
 }

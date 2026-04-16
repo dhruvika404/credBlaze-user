@@ -1,13 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styles from './deliveryAddresses.module.scss';
 import Button from '@/components/button';
 import MapIcon from '@/icons/mapIcon';
 import EditOutline from '@/icons/editOutline';
 import RemoveIcon from '@/icons/removeIcon';
 import Input from '@/components/input';
+import Dropdown from '@/components/dropdown';
+import PhoneInput, { parsePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import toast from 'react-hot-toast';
 import { getAddressList, createAddress, updateAddress, deleteAddress } from '@/services/address';
+import { Country, State, City } from 'country-state-city';
 
 const AddIcon = '/assets/icons/add.svg';
 
@@ -18,14 +22,15 @@ const EMPTY_FORM = {
 
 function validate(form) {
   const e = {};
-  if (!form.first_name.trim()) e.first_name = 'Required';
-  if (!form.last_name.trim()) e.last_name = 'Required';
-  if (!form.phone.trim()) e.phone = 'Required';
-  if (!form.address.trim()) e.address = 'Required';
-  if (!form.city.trim()) e.city = 'Required';
-  if (!form.state.trim()) e.state = 'Required';
-  if (!form.country.trim()) e.country = 'Required';
-  if (!form.zip_code.trim()) e.zip_code = 'Required';
+  if (!form.first_name.trim()) e.first_name = 'First name is required';
+  if (!form.last_name.trim()) e.last_name = 'Last name is required';
+  if (!form.phone) e.phone = 'Phone number is required';
+  else if (!isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
+  if (!form.address.trim()) e.address = 'Address is required';
+  if (!form.country) e.country = 'Country is required';
+  if (!form.state) e.state = 'State is required';
+  if (!form.city) e.city = 'City is required';
+  if (!form.zip_code.trim()) e.zip_code = 'Zip code is required';
   return e;
 }
 
@@ -46,11 +51,26 @@ export default function DeliveryAddresses() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
+  const countryOptions = useMemo(
+    () => Country.getAllCountries().map((c) => ({ value: c.isoCode, label: c.name })),
+    []
+  );
+
+  const stateOptions = useMemo(() => {
+    if (!form.country) return [];
+    return State.getStatesOfCountry(form.country).map((s) => ({ value: s.isoCode, label: s.name }));
+  }, [form.country]);
+
+  const cityOptions = useMemo(() => {
+    if (!form.country || !form.state) return [];
+    return City.getCitiesOfState(form.country, form.state).map((c) => ({ value: c.name, label: c.name }));
+  }, [form.country, form.state]);
+
   const fetchAddresses = () => {
     setLoading(true);
     getAddressList()
       .then((res) => setAddresses(normaliseList(res)))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   };
 
@@ -62,6 +82,21 @@ export default function DeliveryAddresses() {
     setErrors((e) => { if (!e[field]) return e; const n = { ...e }; delete n[field]; return n; });
   };
 
+  const handleCountryChange = (opt) => {
+    setForm((f) => ({ ...f, country: opt?.value || '', state: '', city: '' }));
+    setErrors((e) => { const n = { ...e }; delete n.country; delete n.state; delete n.city; return n; });
+  };
+
+  const handleStateChange = (opt) => {
+    setForm((f) => ({ ...f, state: opt?.value || '', city: '' }));
+    setErrors((e) => { const n = { ...e }; delete n.state; delete n.city; return n; });
+  };
+
+  const handleCityChange = (opt) => {
+    setForm((f) => ({ ...f, city: opt?.value || '' }));
+    setErrors((e) => { if (!e.city) return e; const n = { ...e }; delete n.city; return n; });
+  };
+
   const openAdd = () => {
     setForm(EMPTY_FORM);
     setErrors({});
@@ -70,11 +105,17 @@ export default function DeliveryAddresses() {
   };
 
   const openEdit = (addr) => {
+    const rawPhone = addr.phone || '';
+    const rawCode = addr.countryCode || '';
+    const phoneVal = rawCode && rawPhone
+      ? (rawCode.startsWith('+') ? rawCode : `+${rawCode}`) + rawPhone
+      : rawPhone;
+
     setForm({
       first_name: addr.first_name || '',
       last_name: addr.last_name || '',
-      phone: addr.phone || '',
-      countryCode: addr.countryCode || '',
+      phone: phoneVal,
+      countryCode: rawCode,
       address: addr.address || '',
       city: addr.city || '',
       state: addr.state || '',
@@ -100,11 +141,21 @@ export default function DeliveryAddresses() {
 
     setSaving(true);
     try {
+      let phone = form.phone;
+      let countryCode = form.countryCode;
+      if (form.phone && isValidPhoneNumber(form.phone)) {
+        const parsed = parsePhoneNumber(form.phone);
+        countryCode = `+${parsed.countryCallingCode}`;
+        phone = parsed.nationalNumber;
+      }
+
+      const payload = { ...form, phone, countryCode };
+
       if (editingId) {
-        await updateAddress(editingId, form);
+        await updateAddress(editingId, payload);
         toast.success('Address updated');
       } else {
-        await createAddress(form);
+        await createAddress(payload);
         toast.success('Address added');
       }
       fetchAddresses();
@@ -117,6 +168,13 @@ export default function DeliveryAddresses() {
   };
 
   const handleDelete = async (id) => {
+    if (addresses.length > 1) {
+      const target = addresses.find((a) => (a.id || a._id || a.address_id) === id);
+      if (target?.is_default) {
+        toast.error('Cannot delete the default address. Set another address as default first');
+        return;
+      }
+    }
     setDeletingId(id);
     try {
       await deleteAddress(id);
@@ -129,12 +187,16 @@ export default function DeliveryAddresses() {
     }
   };
 
+  const selectedCountry = countryOptions.find((c) => c.value === form.country) || null;
+  const selectedState = stateOptions.find((s) => s.value === form.state) || (form.state ? { value: form.state, label: form.state } : null);
+  const selectedCity = cityOptions.find((c) => c.value === form.city) || (form.city ? { value: form.city, label: form.city } : null);
+
   return (
     <div className={styles.deliveryAddresses}>
       <div className={styles.spacingGrid}>
         <div className={styles.content}>
           <div>
-            <h2>Saved Addresses</h2>
+            <h2>{showForm ? (editingId ? 'Edit address' : 'Add a new address') : 'Saved Addresses'}</h2>
             <p>Add new Address and view address</p>
           </div>
           {!showForm && (
@@ -150,7 +212,8 @@ export default function DeliveryAddresses() {
             <div key={id} className={styles.locationBox}>
               <div className={styles.left}>
                 <p>
-                  {addr.first_name} {addr.last_name}
+                  {addr.first_name ? addr.first_name.charAt(0).toUpperCase() + addr.first_name.slice(1) : ''}{' '}
+                  {addr.last_name ? addr.last_name.charAt(0).toUpperCase() + addr.last_name.slice(1) : ''}
                   {addr.is_default && <span> Default</span>}
                 </p>
                 <div className={styles.location}>
@@ -177,21 +240,79 @@ export default function DeliveryAddresses() {
 
         {showForm && (
           <div className={styles.formBox}>
-            <h4>{editingId ? 'Edit Address' : 'Add New Address'}</h4>
             <div className={styles.formGrid}>
-              <Input labelChange label="First Name" placeholder="John" value={form.first_name} onChange={set('first_name')} error={errors.first_name} />
-              <Input labelChange label="Last Name" placeholder="Doe" value={form.last_name} onChange={set('last_name')} error={errors.last_name} />
-              <Input labelChange label="Phone" placeholder="+1 555 000 0000" value={form.phone} onChange={set('phone')} error={errors.phone} />
-              <Input labelChange label="Country Code" placeholder="+1" value={form.countryCode} onChange={set('countryCode')} />
-              <Input labelChange label="Address" placeholder="123 Main St" value={form.address} onChange={set('address')} error={errors.address} />
-              <Input labelChange label="City" placeholder="New York" value={form.city} onChange={set('city')} error={errors.city} />
-              <Input labelChange label="State" placeholder="NY" value={form.state} onChange={set('state')} error={errors.state} />
-              <Input labelChange label="Country" placeholder="United States" value={form.country} onChange={set('country')} error={errors.country} />
-              <Input labelChange label="Zip Code" placeholder="10001" value={form.zip_code} onChange={set('zip_code')} error={errors.zip_code} />
+              {/* Row 1: First Name + Last Name */}
+              <Input labelChange required label="First Name" placeholder="Enter first name"
+                value={form.first_name} onChange={set('first_name')} error={errors.first_name} maxLength={50} />
+              <Input labelChange required label="Last Name" placeholder="Enter last name"
+                value={form.last_name} onChange={set('last_name')} error={errors.last_name} maxLength={50} />
+
+              {/* Row 2: Phone number */}
+              <div>
+                <label className={styles.phoneLabel}>Phone number <span className={styles.requiredStar} aria-hidden="true">*</span></label>
+                <PhoneInput
+                  international
+                  defaultCountry="US"
+                  placeholder="Enter your number"
+                  value={form.phone || ''}
+                  onChange={(val) => {
+                    setForm((f) => ({ ...f, phone: val || '' }));
+                    setErrors((e) => { if (!e.phone) return e; const n = { ...e }; delete n.phone; return n; });
+                  }}
+                  className={errors.phone ? styles.phoneInputError : styles.phoneInput}
+                />
+                {errors.phone && <p className={styles.errorMsg}>{errors.phone}</p>}
+              </div>
+
+              <div />
+
+              {/* Row 3: Address (full width) */}
+              <div className={styles.fullWidth}>
+                <Input labelChange required label="Address" placeholder="Enter address"
+                  value={form.address} onChange={set('address')} error={errors.address} maxLength={100} />
+              </div>
+
+              {/* Row 4: Country + State */}
+              <Dropdown
+                labelChange required
+                label="Country"
+                options={countryOptions}
+                searchable
+                placeholder="Select country"
+                value={selectedCountry}
+                onChange={handleCountryChange}
+                error={errors.country}
+              />
+              <Dropdown
+                labelChange required
+                label="State"
+                options={stateOptions}
+                searchable
+                placeholder={form.country ? 'Select state' : 'Select country first'}
+                value={selectedState}
+                onChange={handleStateChange}
+                error={errors.state}
+              />
+
+              {/* Row 5: City + Zip Code */}
+              <Dropdown
+                labelChange required
+                label="City"
+                options={cityOptions}
+                searchable
+                placeholder={form.state ? 'Select city' : 'Select state first'}
+                value={selectedCity}
+                onChange={handleCityChange}
+                error={errors.city}
+              />
+              <Input labelChange required label="Zip Code" placeholder="Enter Zip Code"
+                value={form.zip_code} onChange={set('zip_code')} error={errors.zip_code} maxLength={10} />
             </div>
+
             <label className={styles.defaultCheck}>
-              <input type="checkbox" checked={form.is_default} onChange={(e) => setForm((f) => ({ ...f, is_default: e.target.checked }))} />
-              Set as default address
+              <input type="checkbox" checked={form.is_default}
+                onChange={(e) => setForm((f) => ({ ...f, is_default: e.target.checked }))} />
+              Make this my default address
             </label>
           </div>
         )}

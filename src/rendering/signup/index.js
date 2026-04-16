@@ -35,7 +35,7 @@ export default function Signup() {
         const userRole = list.find(r => r.name?.toLowerCase() === 'user') || list[0];
         if (userRole) setUserRoleId(userRole.id);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const set = (field) => (v) => {
@@ -49,8 +49,7 @@ export default function Signup() {
     if (!form.last_name.trim()) e.last_name = 'Last name is required';
     if (!form.email) e.email = 'Email is required';
     else if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(form.email) || /\.@/.test(form.email) || /^\./.test(form.email)) e.email = 'Enter a valid email';
-    if (!form.phone) e.phone = 'Phone number is required';
-    else if (!isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
+    if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
     if (!form.password) e.password = 'Password is required';
     else if (form.password.length < 8) e.password = 'At least 8 characters';
     else if (!/[A-Z]/.test(form.password)) e.password = 'Must include an uppercase letter';
@@ -69,10 +68,10 @@ export default function Signup() {
     setApiError('');
     setLoading(true);
     try {
-      const parsed = parsePhoneNumber(form.phone);
-      const country_code = `+${parsed.countryCallingCode}`;
-      const phone = parsed.nationalNumber;
-      const country = parsed.country || '';
+      const parsed = form.phone ? parsePhoneNumber(form.phone) : null;
+      const country_code = parsed ? `+${parsed.countryCallingCode}` : '';
+      const phone = parsed ? parsed.nationalNumber : '';
+      const country = parsed?.country || '';
       const data = await signup({
         first_name: form.first_name,
         last_name: form.last_name,
@@ -97,7 +96,7 @@ export default function Signup() {
   return (
     <div className={styles.flexbox}>
       <div className={styles.items}>
-        <div className={styles.logo} onClick={()=>router.push("/")}>
+        <div className={styles.logo} onClick={() => router.push("/")}>
           <img src={Logo} alt="Logo" />
         </div>
         <div className={styles.box}>
@@ -108,16 +107,18 @@ export default function Signup() {
           <form onSubmit={handleSubmit} noValidate>
             <div className={styles.twocol}>
               <Input label="First Name" placeholder="John" name="first_name" heightChange
-                value={form.first_name} onChange={set('first_name')} error={errors.first_name} />
+                value={form.first_name} onChange={set('first_name')} error={errors.first_name} required />
               <Input label="Last Name" placeholder="Doe" name="last_name" heightChange
-                value={form.last_name} onChange={set('last_name')} error={errors.last_name} />
+                value={form.last_name} onChange={set('last_name')} error={errors.last_name} required />
             </div>
             <div className={styles.spacing}>
               <Input label="Email Address" placeholder="you@example.com" type="email" name="email" heightChange
-                value={form.email} onChange={set('email')} error={errors.email} />
+                value={form.email} onChange={set('email')} error={errors.email} required />
 
               <div className={styles.phoneField}>
-                <label className={styles.phoneLabel}>Phone Number</label>
+                <label className={styles.phoneLabel}>
+                  Phone Number
+                </label>
                 <PhoneInput
                   international
                   defaultCountry="US"
@@ -133,11 +134,11 @@ export default function Signup() {
               <Input label="Password" placeholder="Password" name="password" heightChange
                 type={showPassword ? 'text' : 'password'} rightIcon={showPassword ? EyeFillIcon : EyeIcon}
                 onRightIconClick={() => setShowPassword(s => !s)}
-                value={form.password} onChange={set('password')} error={errors.password} />
+                value={form.password} onChange={set('password')} error={errors.password} required maxLength={12} />
               <Input label="Confirm Password" placeholder="Confirm password" name="confirm_password" heightChange
                 type={showConfirm ? 'text' : 'password'} rightIcon={showConfirm ? EyeFillIcon : EyeIcon}
                 onRightIconClick={() => setShowConfirm(s => !s)}
-                value={form.confirm_password} onChange={set('confirm_password')} error={errors.confirm_password} />
+                value={form.confirm_password} onChange={set('confirm_password')} error={errors.confirm_password} required maxLength={12} />
 
               <Input label="Referral Code (optional)" placeholder="Enter referral code" name="referralCode" heightChange
                 value={form.referralCode} onChange={set('referralCode')} />

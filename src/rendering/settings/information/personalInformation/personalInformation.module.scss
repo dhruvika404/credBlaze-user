@@ -5,11 +5,7 @@
     border-radius: 12px;
     border: 1px solid #E9E9E9;
     background: #FFF;
-
-    .spacingGrid {
-        padding: 16px;
-        border-bottom: 1px solid #E9E9E9;
-    }
+    padding: 16px;
 
     .content {
         padding: 0 0 16px 0;
@@ -65,6 +61,12 @@
         font-weight: 400;
         line-height: 150%;
         letter-spacing: -0.02em;
+    }
+
+    .requiredStar {
+        color: #E53935;
+        font-size: 14px;
+        font-weight: 600;
     }
 
     .phoneInput {
@@ -133,6 +135,12 @@
             font-weight: 400;
             line-height: 150%;
             letter-spacing: -0.02em;
+
+            .requiredStar {
+                color: #E53935;
+                font-size: 14px;
+                font-weight: 600;
+            }
         }
     }
 
@@ -238,12 +246,35 @@
         100% { background-position: -200% 0; }
     }
 
-}
+    // ── Save / Cancel row ────────────────────────────────────────────────────
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 24px;
+        padding: 16px 20px;
+        margin-left: -16px;
+        margin-right: -16px;
+        margin-bottom: -16px;
+        border-top: 1px solid #E9E9E9;
+        background: #fff;
+        border-radius: 0 0 12px 12px;
 
-// ── Save / Cancel row ────────────────────────────────────────────────────
-.actions {
-    padding: 16px 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+        .cancelBtn {
+            height: 46px;
+            border-radius: 8px;
+            border: none;
+            background: #F5F5F5;
+            color: #171717;
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            line-height: 22px;
+
+            &:hover {
+                background: #EBEBEB;
+            }
+        }
+    }
 }

@@ -15,7 +15,8 @@ function validate(form) {
   if (!form.currentPassword) e.currentPassword = 'Current password is required';
   if (!form.newPassword) e.newPassword = 'New password is required';
   else if (form.newPassword.length < 8) e.newPassword = 'Password must be at least 8 characters';
-  if (!form.confirmPassword) e.confirmPassword = 'Please confirm your new password';
+  else if (form.currentPassword && form.newPassword === form.currentPassword) e.newPassword = 'New password must be different from current password';
+  if (!form.confirmPassword) e.confirmPassword = 'Confirm password is required';
   else if (form.newPassword !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
   return e;
 }
@@ -41,7 +42,7 @@ export default function ChangePassword() {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
       await changePassword(
-        { old_password: form.currentPassword, new_password: form.newPassword },
+        { old_password: form.currentPassword, new_password: form.newPassword, confirm_password: form.confirmPassword },
         token
       );
       toast.success('Password changed successfully');
@@ -70,6 +71,7 @@ export default function ChangePassword() {
           <div className={styles.threeCol}>
             <Input
               labelChange
+              required
               label="Current Password"
               placeholder="• • • • • • • • • • "
               rightIcon={showCurrent ? EyeFillIcon : EyeIcon}
@@ -79,9 +81,11 @@ export default function ChangePassword() {
               value={form.currentPassword}
               onChange={set('currentPassword')}
               error={errors.currentPassword}
+              maxLength={12}
             />
             <Input
               labelChange
+              required
               label="New Password"
               placeholder="• • • • • • • • • • "
               rightIcon={showNew ? EyeFillIcon : EyeIcon}
@@ -91,9 +95,11 @@ export default function ChangePassword() {
               value={form.newPassword}
               onChange={set('newPassword')}
               error={errors.newPassword}
+              maxLength={12}
             />
             <Input
               labelChange
+              required
               label="Confirm New Password"
               placeholder="• • • • • • • • • • "
               rightIcon={showConfirm ? EyeFillIcon : EyeIcon}
@@ -103,6 +109,7 @@ export default function ChangePassword() {
               value={form.confirmPassword}
               onChange={set('confirmPassword')}
               error={errors.confirmPassword}
+              maxLength={12}
             />
           </div>
         </div>

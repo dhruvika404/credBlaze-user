@@ -5,14 +5,17 @@ import EditIcon from '@/icons/editIcon';
 import KycVerification from './kycVerification';
 import PersonalInformation from './personalInformation';
 import { getProfileDetails } from '@/services/profile';
-import { COUNTRIES } from '@/utils/countries';
 
 const ProfileImage = '/assets/icons/profile.svg';
 
-function getFlagEmoji(countryCode) {
+function capitalise(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function getFlagUrl(countryCode) {
   if (!countryCode || countryCode.length !== 2) return null;
-  const codePoints = [...countryCode.toUpperCase()].map((c) => 127397 + c.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
+  return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 }
 
 function normaliseProfile(raw) {
@@ -28,17 +31,16 @@ export default function Information() {
   useEffect(() => {
     getProfileDetails()
       .then((res) => setProfile(normaliseProfile(res)))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
   const firstName = profile?.first_name || profile?.firstName || '';
   const lastName = profile?.last_name || profile?.lastName || '';
-  const fullName = loading ? 'Loading...' : (`${firstName} ${lastName}`.trim() || 'Naitik Kumar');
+  const fullName = loading ? 'Loading...' : (`${capitalise(firstName)} ${capitalise(lastName)}`.trim() || 'Naitik Kumar');
   const userId = profile?.user_id || profile?.userId || profile?.id || 'CB-2025-00847';
   const countryCode = profile?.country || '';
-  const countryLabel = COUNTRIES.find((c) => c.value === countryCode)?.label || countryCode;
-  const flagEmoji = getFlagEmoji(countryCode);
+  const flagUrl = getFlagUrl(countryCode);
   const avatarSrc = profile?.profile_image || profile?.profileImage || ProfileImage;
 
   return (
@@ -49,18 +51,18 @@ export default function Information() {
             <div className={styles.leftAlignment}>
               <div className={styles.profileImageWrap}>
                 <img src={avatarSrc} alt="Profile" />
-                <span className={styles.onlineDot} />
               </div>
-              <div>
+              <div className={styles.userInfo}>
                 <div className={styles.namecountry}>
                   <h3>{fullName}</h3>
-                  {flagEmoji && <span className={styles.flagEmoji}>{flagEmoji}</span>}
+                  {flagUrl && (
+                    <img
+                      src={flagUrl}
+                      alt={countryCode}
+                      className={styles.flagImg}
+                    />
+                  )}
                 </div>
-                {countryLabel && (
-                  <div className={styles.countryLabel}>
-                    <span>{countryLabel}</span>
-                  </div>
-                )}
                 <div className={styles.idnumber}>
                   <button>ID:{userId}</button>
                 </div>
@@ -77,13 +79,15 @@ export default function Information() {
           </div>
 
           <div className={styles.spacingGrid}>
-            <KycVerification />
+            {!isEditing && <KycVerification />}
             <PersonalInformation
               isEditing={isEditing}
               profile={profile}
               onSaved={(updated) => {
                 if (updated) {
-                  setProfile((prev) => ({ ...prev, ...updated }));
+                  getProfileDetails()
+                    .then((res) => setProfile(normaliseProfile(res)))
+                    .catch(() => { });
                 }
                 setIsEditing(false);
               }}

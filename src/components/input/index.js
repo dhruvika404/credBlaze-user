@@ -19,10 +19,16 @@ export default function Input({
   disabled,
   maxLength,
   inputMode,
+  required,
 }) {
   return (
     <div className={classNames(styles.input, labelChange ? styles.labelChange : '')} >
-      {label && <label>{label}</label>}
+      {label && (
+        <label>
+          {label}
+          {required && <span className={styles.requiredStar} aria-hidden="true"> *</span>}
+        </label>
+      )}
       <div
         className={classNames(
           styles.inputrelative,
@@ -40,6 +46,7 @@ export default function Input({
           disabled={disabled}
           maxLength={maxLength}
           inputMode={inputMode}
+          required={required}
           onChange={(e) => onChange?.(e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${name}-error` : undefined}

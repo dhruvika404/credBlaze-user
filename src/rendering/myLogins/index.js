@@ -1,27 +1,9 @@
-import React from 'react';
+'use client'
+import React, { useState, useEffect } from 'react';
 import styles from './myLogins.module.scss';
 import LogoutIcon from '../../icons/logoutIcon';
+import { getUserActivity } from '@/services/auth';
 
-const activitiesData = [
-    {
-        id: 1,
-        browser: 'Google Chrome',
-        location: 'Mumbai, India',
-        ip: '212.021.01',
-    },
-    {
-        id: 2,
-        browser: 'Google Chrome',
-        location: 'Mumbai, India',
-        ip: '212.021.01',
-    },
-    {
-        id: 3,
-        browser: 'Google Chrome',
-        location: 'Mumbai, India',
-        ip: '212.021.01',
-    }
-];
 
 const ChromeIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,6 +13,45 @@ const ChromeIcon = () => (
 );
 
 export default function MyLogins() {
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedActivities, setSelectedActivities] = useState([]);
+
+    const fetchActivities = async () => {
+        try {
+            const token = localStorage.getItem('token') || '';
+            const res = await getUserActivity({}, token);
+            const activityList = res?.data || res?.payload || res || [];
+            setActivities(Array.isArray(activityList) ? activityList : []);
+        } catch (error) {
+            console.error('Error fetching activities:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchActivities();
+    }, []);
+
+    const handleHeaderCheckboxChange = (e) => {
+        if (e.target.checked) {
+            setSelectedActivities(activities.map((a, i) => a.id || i));
+        } else {
+            setSelectedActivities([]);
+        }
+    };
+
+    const handleRowCheckboxChange = (id) => {
+        setSelectedActivities(prev =>
+            prev.includes(id)
+                ? prev.filter(item => item !== id)
+                : [...prev, id]
+        );
+    };
+
+    const isAllSelected = activities.length > 0 && selectedActivities.length === activities.length;
+
     return (
         <div className={styles.myLoginsContainer}>
             {/* Account Activities Section */}
@@ -48,7 +69,12 @@ export default function MyLogins() {
                         <thead>
                             <tr>
                                 <th className={styles.checkboxColumn}>
-                                    <input type="checkbox" className={styles.customCheckbox} />
+                                    <input
+                                        type="checkbox"
+                                        className={styles.customCheckbox}
+                                        checked={isAllSelected}
+                                        onChange={handleHeaderCheckboxChange}
+                                    />
                                 </th>
                                 <th>Browser</th>
                                 <th>Location</th>
@@ -57,26 +83,41 @@ export default function MyLogins() {
                             </tr>
                         </thead>
                         <tbody>
-                            {activitiesData.map((activity) => (
-                                <tr key={activity.id}>
-                                    <td className={styles.checkboxColumn}>
-                                        <input type="checkbox" className={styles.customCheckbox} />
-                                    </td>
-                                    <td className={styles.browserCell}>
-                                        <div className={styles.iconWrapper}>
-                                            <ChromeIcon />
-                                        </div>
-                                        {activity.browser}
-                                    </td>
-                                    <td>{activity.location}</td>
-                                    <td>{activity.ip}</td>
-                                    <td>
-                                        <button className={styles.actionBtn}>
-                                            <LogoutIcon />
-                                        </button>
-                                    </td>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Loading activities...</td>
                                 </tr>
-                            ))}
+                            ) : activities.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No active sessions.</td>
+                                </tr>
+                            ) : (
+                                activities.map((activity, index) => (
+                                    <tr key={activity.id || index}>
+                                        <td className={styles.checkboxColumn}>
+                                            <input
+                                                type="checkbox"
+                                                className={styles.customCheckbox}
+                                                checked={selectedActivities.includes(activity.id || index)}
+                                                onChange={() => handleRowCheckboxChange(activity.id || index)}
+                                            />
+                                        </td>
+                                        <td className={styles.browserCell}>
+                                            <div className={styles.iconWrapper}>
+                                                <ChromeIcon />
+                                            </div>
+                                            {activity.browser || activity.device || '-'}
+                                        </td>
+                                        <td>{activity.location || activity.city || '-'}</td>
+                                        <td>{activity.ip_address || activity.ip || '-'}</td>
+                                        <td>
+                                            <button className={styles.actionBtn}>
+                                                <LogoutIcon />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
