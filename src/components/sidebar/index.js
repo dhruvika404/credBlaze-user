@@ -36,7 +36,9 @@ export default function Sidebar() {
     return (
         <aside className={styles.sidebar}>
             <div className={styles.logo}>
-                <img src={BlackLogo} alt='BlackLogo' />
+                <Link href='/dashboard'>
+                    <img src={BlackLogo} alt='BlackLogo' />
+                </Link>
             </div>
             <div className={styles.allMenubody}>
                 {menuItems.map((item, index) => {

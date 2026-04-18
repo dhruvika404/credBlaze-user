@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import PhoneInput, { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import styles from './signup.module.scss';
@@ -27,6 +28,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { deviceId, login: authLogin } = useAuth();
 
   useEffect(() => {
     getRoles()
@@ -81,10 +83,12 @@ export default function Signup() {
         country_code,
         country,
         roleId: userRoleId,
+        device_id: deviceId,
         ...(form.referralCode.trim() && { referralCode: form.referralCode.trim() }),
       });
       const token = data?.data?.access_token || data?.data?.token || data?.access_token || data?.token || '';
-      localStorage.setItem('token', token);
+      const userData = data?.data?.user || data?.user || null;
+      authLogin(userData, token);
       router.push('/email-verify?mode=verify');
     } catch (err) {
       setApiError(err?.message || 'Signup failed. Please try again.');

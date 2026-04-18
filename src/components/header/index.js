@@ -1,8 +1,21 @@
+'use client';
 import React from 'react'
 import styles from './header.module.scss';
 import SearchIcon from '@/icons/searchIcon';
+import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import UserIcon from '@/icons/userIcon';
+
 const EscText = '/assets/icons/esc-text.svg';
+
 export default function Header() {
+    const { user } = useAuth();
+    const cashWallet = user?.wallets?.find(w => w.wallet_type === 'REAL');
+    const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS');
+    const cashBalance = cashWallet ? Number(cashWallet.balance).toLocaleString('en-IN') : '0';
+    const pointsBalance = pointsWallet ? Number(pointsWallet.balance).toLocaleString('en-IN') : '0';
+    const profileImg = user?.profileImage || user?.profile_image
+
     return (
         <header className={styles.header}>
             <div className={styles.leftsearch}>
@@ -17,7 +30,7 @@ export default function Header() {
             <div className={styles.rightalignment}>
                 <div className={`${styles.walletItem} ${styles.green}`}>
                     <div className={styles.textInfo}>
-                        <span>1,00,000 ₹</span>
+                        <span>{cashBalance} ₹</span>
                         <span className={styles.label}>Cash</span>
                     </div>
                     <div className={styles.iconWrapper}>
@@ -38,7 +51,7 @@ export default function Header() {
 
                 <div className={`${styles.walletItem} ${styles.yellow}`}>
                     <div className={styles.textInfo}>
-                        <span>1,00,000 CB</span>
+                        <span>{pointsBalance} CB</span>
                         <span className={styles.label}>Points</span>
                     </div>
                     <div className={styles.iconWrapper}>
@@ -61,13 +74,17 @@ export default function Header() {
                     <span className={styles.badge}>3</span>
                 </div>
 
-                <div className={styles.userProfile}>
+                <Link href="/settings" className={styles.userProfile}>
                     <div className={styles.profileProgress}>
                         <div className={styles.avatarInner}>
-                            <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" />
+                            {profileImg ? (
+                                <img src={profileImg} alt="User" />
+                            ) : (
+                                <UserIcon width={40} height={40} />
+                            )}
                         </div>
                     </div>
-                </div>
+                </Link>
             </div>
         </header>
     )

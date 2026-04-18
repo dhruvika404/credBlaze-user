@@ -20,9 +20,14 @@ export default function MyLogins() {
     const fetchActivities = async () => {
         try {
             const token = localStorage.getItem('token') || '';
+            const currentDeviceId = localStorage.getItem('device_id');
             const res = await getUserActivity({}, token);
             const activityList = res?.data || res?.payload || res || [];
-            setActivities(Array.isArray(activityList) ? activityList : []);
+            if (Array.isArray(activityList)) {
+                setActivities(activityList.filter(activity => activity.device_id !== currentDeviceId));
+            } else {
+                setActivities([]);
+            }
         } catch (error) {
             console.error('Error fetching activities:', error);
         } finally {
@@ -61,7 +66,11 @@ export default function MyLogins() {
                         <h2>Account Activities</h2>
                         <p>Monitor and manage all your active devices.</p>
                     </div>
-                    <button className={styles.primaryBtn}>Log Out All Sessions</button>
+                    <button className={styles.primaryBtn}>
+                        {selectedActivities.length > 0
+                            ? `Log Out ${selectedActivities.length} Session${selectedActivities.length > 1 ? 's' : ''}`
+                            : 'Log Out All Sessions'}
+                    </button>
                 </div>
 
                 <div className={styles.tableContainer}>
