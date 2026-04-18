@@ -9,6 +9,7 @@ import Input from '@/components/input';
 import LoginwithGoogle from '@/components/loginwithGoogle';
 import Button from '@/components/button';
 import { login } from '@/services/auth';
+import { useAuth } from '@/context/AuthContext';
 
 const EmailIcon = '/assets/icons/email.svg';
 const EyeIcon = '/assets/icons/eye.svg';
@@ -17,6 +18,7 @@ const Logo = '/assets/logo/logo.svg';
 
 export default function Login() {
   const router = useRouter();
+  const { deviceId, login: authLogin } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -42,9 +44,11 @@ export default function Login() {
     setErrors({});
     setLoading(true);
     try {
-      const data = await login({ email: form.email, password: form.password });
+      const data = await login({ email: form.email, password: form.password, device_id: deviceId });
       const token = data?.data?.access_token || data?.access_token || data?.token || '';
-      localStorage.setItem('token', token);
+      const userData = data?.data?.user || data?.user || null;
+
+      authLogin(userData, token);
       toast.success('Signed in successfully');
       router.push('/dashboard');
     } catch {

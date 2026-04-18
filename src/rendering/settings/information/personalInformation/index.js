@@ -8,6 +8,7 @@ import PhoneInput, { parsePhoneNumber, isValidPhoneNumber } from 'react-phone-nu
 import 'react-phone-number-input/style.css';
 import { Country } from 'country-state-city'; import toast from 'react-hot-toast';
 import { updateProfileDetails } from '@/services/profile';
+import { toFormData } from '@/utils/formData';
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
@@ -57,7 +58,7 @@ function validate(form) {
   return e;
 }
 
-export default function PersonalInformation({ isEditing, profile, onSaved }) {
+export default function PersonalInformation({ isEditing, profile, onSaved, selectedFile }) {
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
     phone: '', dob: '', gender: '', country: '',
@@ -108,21 +109,24 @@ export default function PersonalInformation({ isEditing, profile, onSaved }) {
         country_code = `+${parsed.countryCallingCode}`;
         phone = parsed.nationalNumber;
       }
-      const dobISO = form.dob ? form.dob + 'T00:00:00' : undefined;
+      const dobISO = form.dob ? form.dob + 'T00:00:00' : '';
 
       const payload = {
         firstName: form.first_name.trim(),
         lastName: form.last_name.trim(),
-        gender: form.gender,
-        country: form.country,
-        ...(dobISO && { birthday: dobISO }),
-        ...(phone && { phone }),
-        ...(country_code && { countryCode: country_code }),
+        gender: form.gender || '',
+        country: form.country || '',
+        birthday: dobISO,
+        phone: phone || '',
+        countryCode: country_code || '',
+        profileImage: selectedFile || profile?.profile_image || profile?.profileImage || ''
       };
 
-      await updateProfileDetails(payload);
+      const formData = toFormData(payload);
+
+      await updateProfileDetails(formData);
       toast.success('Profile updated successfully');
-      onSaved?.(payload);
+      onSaved?.(true);
     } catch {
     } finally {
       setSaving(false);

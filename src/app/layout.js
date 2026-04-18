@@ -2,13 +2,13 @@ import { Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/toastProvider";
 import GoogleProvider from "@/components/googleProvider";
+import { AuthProvider } from "@/context/AuthContext";
 
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
   display: 'swap',
   weight: ['400', '500', '600', '700', '800'],
-
 });
 
 
@@ -21,10 +21,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${manrope.variable} `}>
       <body>
-        <GoogleProvider>
-          <ToastProvider />
-          {children}
-        </GoogleProvider>
+        <AuthProvider>
+          <GoogleProvider>
+            <ToastProvider />
+            {children}
+          </GoogleProvider>
+        </AuthProvider>
       </body>
     </html>
   );
