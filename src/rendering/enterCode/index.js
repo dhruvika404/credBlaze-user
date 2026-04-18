@@ -75,8 +75,7 @@ export default function EnterCode() {
     setResendLoading(true);
     try {
       const token = localStorage.getItem('token') || '';
-      console.log(token,"tokennn");
-      
+
       await resendOtp(token);
       setResendMsg('A new code has been sent.');
     } catch (err) {
