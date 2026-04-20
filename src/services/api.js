@@ -31,8 +31,8 @@ api.interceptors.response.use(
   (error) => {
     const message = error?.response?.data?.message || error?.response?.data?.error || error?.message || 'Something went wrong';
 
-    // Handle 401 Unauthorized (Expired or Invalid Token)
-    if (error?.response?.status === 401) {
+    // Handle 401 Unauthorized or 403 Forbidden (Expired, Invalid or Blocked Token)
+    if (error?.response?.status === 401 || error?.response?.status === 403) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');

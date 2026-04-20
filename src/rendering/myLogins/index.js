@@ -19,7 +19,7 @@ export default function MyLogins() {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedActivities, setSelectedActivities] = useState([]);
-    const { logout: clearLocalAuth, token } = useAuth();
+    const { logout: clearLocalAuth, token, deviceId } = useAuth();
     const [modalConfig, setModalConfig] = useState({
         isOpen: false,
         type: '',
@@ -29,11 +29,10 @@ export default function MyLogins() {
 
     const fetchActivities = async () => {
         try {
-            const currentDeviceId = localStorage.getItem('device_id');
             const res = await getUserActivity({}, token || '');
             const activityList = res?.data?.activities
             if (Array.isArray(activityList)) {
-                setActivities(activityList.filter(activity => activity.device_id !== currentDeviceId));
+                setActivities(activityList.filter(activity => activity.device_id !== deviceId));
             } else {
                 setActivities([]);
             }
@@ -45,8 +44,10 @@ export default function MyLogins() {
     };
 
     useEffect(() => {
-        fetchActivities();
-    }, []);
+        if (deviceId) {
+            fetchActivities();
+        }
+    }, [deviceId]);
 
     const handleHeaderCheckboxChange = (e) => {
         if (e.target.checked) {
