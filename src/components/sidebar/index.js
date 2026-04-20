@@ -15,6 +15,11 @@ import SettingIcon from '@/icons/settingIcon';
 import StarGroupIcon from '@/icons/starGroupIcon';
 import HelpIcon from '@/icons/helpIcon';
 import LogoutIcon from '@/icons/logoutIcon';
+import LogoutModal from '@/components/modal/logoutModal';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { logout as logoutApi } from '@/services/auth';
+import { toast } from 'react-hot-toast';
 
 const BlackLogo = '/assets/logo/black-logo.svg';
 
@@ -32,53 +37,81 @@ const menuItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const { logout: clearLocalAuth, token } = useAuth();
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleLogout = async () => {
+        setLoading(true);
+        try {
+            const payload = { access_tokens: token ? [token] : [] };
+            await logoutApi(payload);
+            toast.success('Logged out successfully');
+            clearLocalAuth();
+        } catch (error) {
+            toast.error(error?.message || 'Failed to logout');
+            clearLocalAuth();
+        } finally {
+            setLoading(false);
+            setIsLogoutModalOpen(false);
+        }
+    };
 
     return (
-        <aside className={styles.sidebar}>
-            <div className={styles.logo}>
-                <Link href='/dashboard'>
-                    <img src={BlackLogo} alt='BlackLogo' />
-                </Link>
-            </div>
-            <div className={styles.allMenubody}>
-                {menuItems.map((item, index) => {
-                    const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
-                    return (
-                        <Link
-                            key={index}
-                            href={item.href}
-                            className={`${styles.menu} ${isActive ? styles.active : ''}`}
-                        >
-                            {item.icon}
-                            <span>{item.label}</span>
-                        </Link>
-                    )
-                })}
-            </div>
-            <div>
-                <div className={styles.sidebarFooter}>
-                    <div className={styles.featuresBox}>
-                        <div className={styles.boxHeaderAlignment}>
-                            <StarGroupIcon />
-                            <h3>Unlock premium features</h3>
+        <>
+            <aside className={styles.sidebar}>
+                <div className={styles.logo}>
+                    <Link href='/dashboard'>
+                        <img src={BlackLogo} alt='BlackLogo' />
+                    </Link>
+                </div>
+                <div className={styles.allMenubody}>
+                    {menuItems.map((item, index) => {
+                        const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                        return (
+                            <Link
+                                key={index}
+                                href={item.href}
+                                className={`${styles.menu} ${isActive ? styles.active : ''}`}
+                            >
+                                {item.icon}
+                                <span>{item.label}</span>
+                            </Link>
+                        )
+                    })}
+                </div>
+                <div>
+                    <div className={styles.sidebarFooter}>
+                        <div className={styles.featuresBox}>
+                            <div className={styles.boxHeaderAlignment}>
+                                <StarGroupIcon />
+                                <h3>Unlock premium features</h3>
+                            </div>
+                            <p>
+                                Get early access & high-paying tasks with Pro Membership
+                            </p>
+                            <button>Upgrade to Pro</button>
                         </div>
-                        <p>
-                            Get early access & high-paying tasks with Pro Membership
-                        </p>
-                        <button>Upgrade to Pro</button>
-                    </div>
-                    <div className={styles.asideFooter}>
-                        <Link href='/help' className={styles.menu}>
-                            <HelpIcon />
-                            <span>Help & information</span>
-                        </Link>
-                        <div className={styles.menu}>
-                            <LogoutIcon />
-                            <span>Logout</span>
+                        <div className={styles.asideFooter}>
+                            <Link href='/help' className={styles.menu}>
+                                <HelpIcon />
+                                <span>Help & information</span>
+                            </Link>
+                            <div className={styles.menu} onClick={() => setIsLogoutModalOpen(true)}>
+                                <LogoutIcon />
+                                <span>Logout</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </aside>
+            </aside>
+
+            <LogoutModal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={handleLogout}
+                loading={loading}
+            />
+        </>
     )
 }

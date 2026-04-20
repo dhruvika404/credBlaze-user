@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import styles from './myLogins.module.scss';
 import LogoutIcon from '../../icons/logoutIcon';
-import { getUserActivity } from '@/services/auth';
+import { getUserActivity, logout, deleteAccount } from '@/services/auth';
+import LogoutModal from '@/components/modal/logoutModal';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 
 const ChromeIcon = () => (
@@ -16,13 +19,19 @@ export default function MyLogins() {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedActivities, setSelectedActivities] = useState([]);
+    const { logout: clearLocalAuth, token } = useAuth();
+    const [modalConfig, setModalConfig] = useState({
+        isOpen: false,
+        type: '',
+        loading: false,
+        data: null
+    });
 
     const fetchActivities = async () => {
         try {
-            const token = localStorage.getItem('token') || '';
             const currentDeviceId = localStorage.getItem('device_id');
-            const res = await getUserActivity({}, token);
-            const activityList = res?.data || res?.payload || res || [];
+            const res = await getUserActivity({}, token || '');
+            const activityList = res?.data?.activities
             if (Array.isArray(activityList)) {
                 setActivities(activityList.filter(activity => activity.device_id !== currentDeviceId));
             } else {
@@ -57,6 +66,81 @@ export default function MyLogins() {
 
     const isAllSelected = activities.length > 0 && selectedActivities.length === activities.length;
 
+    const openConfirmModal = (type, data = null) => {
+        setModalConfig({
+            isOpen: true,
+            type,
+            loading: false,
+            data
+        });
+    };
+
+    const closeConfirmModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const handleConfirmAction = async () => {
+        setModalConfig(prev => ({ ...prev, loading: true }));
+        try {
+            if (modalConfig.type === 'delete') {
+                await deleteAccount();
+                toast.success('Account deleted successfully');
+                clearLocalAuth();
+            } else if (modalConfig.type === 'single' || modalConfig.type === 'multi') {
+                let tokensToLogout = [];
+                if (modalConfig.type === 'single') {
+                    tokensToLogout = [modalConfig.data];
+                } else if (selectedActivities.length > 0) {
+                    tokensToLogout = selectedActivities.map(id => {
+                        const activity = activities.find(a => (a.id || activities.indexOf(a)) === id);
+                        return activity?.access_token || activity?.token;
+                    }).filter(Boolean);
+                } else {
+                    tokensToLogout = activities.map(a => a.access_token || a.token).filter(Boolean);
+                }
+
+                const payload = { access_tokens: tokensToLogout };
+                await logout(payload);
+                toast.success('Logged out successfully');
+                fetchActivities();
+                if (modalConfig.type === 'multi') setSelectedActivities([]);
+            }
+            closeConfirmModal();
+        } catch (error) {
+            toast.error(error?.message || `Failed to ${modalConfig.type}`);
+        } finally {
+            setModalConfig(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    const getModalProps = () => {
+        switch (modalConfig.type) {
+            case 'delete':
+                return {
+                    title: 'Delete Account',
+                    description: 'Are you sure want to Delete Account ?',
+                    confirmText: 'Yes, Delete Account',
+                    isDanger: true
+                };
+            case 'single':
+                return {
+                    title: 'Logout Session',
+                    description: 'Are you sure you want to logout from this session?',
+                    confirmText: 'Yes, Logout',
+                    isDanger: true
+                };
+            case 'multi':
+                return {
+                    title: 'Logout Multiple Sessions',
+                    description: `Are you sure you want to logout from ${selectedActivities.length > 0 ? selectedActivities.length : 'all other'} sessions?`,
+                    confirmText: 'Yes, Logout',
+                    isDanger: true
+                };
+            default:
+                return {};
+        }
+    };
+
     return (
         <div className={styles.myLoginsContainer}>
             {/* Account Activities Section */}
@@ -66,7 +150,10 @@ export default function MyLogins() {
                         <h2>Account Activities</h2>
                         <p>Monitor and manage all your active devices.</p>
                     </div>
-                    <button className={styles.primaryBtn}>
+                    <button
+                        className={styles.primaryBtn}
+                        onClick={() => openConfirmModal('multi')}
+                    >
                         {selectedActivities.length > 0
                             ? `Log Out ${selectedActivities.length} Session${selectedActivities.length > 1 ? 's' : ''}`
                             : 'Log Out All Sessions'}
@@ -120,7 +207,13 @@ export default function MyLogins() {
                                         <td>{activity.location || activity.city || '-'}</td>
                                         <td>{activity.ip_address || activity.ip || '-'}</td>
                                         <td>
-                                            <button className={styles.actionBtn}>
+                                            <button
+                                                className={styles.actionBtn}
+                                                onClick={() => {
+                                                    const token = activity.access_token || activity.token;
+                                                    openConfirmModal('single', token);
+                                                }}
+                                            >
                                                 <LogoutIcon />
                                             </button>
                                         </td>
@@ -139,9 +232,22 @@ export default function MyLogins() {
                         <h2>Delete Account</h2>
                         <p>Permanently delete your account and data</p>
                     </div>
-                    <button className={styles.primaryBtn}>Delete Account</button>
+                    <button
+                        className={styles.primaryBtn}
+                        onClick={() => openConfirmModal('delete')}
+                    >
+                        Delete Account
+                    </button>
                 </div>
             </div>
+
+            <LogoutModal
+                {...getModalProps()}
+                isOpen={modalConfig.isOpen}
+                onClose={closeConfirmModal}
+                onConfirm={handleConfirmAction}
+                loading={modalConfig.loading}
+            />
         </div>
     );
 }

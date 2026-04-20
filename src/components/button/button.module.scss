@@ -14,6 +14,15 @@
         }
     }
 
+    &.danger {
+        button {
+            background: #EC221F;
+            color: #fff;
+
+
+        }
+    }
+
     &.iconwithText {
         button {
             display: flex;
