@@ -34,7 +34,7 @@ export default function LoginwithGoogle() {
                 onSuccess={handleSuccess}
                 onError={() => toast.error('Google sign-in failed')}
                 useOneTap={false}
-                text="continue_with"
+                text="signin_with"
                 shape="rectangular"
                 logo_alignment="left"
                 width="100%"
