@@ -1,6 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 import { getDeviceId } from '@/utils/deviceId';
 
 const AuthContext = createContext();
@@ -14,13 +15,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('token') || Cookies.get('token');
 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     if (storedToken) {
       setToken(storedToken);
+      if (!localStorage.getItem('token')) localStorage.setItem('token', storedToken);
+      if (!Cookies.get('token')) Cookies.set('token', storedToken, { expires: 7 });
     }
 
     const id = getDeviceId();
@@ -31,6 +34,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, token) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
+    Cookies.set('token', token, { expires: 7 });
     setUser(userData);
     setToken(token);
   };
@@ -38,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    Cookies.remove('token');
     setUser(null);
     setToken(null);
     router.push('/');
