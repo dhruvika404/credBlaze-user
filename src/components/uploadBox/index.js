@@ -1,16 +1,20 @@
 'use client';
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import styles from './uploadBox.module.scss';
 import DragFileIcon from '@/icons/dragFileIcon';
 
-export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Driver's License", onFileSelect }) {
+export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Driver's License", onFileSelect, disabled, existingImage }) {
     const inputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [preview, setPreview] = useState(null);
+    const [preview, setPreview] = useState(existingImage || null);
     const [fileName, setFileName] = useState(null);
 
+    useEffect(() => {
+        if (existingImage) setPreview(existingImage);
+    }, [existingImage]);
+
     const handleFile = useCallback((file) => {
-        if (!file) return;
+        if (!file || disabled) return;
         setFileName(file.name);
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
@@ -20,9 +24,10 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
             setPreview(null);
         }
         onFileSelect?.(file);
-    }, [onFileSelect]);
+    }, [onFileSelect, disabled]);
 
     const handleDragOver = (e) => {
+        if (disabled) return;
         e.preventDefault();
         setIsDragging(true);
     };
@@ -30,6 +35,7 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
     const handleDragLeave = () => setIsDragging(false);
 
     const handleDrop = (e) => {
+        if (disabled) return;
         e.preventDefault();
         setIsDragging(false);
         const file = e.dataTransfer.files?.[0];
@@ -37,12 +43,14 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
     };
 
     const handleChange = (e) => {
+        if (disabled) return;
         const file = e.target.files?.[0];
         handleFile(file);
     };
 
     const handleClear = (e) => {
         e.stopPropagation();
+        if (disabled) return;
         setPreview(null);
         setFileName(null);
         if (inputRef.current) inputRef.current.value = '';
@@ -51,15 +59,16 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
 
     return (
         <div
-            className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''} ${fileName ? styles.hasFile : ''}`}
-            onClick={() => inputRef.current?.click()}
+            className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''} ${fileName ? styles.hasFile : ''} ${disabled ? styles.disabled : ''}`}
+            onClick={() => !disabled && inputRef.current?.click()}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+            tabIndex={disabled ? -1 : 0}
+            onKeyDown={(e) => e.key === 'Enter' && !disabled && inputRef.current?.click()}
             aria-label="Upload file"
+            aria-disabled={disabled}
         >
             <input
                 ref={inputRef}
@@ -68,18 +77,23 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
                 className={styles.hiddenInput}
                 onChange={handleChange}
                 onClick={(e) => e.stopPropagation()}
+                disabled={disabled}
             />
 
             {preview ? (
                 <div className={styles.previewWrap}>
                     <img src={preview} alt="preview" className={styles.previewImg} />
-                    <button className={styles.clearBtn} onClick={handleClear} aria-label="Remove file">✕</button>
+                    {!disabled && (
+                        <button className={styles.clearBtn} onClick={handleClear} aria-label="Remove file">✕</button>
+                    )}
                 </div>
             ) : fileName ? (
                 <div className={styles.fileInfo}>
                     <DragFileIcon />
                     <span className={styles.fileName}>{fileName}</span>
-                    <button className={styles.clearBtn} onClick={handleClear} aria-label="Remove file">✕</button>
+                    {!disabled && (
+                        <button className={styles.clearBtn} onClick={handleClear} aria-label="Remove file">✕</button>
+                    )}
                 </div>
             ) : (
                 <div className={styles.placeholder}>

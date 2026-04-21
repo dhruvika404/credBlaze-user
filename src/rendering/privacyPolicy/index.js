@@ -1,21 +1,21 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import styles from './termsConditions.module.scss';
-import { getTermsConditions } from '@/services/legal';
+import styles from '../termsConditions/termsConditions.module.scss';
+import { getPrivacyPolicy } from '@/services/legal';
 
-export default function TermsConditions() {
+export default function PrivacyPolicy() {
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getTermsConditions()
+        getPrivacyPolicy()
             .then((res) => {
                 if (res.success) {
                     setContent(res.data.content);
                 }
             })
             .catch((err) => {
-                console.error('Error fetching terms:', err);
+                console.error('Error fetching privacy policy:', err);
             })
             .finally(() => {
                 setLoading(false);
@@ -28,7 +28,7 @@ export default function TermsConditions() {
 
     return (
         <div className={styles.termsConditions}>
-            <h1>Terms and Conditions</h1>
+            <h1>Privacy Policy</h1>
             <div
                 className={styles.content}
                 dangerouslySetInnerHTML={{ __html: content }}
@@ -36,4 +36,3 @@ export default function TermsConditions() {
         </div>
     );
 }
-

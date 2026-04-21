@@ -70,5 +70,17 @@
             font-weight: 400;
             line-height: 20px;
         }
+
+        &.approved {
+            border-color: #A7F3D0;
+            background: #ECFDF5;
+            p { color: #065F46; }
+        }
+
+        &.rejected {
+            border-color: #FECACA;
+            background: #FEF2F2;
+            p { color: #991B1B; }
+        }
     }
 }

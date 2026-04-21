@@ -124,6 +124,3 @@ export default function Dropdown({ labelChange, label, options = defaultOptions,
         </div>
     )
 }
-
-
-
