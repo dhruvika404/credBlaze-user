@@ -119,8 +119,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
         birthday: dobISO,
         phone: phone || '',
         countryCode: country_code || '',
-        profileImage: selectedFile || profile?.profile_image || profile?.profileImage || ''
       };
+
+      if (selectedFile) {
+        payload.profileImage = selectedFile;
+      }
 
       const formData = toFormData(payload);
 
