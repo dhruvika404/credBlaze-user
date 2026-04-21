@@ -1,8 +1,8 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import { getDeviceId } from '@/utils/deviceId';
+import { getProfileDetails } from '@/services/profile';
 
 const AuthContext = createContext();
 
@@ -14,27 +14,37 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token') || Cookies.get('token');
+    const initializeAuth = async () => {
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (storedToken) {
-      setToken(storedToken);
-      if (!localStorage.getItem('token')) localStorage.setItem('token', storedToken);
-      if (!Cookies.get('token')) Cookies.set('token', storedToken, { expires: 7 });
-    }
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      if (storedToken) {
+        setToken(storedToken);
+      }
 
-    const id = getDeviceId();
-    setDeviceId(id);
-    setLoading(false);
+      const id = getDeviceId();
+      setDeviceId(id);
+
+      if (storedToken) {
+        try {
+          await getProfileDetails();
+        } catch (error) {
+          console.error("Token validation failed on load:", error);
+        }
+      }
+
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const login = (userData, token) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
-    Cookies.set('token', token, { expires: 7 });
     setUser(userData);
     setToken(token);
   };
@@ -42,7 +52,13 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    Cookies.remove('token');
+
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
     setUser(null);
     setToken(null);
     router.push('/');
