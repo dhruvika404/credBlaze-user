@@ -5,10 +5,10 @@ import UploadBox from '@/components/uploadBox';
 export default function UploadDocumnentList({ onChange, disabled, kycStatus, kycData }) {
 
     const getBottomMessage = () => {
-        if (kycStatus === 'APPROVED') {
+        if (kycStatus?.toLowerCase() === 'approved') {
             return { emoji: '✅', text: 'Your KYC has been successfully verified. You now have full access to all features.', type: 'approved' };
         }
-        if (kycStatus === 'REJECTED') {
+        if (kycStatus?.toLowerCase() === 'rejected') {
             return { emoji: '❌', text: kycData?.rejection_reason, type: 'rejected' };
         }
         return { emoji: 'ℹ️', text: 'Your documents will be verified within 24-48 hours. KYC is required for withdrawals.', type: 'default' };

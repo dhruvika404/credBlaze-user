@@ -89,13 +89,15 @@ export default function MyLogins() {
                 clearLocalAuth();
             } else if (modalConfig.type === 'single' || modalConfig.type === 'multi') {
                 let tokensToLogout = [];
+                let idsToRemove = [];
                 if (modalConfig.type === 'single') {
                     tokensToLogout = [modalConfig.data];
-                } else if (selectedActivities.length > 0) {
-                    tokensToLogout = selectedActivities.map(id => {
+                } else if (modalConfig.data && modalConfig.data.length > 0) {
+                    tokensToLogout = modalConfig.data.map(id => {
                         const activity = activities.find(a => (a.id || activities.indexOf(a)) === id);
                         return activity?.access_token || activity?.token;
                     }).filter(Boolean);
+                    idsToRemove = modalConfig.data;
                 } else {
                     tokensToLogout = activities.map(a => a.access_token || a.token).filter(Boolean);
                 }
@@ -104,7 +106,9 @@ export default function MyLogins() {
                 await logout(payload);
                 toast.success('Logged out successfully');
                 fetchActivities();
-                if (modalConfig.type === 'multi') setSelectedActivities([]);
+                if (modalConfig.type === 'multi') {
+                    setSelectedActivities(prev => prev.filter(id => !idsToRemove.includes(id)));
+                }
             }
             closeConfirmModal();
         } catch (error) {
@@ -132,8 +136,10 @@ export default function MyLogins() {
                 };
             case 'multi':
                 return {
-                    title: 'Logout Multiple Sessions',
-                    description: `Are you sure you want to logout from ${selectedActivities.length > 0 ? selectedActivities.length : 'all other'} sessions?`,
+                    title: modalConfig.data && modalConfig.data.length > 0 ? 'Logout Selected Sessions' : 'Logout All Sessions',
+                    description: modalConfig.data && modalConfig.data.length > 0
+                        ? `Are you sure you want to logout from ${modalConfig.data.length} selected session${modalConfig.data.length > 1 ? 's' : ''}?`
+                        : `Are you sure you want to logout from all other sessions?`,
                     confirmText: 'Yes, Logout',
                     isDanger: true
                 };
@@ -152,8 +158,9 @@ export default function MyLogins() {
                         <p>Monitor and manage all your active devices.</p>
                     </div>
                     <button
-                        className={styles.primaryBtn}
-                        onClick={() => openConfirmModal('multi')}
+                        className={`${styles.primaryBtn} ${activities.length === 0 ? styles.primaryBtnDisabled : ''}`}
+                        onClick={() => openConfirmModal('multi', selectedActivities.length > 0 ? [...selectedActivities] : null)}
+                        disabled={activities.length === 0}
                     >
                         {selectedActivities.length > 0
                             ? `Log Out ${selectedActivities.length} Session${selectedActivities.length > 1 ? 's' : ''}`
