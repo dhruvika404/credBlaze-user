@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import styles from './settings.module.scss'
+import TutorialVideoModal from '@/components/modal/tutorialVideoModal'
 
-const YoutubeIcon = '/assets/icons/youtube.svg'
+const YoutubeIcon = '/assets/platforms/utube.svg'
 
 const headers = {
     '/settings': { title: 'Profile Information', subtitle: 'Invite friends and earn together!' },
@@ -23,6 +24,7 @@ const headers = {
 export default function SettingsHeader() {
     const pathname = usePathname()
     const { title, subtitle } = headers[pathname] || { title: 'Settings', subtitle: '' }
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <div className={styles.pageHeader}>
@@ -31,11 +33,15 @@ export default function SettingsHeader() {
                 <p>{subtitle}</p>
             </div>
             <div className={styles.watch}>
-                <button>
+                <button onClick={() => setIsModalOpen(true)}>
                     <img src={YoutubeIcon} alt="Watch tutorial" />
                     Watch Tutorial video
                 </button>
             </div>
+            <TutorialVideoModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     )
 }

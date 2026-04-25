@@ -6,5 +6,6 @@ export default function KycVerification() {
   const { user } = useAuth();
   const kycStatus = user && user?.kyc_status;
 
-  return <Kycpending status={kycStatus} />;
+  return kycStatus === 'pending' && <Kycpending />
 }
+

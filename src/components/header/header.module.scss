@@ -138,8 +138,9 @@
 
                     .rupeeIcon {
                         color: #3DB042;
-                        font-size: 18px;
-                        font-weight: 700;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                 }
             }
@@ -154,12 +155,11 @@
                 }
 
                 .iconWrapper {
-                    background: linear-gradient(180deg, #FFEF5F 0%, #FFA800 100%);
+                    background: rgba(224, 208, 26, 0.2);
                     border: 1px solid #E0D01A;
-                    box-shadow: 0px 2px 4px rgba(224, 208, 26, 0.4);
 
                     .starIcon {
-                        color: #fff;
+                        color: #E0D01A;
                         display: flex;
                         align-items: center;
                         justify-content: center;

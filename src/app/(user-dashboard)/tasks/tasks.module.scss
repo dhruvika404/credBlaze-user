@@ -1,0 +1,514 @@
+.container {
+    padding: 32px;
+    font-family: 'Manrope', sans-serif;
+    font-feature-settings: 'cv09' on, 'ss11' on, 'calt' off, 'liga' off;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: calc(100vh - 83px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+/* ── Top header row (title + main tabs) ── */
+.headerSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    width: 100%;
+    height: 56px;
+    flex-shrink: 0;
+
+    .titleInfo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+
+        h1 {
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 22px;
+            line-height: 30px;
+            color: #020204;
+            margin: 0;
+        }
+
+        p {
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 22px;
+            color: #6B7280;
+            margin: 0;
+        }
+    }
+}
+
+/* Available Tasks / My Task toggle pill */
+.mainTabs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px;
+    gap: 8px;
+    width: 268px;
+    height: 43px;
+    background: #F5F5F5;
+    border: 1px solid #F5F5F5;
+    border-radius: 8px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+
+    button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 12px;
+        gap: 10px;
+        width: 126px;
+        height: 35px;
+        border: none;
+        background: transparent;
+        border-radius: 4px;
+        font-family: 'Manrope', sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 19px;
+        text-align: center;
+        color: #000000;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        box-sizing: border-box;
+
+        &.active {
+            background: #FFFFFF;
+            color: #635C70;
+        }
+    }
+}
+
+/* ── White card that holds filterBar + grid ── */
+.contentWrapper {
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* ── Filter bar row inside white card ── */
+.filterBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    gap: 16px;
+    width: 100%;
+    height: 75px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+
+    /* Search box – 232 × 40 */
+    .searchBox {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 8px 12px;
+        gap: 8px;
+        width: 232px;
+        height: 40px;
+        background: #F5F5F5;
+        border: 1px solid #F5F5F5;
+        border-radius: 8px;
+        box-sizing: border-box;
+
+        input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            font-feature-settings: 'cv09' on, 'ss11' on, 'calt' off, 'liga' off;
+            color: #6B7280;
+            width: 100%;
+
+            &::placeholder {
+                color: #6B7280;
+            }
+        }
+
+        svg {
+            color: #6B7280;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+    }
+
+    /* Right side: category tabs + filter button */
+    .rightControls {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        height: 43px;
+    }
+
+    /* Social Tasks / Reviews / Surveys pill – 356 × 43 */
+    .categoryTabs {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 4px;
+        gap: 8px;
+        height: 43px;
+        background: #F5F5F5;
+        border: 1px solid #F5F5F5;
+        border-radius: 8px;
+        box-sizing: border-box;
+
+        button {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 10px;
+            height: 35px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 19px;
+            text-align: center;
+            color: #000000;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease;
+            box-sizing: border-box;
+
+            &.active {
+                background: #FFFFFF;
+                color: #635C70;
+            }
+        }
+    }
+
+    /* Filter button – 92 × 40 */
+    .filterBtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 16px;
+        gap: 8px;
+        width: 92px;
+        height: 40px;
+        background: #FFFFFF;
+        border: 1px solid #F5F5F5;
+        border-radius: 8px;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-family: 'Manrope', sans-serif;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 20px;
+        font-feature-settings: 'cv09' on, 'ss11' on, 'calt' off, 'liga' off;
+        color: #6B7280;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+    }
+}
+
+/* ── Task grid ── */
+.taskGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+
+    /* hide scrollbar */
+    &::-webkit-scrollbar { display: none; }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ── Individual task card ── */
+.taskCard {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 24px;
+    gap: 10px;
+    height: 180px;
+    background: #FFFFFF;
+    border: 1px solid #D6D1E0;
+    border-radius: 12px;
+    filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.04));
+    animation: fadeInUp 0.4s ease-out forwards;
+    opacity: 0;
+
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.05}s;
+        }
+    }
+
+    /* Card header: logo left, badge right */
+    .cardHeader {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0;
+        gap: 14px;
+        width: 100%;
+        height: 40px;
+
+        .taskImage {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            border: 1.13333px solid #D6D1E0;
+            border-radius: 50%;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        /* Pro Task gold badge */
+        .proBadge {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 4.27px;
+            height: 28px;
+            background: linear-gradient(
+                90deg,
+                #A47A1E 0%,
+                #D3A84C 20%,
+                #D3A84C 36.01%,
+                #EBBE6B 55%,
+                #FFD87C 70%,
+                #B58F3E 85%,
+                #956D13 100%,
+                #A47A1E 200%
+            );
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+            border-radius: 21.3333px;
+            box-sizing: border-box;
+
+            svg {
+                width: 8px;
+                height: 8px;
+                flex-shrink: 0;
+            }
+
+            span {
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 16px;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        }
+    }
+
+    /* Title + description */
+    .cardBody {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0;
+        gap: 6px;
+        width: 100%;
+        height: 44px;
+
+        h3 {
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 22px;
+            color: #171717;
+            margin: 0;
+        }
+
+        p {
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 16px;
+            color: #6B7280;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    }
+
+    /* Divider */
+    .divider {
+        width: 100%;
+        height: 1px;
+        background: #F5F5F5;
+        border-radius: 8px;
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    /* Footer: reward left, View button right */
+    .cardFooter {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0;
+        gap: 18px;
+        width: 100%;
+        height: 35px;
+
+        .reward {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 9px;
+            height: 24px;
+
+            .rewardIcon {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            span {
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 22px;
+                color: #171717;
+            }
+        }
+
+        /* View button — gradient reverses on hover (same as global button component) */
+        .viewBtn {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 8px 20px;
+            gap: 12px;
+            width: 72px;
+            height: 35px;
+            background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 19px;
+            color: #FFFFFF;
+            box-sizing: border-box;
+            transition: background 0.3s ease-in-out;
+
+            &:hover {
+                background: linear-gradient(90deg, #6475F6 -4.55%, #0040C1 102.73%);
+            }
+        }
+    }
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shine {
+    0% { background-position: 0% center; }
+    30% { background-position: 200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+    .taskGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .taskGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .headerSection {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        gap: 16px;
+    }
+
+    .filterBar {
+        flex-direction: column;
+        height: auto;
+        align-items: stretch;
+
+        .searchBox {
+            width: 100%;
+        }
+
+        .rightControls {
+            flex-wrap: wrap;
+        }
+    }
+}
