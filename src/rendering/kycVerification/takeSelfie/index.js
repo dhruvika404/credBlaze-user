@@ -17,10 +17,44 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     const [cameraError, setCameraError] = useState(null);
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [hasCameraDevice, setHasCameraDevice] = useState(false);
+    const [sessionId, setSessionId] = useState(null);
     
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        // Generate unique session ID
+        const sid = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        setSessionId(sid);
+
+        // Listen for selfie from public link
+        const handleMessage = (event) => {
+            if (event.origin !== window.location.origin) return;
+            
+            if (event.data.type === 'SELFIE_CAPTURED' && event.data.sessionId === sid) {
+                handleSelfieReceived(event.data.imageData);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+        // Check localStorage periodically for selfie
+        const checkInterval = setInterval(() => {
+            const storedSelfie = localStorage.getItem(`selfie_${sid}`);
+            if (storedSelfie) {
+                handleSelfieReceived(storedSelfie);
+                localStorage.removeItem(`selfie_${sid}`);
+                clearInterval(checkInterval);
+            }
+        }, 1000);
+
+        return () => {
+            window.removeEventListener('message', handleMessage);
+            clearInterval(checkInterval);
+            stopWebcam();
+        };
+    }, []);
 
     useEffect(() => {
         if (selfieMode === 'webcam') {
@@ -82,9 +116,26 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     };
 
     const generateQRCode = () => {
-        const currentUrl = window.location.origin + '/selfie-capture';
+        const currentUrl = `${window.location.origin}/selfie-capture?sid=${sessionId}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
         setQrCodeUrl(qrUrl);
+    };
+
+    const handleSelfieReceived = (imageData) => {
+        // Convert base64 to blob
+        fetch(imageData)
+            .then(res => res.blob())
+            .then(blob => {
+                const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+                setSelfieFile(file);
+                setCapturedImage(imageData);
+                setSelfieCaptured(true);
+                toast.success('Selfie received from your device!');
+            })
+            .catch(error => {
+                console.error('Error processing selfie:', error);
+                toast.error('Failed to process selfie');
+            });
     };
 
     const handleCapture = () => {

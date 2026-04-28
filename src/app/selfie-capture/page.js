@@ -1,89 +1,137 @@
 'use client';
-import { useState, useRef } from 'react';
-import styles from './selfie.module.scss';
+import { useState, useRef, useEffect } from 'react';
+import styles from './selfieCapture.module.scss';
+import toast from 'react-hot-toast';
 
 export default function SelfieCapturePage() {
-    const [captured, setCaptured] = useState(false);
-    const [imageData, setImageData] = useState(null);
-    const fileInputRef = useRef(null);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const [stream, setStream] = useState(null);
+    const [sessionId, setSessionId] = useState(null);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
 
-    const handleCapture = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageData(reader.result);
-                setCaptured(true);
-            };
-            reader.readAsDataURL(file);
+    useEffect(() => {
+        // Get session ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const sid = params.get('sid');
+        setSessionId(sid);
+
+        startCamera();
+
+        return () => {
+            stopCamera();
+        };
+    }, []);
+
+    const startCamera = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: 640, height: 480 }
+            });
+            setStream(mediaStream);
+            if (videoRef.current) {
+                videoRef.current.srcObject = mediaStream;
+            }
+        } catch (error) {
+            toast.error('Camera access denied');
         }
+    };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    };
+
+    const handleCapture = () => {
+        if (!videoRef.current || !canvasRef.current) return;
+
+        const canvas = canvasRef.current;
+        const video = videoRef.current;
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL('image/jpeg', 0.95);
+        setCapturedImage(imageData);
+        stopCamera();
+        toast.success('Selfie captured!');
     };
 
     const handleRetake = () => {
-        setCaptured(false);
-        setImageData(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
+        setCapturedImage(null);
+        startCamera();
     };
 
-    const handleUpload = () => {
-        // Store in localStorage to be retrieved by parent window
-        if (imageData) {
-            localStorage.setItem('selfie_capture', imageData);
-            alert('Selfie captured! You can now close this window and return to the main page.');
+    const handleSubmit = () => {
+        if (!capturedImage || !sessionId) return;
+
+        // Store in localStorage with session ID
+        localStorage.setItem(`selfie_${sessionId}`, capturedImage);
+        
+        // Try to communicate with parent window (if opened from same origin)
+        if (window.opener) {
+            try {
+                window.opener.postMessage({
+                    type: 'SELFIE_CAPTURED',
+                    sessionId: sessionId,
+                    imageData: capturedImage
+                }, window.location.origin);
+                toast.success('Selfie sent successfully!');
+                setTimeout(() => window.close(), 1500);
+            } catch (error) {
+                toast.success('Selfie saved! You can close this window.');
+            }
+        } else {
+            toast.success('Selfie saved! You can close this window.');
         }
     };
 
     return (
         <div className={styles.container}>
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            
             <div className={styles.header}>
-                <h1>Capture Selfie</h1>
-                <p>Take a clear photo of your face</p>
+                <h1>Take Your Selfie</h1>
+                <p>Capture a clear photo of your face</p>
             </div>
 
-            <div className={styles.content}>
-                {!captured ? (
-                    <div className={styles.captureSection}>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            capture="user"
-                            onChange={handleCapture}
-                            style={{ display: 'none' }}
-                        />
-                        <div className={styles.placeholder}>
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="#9CA3AF" strokeWidth="2"/>
-                                <circle cx="12" cy="10" r="3" stroke="#9CA3AF" strokeWidth="2"/>
-                                <path d="M6 19C6 16.7909 8.68629 15 12 15C15.3137 15 18 16.7909 18 19" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <p>Position your face in the frame</p>
-                        </div>
-                        <button 
-                            className={styles.captureButton}
-                            onClick={() => fileInputRef.current?.click()}
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
-                                <circle cx="12" cy="12" r="6" fill="white"/>
-                            </svg>
-                            Take Photo
-                        </button>
+            <div className={styles.cameraBox}>
+                {capturedImage ? (
+                    <div className={styles.preview}>
+                        <img src={capturedImage} alt="Captured" />
                     </div>
                 ) : (
-                    <div className={styles.previewSection}>
-                        <img src={imageData} alt="Captured selfie" className={styles.preview} />
-                        <div className={styles.actions}>
-                            <button className={styles.retakeButton} onClick={handleRetake}>
-                                Retake
-                            </button>
-                            <button className={styles.uploadButton} onClick={handleUpload}>
-                                Use This Photo
-                            </button>
-                        </div>
-                    </div>
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className={styles.video}
+                    />
+                )}
+            </div>
+
+            <div className={styles.controls}>
+                {capturedImage ? (
+                    <>
+                        <button onClick={handleRetake} className={styles.retakeBtn}>
+                            Retake
+                        </button>
+                        <button onClick={handleSubmit} className={styles.submitBtn}>
+                            Submit
+                        </button>
+                    </>
+                ) : (
+                    <button onClick={handleCapture} className={styles.captureBtn}>
+                        <svg width="60" height="60" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" fill="white" stroke="#000" strokeWidth="2"/>
+                            <circle cx="30" cy="30" r="22" fill="#000"/>
+                        </svg>
+                    </button>
                 )}
             </div>
         </div>
