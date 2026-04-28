@@ -3,28 +3,49 @@
 
 .kycpending {
     border-radius: 12px;
-    border: 1px solid #E9E9E9;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: var(--Black-600, #FFF);
+    position: relative;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 32px 1fr;
     gap: 12px;
+    padding: 16px 20px;
     align-items: center;
-    background: #FFF;
-    padding: 16px;
 
-    h2 {
-        color: #2C3333;
+    h3 {
+        color: var(--Black-100, #171717);
         font-size: 18px;
+        margin: 0 0 4px 0;
         font-style: normal;
         font-weight: 600;
-        margin: 0 0 4px 0;
         line-height: 24px;
     }
 
     p {
-        color: #586162;
+        color: var(--Black-300, #6B7280);
         font-size: 12px;
         font-style: normal;
         font-weight: 400;
         line-height: 16px;
+        max-width: 687px;
+    }
+
+    .icon {
+        img {
+            display: block;
+        }
+    }
+
+    &::before {
+        position: absolute;
+        top: 0;
+        width: 100px;
+        height: 100px;
+        right: 0;
+        background: var(--Hyper-Blue-4-Primery-Color, #00E);
+        opacity: 0.6;
+        filter: blur(100px);
+        content: '';
     }
 }

@@ -9,7 +9,8 @@ import styles from './signup.module.scss';
 import AuthSlider from '@/components/authSlider';
 import Input from '@/components/input';
 import Button from '@/components/button';
-import { signup, getRoles } from '@/services/auth';
+import { getRoles } from '@/services/auth';
+import { signupAction } from '@/app/actions/auth/auth';
 
 const EyeIcon = '/assets/icons/eye.svg';
 const EyeFillIcon = '/assets/icons/eye-fill.svg';
@@ -26,6 +27,7 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = React.useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { deviceId, login: authLogin } = useAuth();
@@ -69,32 +71,40 @@ export default function Signup() {
     setErrors({});
     setApiError('');
     setLoading(true);
-    try {
-      const parsed = form.phone ? parsePhoneNumber(form.phone) : null;
-      const country_code = parsed ? `+${parsed.countryCallingCode}` : '';
-      const phone = parsed ? parsed.nationalNumber : '';
-      const country = parsed?.country || '';
-      const data = await signup({
-        first_name: form.first_name,
-        last_name: form.last_name,
-        email: form.email,
-        password: form.password,
-        phone,
-        country_code,
-        country,
-        roleId: userRoleId,
-        device_id: deviceId,
-        ...(form.referralCode.trim() && { referralCode: form.referralCode.trim() }),
-      });
-      const token = data?.data?.access_token || data?.data?.token || data?.access_token || data?.token || '';
-      const userData = data?.data?.user || data?.user || null;
-      authLogin(userData, token);
-      router.push('/email-verify?mode=verify');
-    } catch (err) {
-      setApiError(err?.message || 'Signup failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+
+    startTransition(async () => {
+      try {
+        const parsed = form.phone ? parsePhoneNumber(form.phone) : null;
+        const country_code = parsed ? `+${parsed.countryCallingCode}` : '';
+        const phone = parsed ? parsed.nationalNumber : '';
+        const country = parsed?.country || '';
+        const res = await signupAction({
+          first_name: form.first_name,
+          last_name: form.last_name,
+          email: form.email,
+          password: form.password,
+          phone,
+          country_code,
+          country,
+          roleId: userRoleId,
+          device_id: deviceId,
+          ...(form.referralCode.trim() && { referralCode: form.referralCode.trim() }),
+        });
+
+        if (res.success) {
+          const token = res.data?.data?.access_token || res.data?.data?.token || res.data?.access_token || res.data?.token || '';
+          const userData = res.data?.data?.user || res.data?.user || null;
+          await authLogin(userData, token);
+          router.push('/email-verify?mode=verify');
+        } else {
+          setApiError(res.error || 'Signup failed. Please try again.');
+        }
+      } catch (err) {
+        setApiError(err?.message || 'Signup failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    });
   };
 
   return (
@@ -162,7 +172,7 @@ export default function Signup() {
             {errors.agreed && <p className={styles.errorMsg} role="alert">{errors.agreed}</p>}
             {apiError && <p className={styles.apiError} role="alert">{apiError}</p>}
 
-            <Button text={loading ? 'Creating account...' : 'Sign Up'} disabled={loading} />
+            <Button text={loading || isPending ? 'Creating account...' : 'Sign Up'} disabled={loading || isPending} />
           </form>
           <div className={styles.bottomText}>
             <p>Already have an account?</p>

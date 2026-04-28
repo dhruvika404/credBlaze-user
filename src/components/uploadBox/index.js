@@ -3,7 +3,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import styles from './uploadBox.module.scss';
 import DragFileIcon from '@/icons/dragFileIcon';
 
-export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Driver's License", onFileSelect, disabled, existingImage }) {
+export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Driver's License", onFileSelect, disabled, existingImage, showPreview = true }) {
     const inputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [preview, setPreview] = useState(existingImage || null);
@@ -15,6 +15,11 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
 
     const handleFile = useCallback((file) => {
         if (!file || disabled) return;
+        if (!showPreview) {
+            // Don't set preview or filename, just call the callback
+            onFileSelect?.(file);
+            return;
+        }
         setFileName(file.name);
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
@@ -24,7 +29,7 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
             setPreview(null);
         }
         onFileSelect?.(file);
-    }, [onFileSelect, disabled]);
+    }, [onFileSelect, disabled, showPreview]);
 
     const handleDragOver = (e) => {
         if (disabled) return;
@@ -59,7 +64,7 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
 
     return (
         <div
-            className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''} ${fileName ? styles.hasFile : ''} ${disabled ? styles.disabled : ''}`}
+            className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''} ${fileName && showPreview ? styles.hasFile : ''} ${disabled ? styles.disabled : ''}`}
             onClick={() => !disabled && inputRef.current?.click()}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -69,6 +74,7 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
             onKeyDown={(e) => e.key === 'Enter' && !disabled && inputRef.current?.click()}
             aria-label="Upload file"
             aria-disabled={disabled}
+            style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
         >
             <input
                 ref={inputRef}
@@ -80,14 +86,14 @@ export default function UploadBox({ subtitle = "Aadhaar, PAN, Passport, or Drive
                 disabled={disabled}
             />
 
-            {preview ? (
+            {showPreview && preview ? (
                 <div className={styles.previewWrap}>
                     <img src={preview} alt="preview" className={styles.previewImg} />
                     {!disabled && (
                         <button className={styles.clearBtn} onClick={handleClear} aria-label="Remove file">✕</button>
                     )}
                 </div>
-            ) : fileName ? (
+            ) : showPreview && fileName ? (
                 <div className={styles.fileInfo}>
                     <DragFileIcon />
                     <span className={styles.fileName}>{fileName}</span>

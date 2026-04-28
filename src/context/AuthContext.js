@@ -1,11 +1,15 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import { getDeviceId } from '@/utils/deviceId';
 import { getProfileDetails } from '@/services/profile';
 
 const AuthContext = createContext();
+
+function normaliseProfile(raw) {
+  if (!raw) return null;
+  return raw?.data?.[0] ?? raw?.data ?? raw?.payload?.data?.[0] ?? raw?.payload ?? raw;
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -13,6 +17,21 @@ export const AuthProvider = ({ children }) => {
   const [deviceId, setDeviceId] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const fetchAndSetProfile = useCallback(async () => {
+    try {
+      const res = await getProfileDetails();
+      const profile = normaliseProfile(res);
+      if (profile) {
+        setUser(profile);
+        localStorage.setItem('user', JSON.stringify(profile));
+      }
+      return profile;
+    } catch (error) {
+      console.error('Failed to fetch profile:', error);
+      return null;
+    }
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -32,25 +51,26 @@ export const AuthProvider = ({ children }) => {
       setDeviceId(id);
 
       if (storedToken) {
-        try {
-          await getProfileDetails();
-        } catch (error) {
-          console.error("Token validation failed on load:", error);
-        }
+        await fetchAndSetProfile();
       }
 
       setLoading(false);
     };
 
     initializeAuth();
-  }, []);
+  }, [fetchAndSetProfile]);
 
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    Cookies.set('token', token, { expires: 7 });
+  const login = async (userData, authToken) => {
+    localStorage.setItem('token', authToken);
+    setToken(authToken);
+    if (userData) {
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+          Cookies.set('token', token, { expires: 7 });
     setUser(userData);
     setToken(token);
+    }
+    await fetchAndSetProfile();
   };
 
   const logout = () => {
@@ -69,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, deviceId, loading, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, token, deviceId, loading, login, logout, setUser, fetchAndSetProfile }}>
       {children}
     </AuthContext.Provider>
   );

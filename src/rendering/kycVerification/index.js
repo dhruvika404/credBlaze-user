@@ -1,28 +1,146 @@
 'use client';
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import DocumentUpload from './documentUpload';
+import KycAddress from './kycAddress';
+import KycComplete from './kycComplete';
+import KycPending from './kycpending';
 import styles from './kycVerification.module.scss';
-import Kycpending from './kycpending';
-import Button from '@/components/button';
-
-const MobileIcon = '/assets/images/mobile.svg';
+import KycVerified from './kycVerified';
+import TakeSelfie from './takeSelfie';
+import VerificationProgress from './verificationProgress';
+import { getKycDetails, submitKyc } from '@/services/kyc';
 
 export default function KycVerification() {
+    const [currentStep, setCurrentStep] = useState('selfie');
+    const [loading, setLoading] = useState(true);
+    const [kycDetails, setKycDetails] = useState(null);
+    const [kycData, setKycData] = useState({
+        id_proof: null,
+        selfie_image: null,
+        address_proof: null,
+        address: '',
+        city: '',
+        state: '',
+        pincode: '',
+        country: ''
+    });
+
+    useEffect(() => {
+        fetchKycDetails();
+    }, []);
+
+    const fetchKycDetails = async () => {
+        try {
+            const response = await getKycDetails();
+            const status = response?.data?.status?.toLowerCase();
+
+            if (response?.data) {
+                setKycDetails(response.data);
+            }
+            // if (status === 'approved') {
+            //     setCurrentStep('approved');
+            // } else if (status === 'pending') {
+            //     setCurrentStep('progress');
+            // } else if (status === 'rejected') {
+            //     setCurrentStep('pending');
+            // } else {
+            //     setCurrentStep('pending');
+            // }
+        } catch (error) {
+            console.error('Error fetching KYC details:', error);
+            setCurrentStep('pending');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStartKYC = () => {
+        setCurrentStep('document');
+    };
+
+    const handleDocumentContinue = (documentData) => {
+        setKycData(prev => ({ ...prev, ...documentData }));
+        setCurrentStep('selfie');
+    };
+
+    const handleSelfieContinue = (selfieData) => {
+        setKycData(prev => ({ ...prev, ...selfieData }));
+        setCurrentStep('address');
+    };
+
+    const handleAddressContinue = async (addressData) => {
+        try {
+            const finalData = { ...kycData, ...addressData };
+
+            const response = await submitKyc(finalData);
+
+            if (response?.success || response?.status) {
+                toast.success('KYC submitted successfully! Verification in progress.');
+                setCurrentStep('progress');
+            } else {
+                toast.error('KYC submission failed. Please try again.');
+                setCurrentStep('address');
+            }
+        } catch (error) {
+            console.error('Error submitting KYC:', error);
+            toast.error(error?.message || 'Failed to submit KYC. Please try again.');
+            setCurrentStep('address');
+        }
+    };
+
+    const handleCancel = () => {
+        setCurrentStep('pending');
+        setKycData({
+            id_proof: null,
+            selfie_image: null,
+            address_proof: null,
+            address: '',
+            city: '',
+            state: '',
+            pincode: '',
+            country: ''
+        });
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.outlinebox}>
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                    Loading...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.outlinebox}>
-            <div className={styles.spacingGrid}>
-                <Kycpending />
-            </div>
-            
-            <div className={styles.verificationContent}>
-                <img src={MobileIcon} alt="Mobile Verification" className={styles.mobileIcon} />
-                <p className={styles.infoText}>
-                    You have not submitted your necessary documents to verify your identity. In order to purchase our tokens, please verify your identity.
-                </p>
-                <div className={styles.buttonWrapper}>
-                    <Button text="Back to home" onClick={() => {}} />
-                </div>
-            </div>
+            {currentStep === 'pending' && (
+                <>
+                    <KycPending />
+                    <KycComplete onStart={handleStartKYC} />
+                </>
+            )}
+            {currentStep === 'document' && (
+                <DocumentUpload
+                    onContinue={handleDocumentContinue}
+                    onCancel={handleCancel}
+                />
+            )}
+            {currentStep === 'selfie' && (
+                <TakeSelfie
+                    onContinue={handleSelfieContinue}
+                    onCancel={handleCancel}
+                />
+            )}
+            {currentStep === 'address' && (
+                <KycAddress
+                    onContinue={handleAddressContinue}
+                    onCancel={handleCancel}
+                />
+            )}
+            {currentStep === 'progress' && <VerificationProgress />}
+            {currentStep === 'approved' && <KycVerified kycDetails={kycDetails} />}
         </div>
     )
 }

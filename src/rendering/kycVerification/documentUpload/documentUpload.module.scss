@@ -1,0 +1,160 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.documentUpload {
+    border-radius: 12px;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: #FFF;
+
+    .documentHeader {
+        padding: 20px 33px;
+        border-bottom: 1px solid #F5F5F5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .counter {
+            border-radius: 40.741px;
+            border: 0.815px solid #6B7280;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            text-align: center;
+            font-size: 16.296px;
+            font-weight: 500;
+            line-height: 140%;
+        }
+
+        h2 {
+            color: var(--Black-100, #171717);
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 24px;
+            margin: 0 0 2px 0;
+        }
+
+        p {
+            color: #6B7280;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16px;
+        }
+    }
+
+    .documentContent {
+        padding: 20px 33px;
+
+        .contentAlignment {
+            max-width: 533px;
+
+            .tabgrid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding: 0 0 16px 0;
+
+                button {
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 4px;
+                    border: 1px solid #DFE3EA;
+                    background: rgba(255, 255, 255, 0.50);
+                    display: flex;
+                    justify-content: center;
+                    cursor: pointer;
+                    gap: 8px;
+                    align-items: center;
+                    color: #6B7280;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 500;
+                    transition: .3s ease-in-out;
+
+                    &.active {
+                        border: 1px solid #538DFF;
+                        background: rgba(255, 255, 255, 0.50);
+                        color: #538DFF;
+                    }
+
+                    &:hover:not(:disabled) {
+                        border: 1px solid #538DFF;
+                        background: rgba(255, 255, 255, 0.50);
+                        color: #538DFF;
+                    }
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+            .buttonGrid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 22px;
+                margin-top: 10px;
+
+                button {
+                    width: 100%;
+                }
+            }
+
+            .uploadList {
+                padding: 7px 0 0 0;
+
+                .proof {
+                    border-radius: 4px;
+                    background: #FFF;
+                    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+                    padding: 8px 11px;
+                    display: grid;
+                    grid-template-columns: 61px 1fr;
+                    gap: 12px;
+                    align-items: center;
+
+                    .close {
+                        cursor: pointer;
+                    }
+
+                    .content {
+                        display: flex;
+                        justify-content: space-between;
+
+                        h3 {
+                            color: var(--Text-Primary, #020204);
+                            font-size: 16px;
+                            font-style: normal;
+                            font-weight: 500;
+                            margin: 0 0 8px 0;
+                            line-height: 16px;
+                        }
+
+                        p {
+                            color: #6A7282;
+                            font-size: 12px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: 16px;
+                        }
+                    }
+
+                    .image {
+                        border-radius: 4px;
+                        background: #CCC;
+                        height: 60px;
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+}

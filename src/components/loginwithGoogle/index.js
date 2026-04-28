@@ -3,28 +3,30 @@ import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { googleLogin } from '@/services/auth';
+import { googleLoginAction } from '@/app/actions/auth/auth';
 import styles from './loginwithGoogle.module.scss';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginwithGoogle() {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
     const { deviceId, login: authLogin } = useAuth();
 
     const handleSuccess = async ({ credential }) => {
-        setLoading(true);
         try {
-            const data = await googleLogin(credential, deviceId);
-            const token = data.token || data.access_token || '';
-            const userData = data?.user || data?.data?.user || null;
+            const res = await googleLoginAction(credential, deviceId);
 
-            authLogin(userData, token);
-            toast.success('Signed in with Google');
-            router.push('/dashboard');
+            if (res.success) {
+                const token = res.data?.data?.access_token || res.data?.access_token || res.data?.token || '';
+                const userData = res.data?.data?.user || res.data?.user || null;
+
+                await authLogin(userData, token);
+                toast.success('Signed in with Google');
+                router.push('/dashboard');
+            } else {
+                toast.error(res.error || 'Google login failed');
+            }
         } catch {
-        } finally {
-            setLoading(false);
+            toast.error('An error occurred during Google sign in');
         }
     };
 

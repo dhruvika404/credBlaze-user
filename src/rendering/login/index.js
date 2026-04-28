@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ import AuthSlider from '@/components/authSlider';
 import Input from '@/components/input';
 import LoginwithGoogle from '@/components/loginwithGoogle';
 import Button from '@/components/button';
-import { login } from '@/services/auth';
+import { loginAction } from '@/app/actions/auth/auth';
 import { useAuth } from '@/context/AuthContext';
 
 const EmailIcon = '/assets/icons/email.svg';
@@ -21,7 +21,7 @@ export default function Login() {
   const { deviceId, login: authLogin } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
 
   const set = (field) => (v) => {
@@ -42,20 +42,27 @@ export default function Login() {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
-    setLoading(true);
-    try {
-      const data = await login({ email: form.email, password: form.password, device_id: deviceId });
-      const token = data?.data?.access_token || data?.access_token || data?.token || '';
-      const userData = data?.data?.user || data?.user || null;
+    startTransition(async () => {
+      try {
+        const res = await loginAction({
+          email: form.email,
+          password: form.password,
+          device_id: deviceId,
+        });
 
-      authLogin(userData, token);
-      toast.success('Signed in successfully');
-      router.push('/dashboard');
-    } catch {
-      // error toast already fired by auth service
-    } finally {
-      setLoading(false);
-    }
+        if (res.success) {
+          const token = res.data?.data?.access_token || res.data?.access_token || res.data?.token || '';
+          const userData = res.data?.data?.user || res.data?.user || null;
+          await authLogin(userData, token);
+          toast.success('Signed in successfully');
+          router.push('/dashboard');
+        } else {
+          toast.error(res.error || 'Login failed');
+        }
+      } catch {
+        toast.error('An error occurred during sign in');
+      }
+    });
   };
 
   return (

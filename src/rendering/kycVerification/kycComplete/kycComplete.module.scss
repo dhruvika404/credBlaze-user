@@ -1,0 +1,33 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.kycComplete {
+    padding: 22px 0;
+    max-width: 455px;
+    margin: 0 auto;
+
+    .imageCenter {
+        display: flex;
+        padding: 0 0 20px 0;
+        justify-content: center;
+
+        img {
+            display: block;
+        }
+    }
+
+    p {
+        color: var(--Black-300, #6B7280);
+        text-align: center;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 140%;
+        margin: 0 auto 40px auto;
+    }
+
+    .buttonAlignment {
+        margin: 0 auto;
+        max-width: 379px;
+    }
+}
