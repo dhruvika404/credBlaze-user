@@ -67,27 +67,39 @@ export default function SelfieCapturePage() {
     };
 
     const handleSubmit = () => {
-        if (!capturedImage || !sessionId) return;
+        if (!capturedImage || !sessionId) {
+            toast.error('No selfie captured or invalid session');
+            return;
+        }
 
-        // Store in localStorage with session ID
+        // Store in localStorage first
         localStorage.setItem(`selfie_${sessionId}`, capturedImage);
+        console.log('Selfie stored in localStorage with key:', `selfie_${sessionId}`);
         
-        // Try to communicate with parent window (if opened from same origin)
-        if (window.opener) {
-            try {
+        // Try to communicate with parent window
+        try {
+            if (window.opener && !window.opener.closed) {
                 window.opener.postMessage({
                     type: 'SELFIE_CAPTURED',
                     sessionId: sessionId,
                     imageData: capturedImage
                 }, window.location.origin);
-                toast.success('Selfie sent successfully!');
-                setTimeout(() => window.close(), 1500);
-            } catch (error) {
-                toast.success('Selfie saved! You can close this window.');
+                console.log('Selfie sent via postMessage');
             }
-        } else {
-            toast.success('Selfie saved! You can close this window.');
+        } catch (error) {
+            console.error('PostMessage error:', error);
         }
+
+        toast.success('Selfie saved! You can close this window.');
+        
+        // Auto close after 2 seconds
+        setTimeout(() => {
+            try {
+                window.close();
+            } catch (e) {
+                console.log('Cannot auto-close window');
+            }
+        }, 2000);
     };
 
     return (

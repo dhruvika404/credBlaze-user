@@ -23,6 +23,28 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     const canvasRef = useRef(null);
     const fileInputRef = useRef(null);
 
+    // Handle selfie received from public link
+    const handleSelfieReceived = (imageData) => {
+        try {
+            // Convert base64 to blob
+            fetch(imageData)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+                    setSelfieFile(file);
+                    setCapturedImage(imageData);
+                    setSelfieCaptured(true);
+                    toast.success('Selfie received from your device!');
+                })
+                .catch(error => {
+                    console.error('Error processing selfie:', error);
+                    toast.error('Failed to process selfie');
+                });
+        } catch (error) {
+            console.error('Error handling selfie:', error);
+        }
+    };
+
     useEffect(() => {
         // Generate unique session ID
         const sid = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -47,7 +69,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                 localStorage.removeItem(`selfie_${sid}`);
                 clearInterval(checkInterval);
             }
-        }, 1000);
+        }, 500); // Check every 500ms for faster response
 
         return () => {
             window.removeEventListener('message', handleMessage);
@@ -61,13 +83,15 @@ export default function TakeSelfie({ onContinue, onCancel }) {
             checkAndStartWebcam();
         } else {
             stopWebcam();
-            generateQRCode();
+            if (sessionId) {
+                generateQRCode();
+            }
         }
 
         return () => {
             stopWebcam();
         };
-    }, [selfieMode]);
+    }, [selfieMode, sessionId]);
 
     const checkAndStartWebcam = async () => {
         try {
@@ -116,26 +140,10 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     };
 
     const generateQRCode = () => {
+        if (!sessionId) return;
         const currentUrl = `${window.location.origin}/selfie-capture?sid=${sessionId}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
         setQrCodeUrl(qrUrl);
-    };
-
-    const handleSelfieReceived = (imageData) => {
-        // Convert base64 to blob
-        fetch(imageData)
-            .then(res => res.blob())
-            .then(blob => {
-                const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
-                setSelfieFile(file);
-                setCapturedImage(imageData);
-                setSelfieCaptured(true);
-                toast.success('Selfie received from your device!');
-            })
-            .catch(error => {
-                console.error('Error processing selfie:', error);
-                toast.error('Failed to process selfie');
-            });
     };
 
     const handleCapture = () => {
@@ -304,6 +312,9 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                                         )}
                                     </div>
                                     <p>Scan QR code to open camera on your device</p>
+                                    <p style={{ fontSize: '0.9rem', marginTop: '0.5rem', color: '#666' }}>
+                                        Waiting for selfie... 📸
+                                    </p>
                                 </div>
                             )}
                         </div>
