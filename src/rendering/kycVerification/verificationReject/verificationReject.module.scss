@@ -1,0 +1,66 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.verificationProgress {
+    border-radius: 12px;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: #FFF;
+    padding: 24px;
+
+    .centerbox {
+        max-width: 426px;
+        margin: 0 auto;
+
+        .centerAlignment {
+            display: flex;
+            justify-content: center;
+            padding: 0 0 24px 0;
+
+            img {
+                display: block;
+            }
+        }
+
+        h2 {
+            color: var(--Black-100, #171717);
+            text-align: center;
+            font-size: 28px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 120%;
+            margin: 0 0 12px 0;
+            letter-spacing: -1px;
+        }
+
+        p {
+            color: var(--black-200, #707070);
+            text-align: center;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 145%;
+            letter-spacing: -1px;
+            max-width: 426px;
+            margin: 0 auto;
+        }
+
+        .buttonGrid {
+            padding: 44px 0 0 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            max-width: 426px;
+            margin: 0 auto;
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .buttonTop {
+            padding: 44px 0 0 0;
+            max-width: 254px;
+            margin: 0 auto;
+        }
+    }
+}

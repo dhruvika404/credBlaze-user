@@ -1,131 +1,54 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react'
+import QRCode from 'react-qr-code';
+import { getMobileImage } from '@/services/kyc';
 import styles from './takeSelfie.module.scss';
 import Button from '@/components/button';
 import CameraIcon from '@/icons/cameraIcon';
-import toast from 'react-hot-toast';
 const WebCamIcon = '/assets/icons/web-cam.svg';
 const UseIcon = '/assets/icons/use.svg';
-const ScanImage = '/assets/images/scan.svg';
 
 export default function TakeSelfie({ onContinue, onCancel }) {
     const [selfieCaptured, setSelfieCaptured] = useState(false);
     const [selfieMode, setSelfieMode] = useState('webcam');
-    const [selfieFile, setSelfieFile] = useState(null);
-    const [capturedImage, setCapturedImage] = useState(null);
     const [stream, setStream] = useState(null);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
+    const [mobileImage, setMobileImage] = useState(null);
     const [cameraError, setCameraError] = useState(null);
-    const [qrCodeUrl, setQrCodeUrl] = useState(null);
-    const [hasCameraDevice, setHasCameraDevice] = useState(false);
-    const [sessionId, setSessionId] = useState(null);
-    
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const fileInputRef = useRef(null);
-
-    // Handle selfie received from public link
-    const handleSelfieReceived = (imageData) => {
-        try {
-            // Convert base64 to blob
-            fetch(imageData)
-                .then(res => res.blob())
-                .then(blob => {
-                    const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
-                    setSelfieFile(file);
-                    setCapturedImage(imageData);
-                    setSelfieCaptured(true);
-                    toast.success('Selfie received from your device!');
-                })
-                .catch(error => {
-                    console.error('Error processing selfie:', error);
-                    toast.error('Failed to process selfie');
-                });
-        } catch (error) {
-            console.error('Error handling selfie:', error);
-        }
-    };
-
-    useEffect(() => {
-        // Generate unique session ID
-        const sid = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        setSessionId(sid);
-
-        // Listen for selfie from public link
-        const handleMessage = (event) => {
-            if (event.origin !== window.location.origin) return;
-            
-            if (event.data.type === 'SELFIE_CAPTURED' && event.data.sessionId === sid) {
-                handleSelfieReceived(event.data.imageData);
-            }
-        };
-
-        window.addEventListener('message', handleMessage);
-
-        // Check localStorage periodically for selfie
-        const checkInterval = setInterval(() => {
-            const storedSelfie = localStorage.getItem(`selfie_${sid}`);
-            if (storedSelfie) {
-                handleSelfieReceived(storedSelfie);
-                localStorage.removeItem(`selfie_${sid}`);
-                clearInterval(checkInterval);
-            }
-        }, 500); // Check every 500ms for faster response
-
-        return () => {
-            window.removeEventListener('message', handleMessage);
-            clearInterval(checkInterval);
-            stopWebcam();
-        };
-    }, []);
+    const pollIntervalRef = useRef(null);
 
     useEffect(() => {
         if (selfieMode === 'webcam') {
-            checkAndStartWebcam();
+            startWebcam();
         } else {
             stopWebcam();
-            if (sessionId) {
-                generateQRCode();
-            }
+            startPolling();
         }
-
         return () => {
             stopWebcam();
+            stopPolling();
         };
-    }, [selfieMode, sessionId]);
+    }, [selfieMode]);
 
-    const checkAndStartWebcam = async () => {
+    const startWebcam = async () => {
         try {
             setCameraError(null);
-            // First check if camera devices exist
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            
-            if (videoDevices.length === 0) {
-                setHasCameraDevice(false);
-                setCameraError('No camera found on your device.');
-                return;
-            }
-            
-            setHasCameraDevice(true);
-            
-            // Now try to access the camera
             const mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user', width: 640, height: 480 }
+                video: { facingMode: 'user' }
             });
-            
             setStream(mediaStream);
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
             }
-        } catch (error) {
-            console.error('Camera access error:', error);
-            
-            if (error.name === 'NotAllowedError') {
-                setCameraError('Camera access denied. Please allow camera permission in your browser settings.');
-                toast.error('Please allow camera access to continue');
-            } else if (error.name === 'NotFoundError') {
-                setHasCameraDevice(false);
-                setCameraError('No camera found on your device.');
+        } catch (err) {
+            console.error('Camera access denied:', err);
+            if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                setCameraError('Camera not found. Please connect a camera.');
+            } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                setCameraError('Camera access denied. Please allow camera permissions.');
             } else {
                 setCameraError('Unable to access camera. Please check your device settings.');
             }
@@ -139,96 +62,82 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         }
     };
 
-    const generateQRCode = () => {
-        if (!sessionId) return;
-        const currentUrl = `${window.location.origin}/selfie-capture?sid=${sessionId}`;
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
-        setQrCodeUrl(qrUrl);
-    };
-
-    const handleCapture = () => {
-        if (!videoRef.current || !canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        const video = videoRef.current;
-        
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        canvas.toBlob((blob) => {
-            if (blob) {
-                const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
-                const imageUrl = URL.createObjectURL(blob);
-                
-                setSelfieFile(file);
-                setCapturedImage(imageUrl);
-                setSelfieCaptured(true);
-                stopWebcam();
-                toast.success('Selfie captured successfully!');
+    const startPolling = () => {
+        pollIntervalRef.current = setInterval(async () => {
+            try {
+                const data = await getMobileImage();
+                if (data?.image || data?.url) {
+                    setMobileImage(data.image || data.url);
+                    setSelfieCaptured(true);
+                    stopPolling();
+                }
+            } catch (err) {
+                console.error('Polling error:', err);
             }
-        }, 'image/jpeg', 0.95);
+        }, 2000);
     };
 
-    const handleRetake = () => {
-        setSelfieCaptured(false);
-        setCapturedImage(null);
-        setSelfieFile(null);
-        if (selfieMode === 'webcam') {
-            checkAndStartWebcam();
+    const stopPolling = () => {
+        if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
         }
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelfieFile(file);
-            setCapturedImage(imageUrl);
+    const captureWebcam = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (video && canvas) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const imageData = canvas.toDataURL('image/jpeg');
+            setCapturedImage(imageData);
             setSelfieCaptured(true);
-            toast.success('Image uploaded successfully!');
+            stopWebcam();
         }
+    };
+
+    const retakeWebcam = () => {
+        setCapturedImage(null);
+        setSelfieCaptured(false);
+        startWebcam();
     };
 
     const handleModeChange = (mode) => {
         setSelfieMode(mode);
         setSelfieCaptured(false);
-        setSelfieFile(null);
         setCapturedImage(null);
+        setMobileImage(null);
         setCameraError(null);
     };
 
-    const handleDeviceCapture = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+    const handleContinue = () => {
+        if (selfieCaptured) {
+            const imageToSend = selfieMode === 'webcam' ? capturedImage : mobileImage;
+            if (imageToSend) {
+                fetch(imageToSend)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+                        onContinue({ selfie_image: file });
+                    });
+            }
         }
     };
 
-    const handleContinue = () => {
-        if (selfieCaptured && selfieFile) {
-            onContinue({ selfie_image: selfieFile });
-        }
-    };
+    const mobileUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/mobile-capture?session=${sessionId}`
+        : '';
 
     return (
         <div className={styles.documentUpload}>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="user"
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-            />
             <canvas ref={canvasRef} style={{ display: 'none' }} />
-            
             <div className={styles.documentHeader}>
                 <div className={styles.counter}>2</div>
                 <div>
                     <h2>Take Selfie</h2>
-                    <p>Take your live selfie to ensure your identity</p>
+                    <p>Take your live selfie to insure that your identy</p>
                 </div>
             </div>
 
@@ -256,70 +165,54 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                             {cameraError ? (
                                 <div className={styles.errorContainer}>
                                     <div className={styles.errorIcon}>
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                                            <circle cx="12" cy="12" r="10" stroke="#EF4444" strokeWidth="2"/>
-                                            <path d="M12 8V12M12 16H12.01" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"/>
-                                        </svg>
+                                        <img src={WebCamIcon} alt='Camera Error' />
                                     </div>
                                     <p className={styles.errorText}>{cameraError}</p>
                                 </div>
-                            ) : selfieCaptured ? (
-                                <div className={styles.capturedImageContainer}>
-                                    <img src={capturedImage} alt="Captured Selfie" className={styles.capturedImage} />
-                                    <button className={styles.retakeButton} onClick={handleRetake}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C14.3051 3 16.4077 3.89124 18 5.33579" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                                            <path d="M21 3V7H17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
-                                        Retake
-                                    </button>
-                                </div>
-                            ) : stream ? (
-                                <div className={styles.videoContainer}>
-                                    <video
-                                        ref={videoRef}
-                                        autoPlay
-                                        playsInline
-                                        muted
-                                        className={styles.videoElement}
+                            ) : !capturedImage ? (
+                                <>
+                                    <video 
+                                        ref={videoRef} 
+                                        autoPlay 
+                                        playsInline 
+                                        className={styles.videoFeed}
                                     />
-                                    <button className={styles.cameraButton} onClick={handleCapture}>
+                                    <button className={styles.cameraButton} onClick={captureWebcam}>
                                         <CameraIcon />
                                     </button>
-                                </div>
-                            ) : null}
+                                </>
+                            ) : (
+                                <>
+                                    <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
+                                    <button className={styles.retakeButton} onClick={retakeWebcam}>
+                                        <CameraIcon />
+                                        Retake
+                                    </button>
+                                </>
+                            )}
                         </div>
                     ) : (
                         <div className={styles.selfiBox}>
-                            {selfieCaptured ? (
-                                <div className={styles.capturedImageContainer}>
-                                    <img src={capturedImage} alt="Uploaded Selfie" className={styles.capturedImage} />
-                                    <button className={styles.retakeButton} onClick={handleRetake}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C14.3051 3 16.4077 3.89124 18 5.33579" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                                            <path d="M21 3V7H17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
-                                        Change Photo
-                                    </button>
+                            {!mobileImage ? (
+                                <div className={styles.qrContainer}>
+                                    <div className={styles.qrCodeWrapper}>
+                                        <QRCode value={mobileUrl} size={180} />
+                                    </div>
+                                    <p className={styles.qrText}>Scan QR to capture<br />photo using your device</p>
                                 </div>
                             ) : (
-                                <div className={styles.qrContainer}>
-                                    <div className={styles.imageCenter}>
-                                        {qrCodeUrl ? (
-                                            <img src={qrCodeUrl} alt='QR Code' className={styles.qrCode} />
-                                        ) : (
-                                            <img src={ScanImage} alt='ScanImage' />
-                                        )}
+                                <div className={styles.imageCenter}>
+                                    <img src={mobileImage} alt="Mobile Capture" className={styles.mobileImage} />
+                                    <div className={styles.scannedBadge}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <circle cx="12" cy="12" r="12" fill="#10B981"/>
+                                            <path d="M7 12L10.5 15.5L17 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
                                     </div>
-                                    <p>Scan QR code to open camera on your device</p>
-                                    <p style={{ fontSize: '0.9rem', marginTop: '0.5rem', color: '#666' }}>
-                                        Waiting for selfie... 📸
-                                    </p>
                                 </div>
                             )}
                         </div>
                     )}
-                    
                     <div className={styles.buttonGrid}>
                         <Button text="Cancel" lightbutton onClick={onCancel} />
                         <Button

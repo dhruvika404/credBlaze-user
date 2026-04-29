@@ -9,10 +9,11 @@ import styles from './kycVerification.module.scss';
 import KycVerified from './kycVerified';
 import TakeSelfie from './takeSelfie';
 import VerificationProgress from './verificationProgress';
+import VerificationReject from './verificationReject';
 import { getKycDetails, submitKyc } from '@/services/kyc';
 
 export default function KycVerification() {
-    const [currentStep, setCurrentStep] = useState('selfie');
+    const [currentStep, setCurrentStep] = useState('pending');
     const [loading, setLoading] = useState(true);
     const [kycDetails, setKycDetails] = useState(null);
     const [kycData, setKycData] = useState({
@@ -38,15 +39,15 @@ export default function KycVerification() {
             if (response?.data) {
                 setKycDetails(response.data);
             }
-            // if (status === 'approved') {
-            //     setCurrentStep('approved');
-            // } else if (status === 'pending') {
-            //     setCurrentStep('progress');
-            // } else if (status === 'rejected') {
-            //     setCurrentStep('pending');
-            // } else {
-            //     setCurrentStep('pending');
-            // }
+            if (status === 'approved') {
+                setCurrentStep('approved');
+            } else if (status === 'pending') {
+                setCurrentStep('progress');
+            } else if (status === 'rejected') {
+                setCurrentStep('rejected');
+            } else {
+                setCurrentStep('pending');
+            }
         } catch (error) {
             console.error('Error fetching KYC details:', error);
             setCurrentStep('pending');
@@ -103,6 +104,24 @@ export default function KycVerification() {
         });
     };
 
+    const handleReupload = () => {
+        setCurrentStep('document');
+        setKycData({
+            id_proof: null,
+            selfie_image: null,
+            address_proof: null,
+            address: '',
+            city: '',
+            state: '',
+            pincode: '',
+            country: ''
+        });
+    };
+
+    const handleRejectCancel = () => {
+        setCurrentStep('rejected');
+    };
+
     if (loading) {
         return (
             <div className={styles.outlinebox}>
@@ -141,6 +160,13 @@ export default function KycVerification() {
             )}
             {currentStep === 'progress' && <VerificationProgress />}
             {currentStep === 'approved' && <KycVerified kycDetails={kycDetails} />}
+            {currentStep === 'rejected' && (
+                <VerificationReject
+                    rejectionReason={kycDetails?.rejection_reason}
+                    onReupload={handleReupload}
+                    onCancel={handleRejectCancel}
+                />
+            )}
         </div>
     )
 }
