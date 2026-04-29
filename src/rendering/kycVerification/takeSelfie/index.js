@@ -116,6 +116,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         if (selfieCaptured) {
             const imageToSend = selfieMode === 'webcam' ? capturedImage : mobileImage;
             if (imageToSend) {
+                // Convert base64 to file
                 fetch(imageToSend)
                     .then(res => res.blob())
                     .then(blob => {
@@ -147,6 +148,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                         <button
                             className={selfieMode === 'webcam' ? styles.active : ''}
                             onClick={() => handleModeChange('webcam')}
+                            disabled={mobileImage !== null}
                         >
                             <img src={WebCamIcon} alt='WebCamIcon' />
                             Use Web Cam
@@ -154,6 +156,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                         <button
                             className={selfieMode === 'device' ? styles.active : ''}
                             onClick={() => handleModeChange('device')}
+                            disabled={capturedImage !== null}
                         >
                             <img src={UseIcon} alt='UseIcon' />
                             Use your Device

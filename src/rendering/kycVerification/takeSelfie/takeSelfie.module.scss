@@ -300,10 +300,16 @@
                     transition: .3s ease-in-out;
 
                     &.active,
-                    &:hover {
+                    &:hover:not(:disabled) {
                         border: 1px solid #538DFF;
                         background: rgba(255, 255, 255, 0.50);
                         color: #538DFF;
+                    }
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                        background: rgba(200, 200, 200, 0.3);
                     }
                 }
             }
