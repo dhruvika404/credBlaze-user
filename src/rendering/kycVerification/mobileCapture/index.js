@@ -14,6 +14,7 @@ export default function MobileCapture() {
     const [capturedImage, setCapturedImage] = useState(null);
     const [error, setError] = useState(null);
     const [cameraReady, setCameraReady] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
 
@@ -100,12 +101,17 @@ export default function MobileCapture() {
             console.log("API Response:", result);
             
             if (result?.success && result?.data) {
-                const imageData = {
-                    media_key: result.data.media_key,
-                    media_url: result.data.media_url
-                };
-                localStorage.setItem(`mobile_image_${sessionId}`, JSON.stringify(imageData));
-                alert('Image submitted successfully!');
+                // Broadcast the image data to other tabs/windows
+                if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+                    const channel = new BroadcastChannel(`kyc_upload_${sessionId}`);
+                    channel.postMessage({
+                        type: 'IMAGE_UPLOADED',
+                        sessionId: sessionId,
+                        data: result.data
+                    });
+                    channel.close();
+                }
+                setSubmitted(true);
             } else {
                 throw new Error('Invalid API response');
             }
@@ -117,31 +123,46 @@ export default function MobileCapture() {
 
     return (
         <div className={styles.container}>
-            <h1>Capture Selfie</h1>
-            {error && <p className={styles.error}>{error}</p>}
-            
-            {!capturedImage ? (
-                <div className={styles.cameraContainer}>
-                    <video ref={videoRef} autoPlay playsInline className={styles.video} />
-                    <button 
-                        className={styles.cameraButton} 
-                        onClick={captureImage}
-                        disabled={!cameraReady}
-                        style={{ opacity: cameraReady ? 1 : 0.5 }}
-                    >
-                        <CameraIcon />
-                    </button>
-                </div>
+            {!submitted ? (
+                <>
+                    <h1>Capture Selfie</h1>
+                    {error && <p className={styles.error}>{error}</p>}
+                    
+                    {!capturedImage ? (
+                        <div className={styles.cameraContainer}>
+                            <video ref={videoRef} autoPlay playsInline className={styles.video} />
+                            <button 
+                                className={styles.cameraButton} 
+                                onClick={captureImage}
+                                disabled={!cameraReady}
+                                style={{ opacity: cameraReady ? 1 : 0.5 }}
+                            >
+                                <CameraIcon />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className={styles.previewContainer}>
+                            <img src={capturedImage} alt="Captured" className={styles.preview} />
+                            <div className={styles.actions}>
+                                <Button text="Retake" lightbutton onClick={retake} />
+                                <Button text="Submit" onClick={submitImage} disabled={!capturedImage} />
+                            </div>
+                        </div>
+                    )}
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                </>
             ) : (
-                <div className={styles.previewContainer}>
-                    <img src={capturedImage} alt="Captured" className={styles.preview} />
-                    <div className={styles.actions}>
-                        <Button text="Retake" lightbutton onClick={retake} />
-                        <Button text="Submit" onClick={submitImage} disabled={!capturedImage} />
+                <div className={styles.successContainer}>
+                    <div className={styles.successIcon}>
+                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <circle cx="40" cy="40" r="40" fill="#10B981"/>
+                            <path d="M25 40L35 50L55 30" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                     </div>
+                    <h1 className={styles.successTitle}>Image Submitted Successfully!</h1>
+                    <p className={styles.successText}>You can safely close this window and continue with your verification.</p>
                 </div>
             )}
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
     );
 }

@@ -3,6 +3,7 @@ import styles from './logoutModal.module.scss';
 import Button from '@/components/button';
 
 const CloseIcon = '/assets/icons/close-vec.svg';
+
 export default function LogoutModal({
     isOpen,
     onClose,

@@ -18,18 +18,18 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     const [cameraError, setCameraError] = useState(null);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const pollIntervalRef = useRef(null);
+    const broadcastChannelRef = useRef(null);
 
     useEffect(() => {
         if (selfieMode === 'webcam') {
             startWebcam();
         } else {
             stopWebcam();
-            startPolling();
+            setupBroadcastChannel();
         }
         return () => {
             stopWebcam();
-            stopPolling();
+            closeBroadcastChannel();
         };
     }, [selfieMode]);
 
@@ -62,27 +62,25 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         }
     };
 
-    const startPolling = () => {
-        pollIntervalRef.current = setInterval(() => {
-            const storedData = localStorage.getItem(`mobile_image_${sessionId}`);
-            if (storedData) {
-                try {
-                    const imageData = JSON.parse(storedData);
-                    setMobileImageData(imageData);
-                    setMobileImage(imageData.media_url);
-                    localStorage.removeItem(`mobile_image_${sessionId}`);
-                    stopPolling();
-                } catch (error) {
-                    console.error('Error parsing image data:', error);
+    const setupBroadcastChannel = () => {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+            // Create a broadcast channel for this session
+            broadcastChannelRef.current = new BroadcastChannel(`kyc_upload_${sessionId}`);
+            
+            // Listen for messages
+            broadcastChannelRef.current.onmessage = (event) => {
+                if (event.data.type === 'IMAGE_UPLOADED' && event.data.sessionId === sessionId) {
+                    setMobileImageData(event.data.data);
+                    setMobileImage(event.data.data.media_url);
                 }
-            }
-        }, 1000);
+            };
+        }
     };
 
-    const stopPolling = () => {
-        if (pollIntervalRef.current) {
-            clearInterval(pollIntervalRef.current);
-            pollIntervalRef.current = null;
+    const closeBroadcastChannel = () => {
+        if (broadcastChannelRef.current) {
+            broadcastChannelRef.current.close();
+            broadcastChannelRef.current = null;
         }
     };
 
