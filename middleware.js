@@ -10,7 +10,8 @@ export function middleware(request) {
     pathname.startsWith('/email-verify') ||
     pathname.startsWith('/enter-code') ||
     pathname.startsWith('/successfully-message') ||
-    pathname.startsWith('/create-password');
+    pathname.startsWith('/create-password') ||
+    pathname.startsWith('/mobile-capture');
 
   if (!authToken && !isPublicRoute) {
     return NextResponse.redirect(new URL('/', request.url));
