@@ -9,36 +9,60 @@ import styles from './mobileCapture.module.scss';
 export default function MobileCapture() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session');
+    const urlToken = searchParams.get('token');
     const [stream, setStream] = useState(null);
     const [capturedImage, setCapturedImage] = useState(null);
     const [error, setError] = useState(null);
+    const [cameraReady, setCameraReady] = useState(false);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
 
     useEffect(() => {
+        // Store token from URL to localStorage for API calls
+        if (urlToken) {
+            localStorage.setItem('token', urlToken);
+        }
+        
         startCamera();
         return () => {
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
         };
-    }, []);
+    }, [urlToken]);
 
     const startCamera = async () => {
         try {
+            setCameraReady(false);
+            setError(null);
             const mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: 'user' }
             });
             setStream(mediaStream);
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
+                videoRef.current.onloadedmetadata = () => {
+                    setCameraReady(true);
+                };
             }
         } catch (err) {
-            setError('Camera access denied');
+            console.error('Camera error:', err);
+            setCameraReady(false);
+            if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                setError('Camera not found. Please ensure your device has a camera.');
+            } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                setError('Camera access denied. Please allow camera permissions to continue.');
+            } else {
+                setError('Unable to access camera. Please check your device settings.');
+            }
         }
     };
 
     const captureImage = () => {
+        if (!cameraReady || !stream) {
+            return;
+        }
+        
         const video = videoRef.current;
         const canvas = canvasRef.current;
         if (video && canvas) {
@@ -48,16 +72,21 @@ export default function MobileCapture() {
             const imageData = canvas.toDataURL('image/jpeg');
             setCapturedImage(imageData);
             stream?.getTracks().forEach(track => track.stop());
+            setCameraReady(false);
         }
     };
 
     const retake = () => {
         setCapturedImage(null);
+        setError(null);
         startCamera();
     };
 
     const submitImage = async () => {
-        if (!capturedImage || !sessionId) return;
+        if (!capturedImage || !sessionId) {
+            setError('Please capture an image first.');
+            return;
+        }
         
         try {
             const response = await fetch(capturedImage);
@@ -67,11 +96,22 @@ export default function MobileCapture() {
             formData.append('file', file);
             formData.append('session_id', sessionId);
             
-            await uploadMobileImage(formData);
-            alert('Image submitted successfully!');
+            const result = await uploadMobileImage(formData);
+            console.log("API Response:", result);
+            
+            if (result?.success && result?.data) {
+                const imageData = {
+                    media_key: result.data.media_key,
+                    media_url: result.data.media_url
+                };
+                localStorage.setItem(`mobile_image_${sessionId}`, JSON.stringify(imageData));
+                alert('Image submitted successfully!');
+            } else {
+                throw new Error('Invalid API response');
+            }
         } catch (err) {
             console.error('Upload error:', err);
-            setError('Failed to submit image');
+            setError('Failed to submit image. Please try again.');
         }
     };
 
@@ -83,7 +123,12 @@ export default function MobileCapture() {
             {!capturedImage ? (
                 <div className={styles.cameraContainer}>
                     <video ref={videoRef} autoPlay playsInline className={styles.video} />
-                    <button className={styles.cameraButton} onClick={captureImage}>
+                    <button 
+                        className={styles.cameraButton} 
+                        onClick={captureImage}
+                        disabled={!cameraReady}
+                        style={{ opacity: cameraReady ? 1 : 0.5 }}
+                    >
                         <CameraIcon />
                     </button>
                 </div>
@@ -92,7 +137,7 @@ export default function MobileCapture() {
                     <img src={capturedImage} alt="Captured" className={styles.preview} />
                     <div className={styles.actions}>
                         <Button text="Retake" lightbutton onClick={retake} />
-                        <Button text="Submit" onClick={submitImage} />
+                        <Button text="Submit" onClick={submitImage} disabled={!capturedImage} />
                     </div>
                 </div>
             )}

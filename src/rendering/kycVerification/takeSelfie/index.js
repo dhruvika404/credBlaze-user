@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react'
 import QRCode from 'react-qr-code';
-import { getMobileImage } from '@/services/kyc';
 import styles from './takeSelfie.module.scss';
 import Button from '@/components/button';
 import CameraIcon from '@/icons/cameraIcon';
@@ -15,6 +14,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     const [capturedImage, setCapturedImage] = useState(null);
     const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
     const [mobileImage, setMobileImage] = useState(null);
+    const [mobileImageData, setMobileImageData] = useState(null);
     const [cameraError, setCameraError] = useState(null);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -63,18 +63,20 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     };
 
     const startPolling = () => {
-        pollIntervalRef.current = setInterval(async () => {
-            try {
-                const data = await getMobileImage();
-                if (data?.image || data?.url) {
-                    setMobileImage(data.image || data.url);
-                    setSelfieCaptured(true);
+        pollIntervalRef.current = setInterval(() => {
+            const storedData = localStorage.getItem(`mobile_image_${sessionId}`);
+            if (storedData) {
+                try {
+                    const imageData = JSON.parse(storedData);
+                    setMobileImageData(imageData);
+                    setMobileImage(imageData.media_url);
+                    localStorage.removeItem(`mobile_image_${sessionId}`);
                     stopPolling();
+                } catch (error) {
+                    console.error('Error parsing image data:', error);
                 }
-            } catch (err) {
-                console.error('Polling error:', err);
             }
-        }, 2000);
+        }, 1000);
     };
 
     const stopPolling = () => {
@@ -109,6 +111,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         setSelfieCaptured(false);
         setCapturedImage(null);
         setMobileImage(null);
+        setMobileImageData(null);
         setCameraError(null);
     };
 
@@ -124,11 +127,27 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                         onContinue({ selfie_image: file });
                     });
             }
+        } else if (mobileImage && mobileImageData) {
+            // Mobile image uploaded via API
+            fetch(mobileImage)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+                    onContinue({ 
+                        selfie_image: file,
+                        media_key: mobileImageData.media_key 
+                    });
+                });
         }
     };
 
+    const handleCancelMobileImage = () => {
+        setMobileImage(null);
+        setMobileImageData(null);
+    };
+
     const mobileUrl = typeof window !== 'undefined' 
-        ? `${window.location.origin}/mobile-capture?session=${sessionId}`
+        ? `${window.location.origin}/mobile-capture?session=${sessionId}&token=${localStorage.getItem('token') || ''}`
         : '';
 
     return (
@@ -206,23 +225,25 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                             ) : (
                                 <div className={styles.imageCenter}>
                                     <img src={mobileImage} alt="Mobile Capture" className={styles.mobileImage} />
-                                    <div className={styles.scannedBadge}>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <circle cx="12" cy="12" r="12" fill="#10B981"/>
-                                            <path d="M7 12L10.5 15.5L17 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
+                                    <div className={styles.imageActions}>
+                                        <Button text="Cancel" lightbutton onClick={handleCancelMobileImage} />
+                                        <Button text="Continue" onClick={handleContinue} />
                                     </div>
                                 </div>
                             )}
                         </div>
                     )}
                     <div className={styles.buttonGrid}>
-                        <Button text="Cancel" lightbutton onClick={onCancel} />
-                        <Button
-                            text="Continue"
-                            onClick={handleContinue}
-                            disabled={!selfieCaptured}
-                        />
+                        {!mobileImage && (
+                            <>
+                                <Button text="Cancel" lightbutton onClick={onCancel} />
+                                <Button
+                                    text="Continue"
+                                    onClick={handleContinue}
+                                    disabled={!selfieCaptured}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

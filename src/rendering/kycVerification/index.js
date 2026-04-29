@@ -13,7 +13,7 @@ import VerificationReject from './verificationReject';
 import { getKycDetails, submitKyc } from '@/services/kyc';
 
 export default function KycVerification() {
-    const [currentStep, setCurrentStep] = useState('pending');
+    const [currentStep, setCurrentStep] = useState('selfie');
     const [loading, setLoading] = useState(true);
     const [kycDetails, setKycDetails] = useState(null);
     const [kycData, setKycData] = useState({
@@ -36,18 +36,20 @@ export default function KycVerification() {
             const response = await getKycDetails();
             const status = response?.data?.status?.toLowerCase();
 
+            // Store the complete KYC details
             if (response?.data) {
                 setKycDetails(response.data);
             }
-            if (status === 'approved') {
-                setCurrentStep('approved');
-            } else if (status === 'pending') {
-                setCurrentStep('progress');
-            } else if (status === 'rejected') {
-                setCurrentStep('rejected');
-            } else {
-                setCurrentStep('pending');
-            }
+
+            // if (status === 'approved') {
+            //     setCurrentStep('approved');
+            // } else if (status === 'pending') {
+            //     setCurrentStep('progress');
+            // } else if (status === 'rejected') {
+            //     setCurrentStep('rejected');
+            // } else {
+            //     setCurrentStep('pending');
+            // }
         } catch (error) {
             console.error('Error fetching KYC details:', error);
             setCurrentStep('pending');
