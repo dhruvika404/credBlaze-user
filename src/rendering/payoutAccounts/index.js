@@ -10,6 +10,7 @@ import RemoveIcon from '@/icons/removeIcon';
 import classNames from 'classnames';
 import toast from 'react-hot-toast';
 import { getBankList, createBank, updateBank, deleteBank } from '@/services/bank';
+import LogoutModal from '@/components/modal/logoutModal';
 
 const HomeImage = '/assets/images/home.svg';
 const AddIcon = '/assets/icons/add.svg';
@@ -75,6 +76,8 @@ export default function PayoutAccounts() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+  const [viewModal, setViewModal] = useState({ isOpen: false, bank: null });
   const menuRef = useRef(null);
 
   const fetchBanks = () => {
@@ -180,6 +183,7 @@ export default function PayoutAccounts() {
       await deleteBank(id);
       toast.success('Bank account removed');
       setBanks((prev) => prev.filter((b) => b.id !== id));
+      setDeleteModal({ isOpen: false, id: null });
     } catch {
     } finally {
       setDeletingId(null);
@@ -253,14 +257,24 @@ export default function PayoutAccounts() {
                     <MoreIcon />
                     {openMenuId === bank.id && (
                       <div className={styles.dropdownMenu}>
+                        <div className={styles.menuItem} onClick={() => {
+                          setViewModal({ isOpen: true, bank });
+                          setOpenMenuId(null);
+                        }}>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>View Details</span>
+                        </div>
                         <div className={styles.menuItem} onClick={() => openEdit(bank)}>
                           <EditOutline />
                           <span>Edit Account</span>
                         </div>
                         <div
                           className={classNames(styles.menuItem, styles.delete)}
-                          onClick={() => deletingId !== bank.id && handleDelete(bank.id)}
-                          style={{ opacity: deletingId === bank.id ? 0.5 : 1, cursor: deletingId === bank.id ? 'not-allowed' : 'pointer' }}
+                          onClick={() => setDeleteModal({ isOpen: true, id: bank.id })}
+                          style={{ cursor: 'pointer' }}
                         >
                           <RemoveIcon />
                           <span>Delete Account</span>
@@ -303,6 +317,62 @@ export default function PayoutAccounts() {
         <div className={styles.boxFooter}>
           <Button text="Cancel" lightbutton onClick={handleCancel} />
           <Button text={saving ? 'Saving...' : editingId ? 'Update' : 'Submit'} onClick={handleSave} disabled={saving} />
+        </div>
+      )}
+
+      <LogoutModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, id: null })}
+        onConfirm={() => deleteModal.id && handleDelete(deleteModal.id)}
+        title="Delete Bank Account"
+        description="Are you sure you want to delete this bank account?"
+        confirmText="Yes, Delete"
+        loading={deletingId === deleteModal.id}
+        isDanger={true}
+      />
+
+      {viewModal.isOpen && viewModal.bank && (
+        <div className={styles.viewModalWrapper} onClick={() => setViewModal({ isOpen: false, bank: null })}>
+          <div className={styles.viewModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.viewModalHeader}>
+              <h2>Bank Account Details</h2>
+              <button onClick={() => setViewModal({ isOpen: false, bank: null })} className={styles.closeBtn}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className={styles.viewModalContent}>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Account Holder Name</span>
+                <span className={styles.value}>{viewModal.bank.account_holder_name}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Bank Name</span>
+                <span className={styles.value}>{viewModal.bank.bank_name}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Account Number</span>
+                <span className={styles.value}>{viewModal.bank.account_number}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Account Type</span>
+                <span className={styles.value}>{viewModal.bank.account_type}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>IFSC Code</span>
+                <span className={styles.value}>{viewModal.bank.IFSC_code}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Branch Name</span>
+                <span className={styles.value}>{viewModal.bank.branch_name}</span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Default Account</span>
+                <span className={styles.value}>{viewModal.bank.is_default ? 'Yes' : 'No'}</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

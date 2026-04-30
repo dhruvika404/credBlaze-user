@@ -96,6 +96,10 @@
                         border-bottom: none;
                     }
 
+                    &.currentSession {
+                        background: #F0F9FF;
+                    }
+
                     td {
                         padding: 16px;
                         color: #6B7280;
@@ -118,6 +122,17 @@
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
+                            }
+
+                            .currentBadge {
+                                display: inline-block;
+                                padding: 2px 8px;
+                                background: #E0F2FE;
+                                color: #0369A1;
+                                border-radius: 12px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                margin-left: 8px;
                             }
                         }
                     }

@@ -12,6 +12,7 @@ import 'react-phone-number-input/style.css';
 import toast from 'react-hot-toast';
 import { getAddressList, createAddress, updateAddress, deleteAddress } from '@/services/address';
 import { Country, State, City } from 'country-state-city';
+import LogoutModal from '@/components/modal/logoutModal';
 
 const AddIcon = '/assets/icons/add.svg';
 
@@ -50,6 +51,7 @@ export default function DeliveryAddresses() {
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
 
   const countryOptions = useMemo(
     () => Country.getAllCountries().map((c) => ({ value: c.isoCode, label: c.name })),
@@ -180,6 +182,7 @@ export default function DeliveryAddresses() {
       await deleteAddress(id);
       toast.success('Address removed');
       setAddresses((prev) => prev.filter((a) => (a.id || a._id || a.address_id) !== id));
+      setDeleteModal({ isOpen: false, id: null });
     } catch {
       // toast handled in service
     } finally {
@@ -224,8 +227,8 @@ export default function DeliveryAddresses() {
               <div className={styles.right}>
                 <span onClick={() => openEdit(addr)}><EditOutline /></span>
                 <span
-                  onClick={() => deletingId !== id && handleDelete(id)}
-                  style={{ opacity: deletingId === id ? 0.5 : 1, cursor: deletingId === id ? 'not-allowed' : 'pointer' }}
+                  onClick={() => setDeleteModal({ isOpen: true, id })}
+                  style={{ cursor: 'pointer' }}
                 >
                   <RemoveIcon />
                 </span>
@@ -324,6 +327,17 @@ export default function DeliveryAddresses() {
           <Button text={saving ? 'Saving...' : editingId ? 'Update' : 'Save'} onClick={handleSave} disabled={saving} />
         </div>
       )}
+
+      <LogoutModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, id: null })}
+        onConfirm={() => deleteModal.id && handleDelete(deleteModal.id)}
+        title="Delete Address"
+        description="Are you sure you want to delete this address?"
+        confirmText="Yes, Delete"
+        loading={deletingId === deleteModal.id}
+        isDanger={true}
+      />
     </div>
   );
 }

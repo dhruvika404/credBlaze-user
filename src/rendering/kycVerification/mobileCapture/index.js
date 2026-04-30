@@ -101,16 +101,6 @@ export default function MobileCapture() {
             console.log("API Response:", result);
             
             if (result?.success && result?.data) {
-                // Broadcast the image data to other tabs/windows
-                if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-                    const channel = new BroadcastChannel(`kyc_upload_${sessionId}`);
-                    channel.postMessage({
-                        type: 'IMAGE_UPLOADED',
-                        sessionId: sessionId,
-                        data: result.data
-                    });
-                    channel.close();
-                }
                 setSubmitted(true);
             } else {
                 throw new Error('Invalid API response');

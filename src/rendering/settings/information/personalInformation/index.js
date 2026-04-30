@@ -205,6 +205,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
               type="date"
               value={form.dob}
               onChange={(e) => set('dob')(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
               className={styles.dateInput}
             />
             <span className={styles.calendarIcon}><CalendarIcon /></span>

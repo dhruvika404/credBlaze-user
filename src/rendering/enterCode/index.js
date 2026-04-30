@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './enterCode.module.scss';
 import AuthSlider from '@/components/authSlider';
@@ -20,7 +20,18 @@ export default function EnterCode() {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  const [countdown, setCountdown] = useState(59);
+  const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef([]);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setCanResend(true);
+    }
+  }, [countdown]);
 
   const handleChange = (index, val) => {
     const char = val.slice(-1).toUpperCase();
@@ -70,6 +81,7 @@ export default function EnterCode() {
   };
 
   const handleResend = async () => {
+    if (!canResend) return;
     setResendMsg('');
     setApiError('');
     setResendLoading(true);
@@ -77,6 +89,8 @@ export default function EnterCode() {
       const token = localStorage.getItem('token') || '';
       await resendOtp(token);
       setResendMsg('A new code has been sent.');
+      setCountdown(59);
+      setCanResend(false);
     } catch (err) {
       setApiError(err?.message || 'Could not resend code.');
     } finally {
@@ -129,9 +143,10 @@ export default function EnterCode() {
               type="button"
               className={styles.resendBtn}
               onClick={handleResend}
-              disabled={resendLoading}
+              disabled={resendLoading || !canResend}
+              style={{ opacity: !canResend ? 0.5 : 1 }}
             >
-              {resendLoading ? 'Sending...' : 'Resend'}
+              {resendLoading ? 'Sending...' : canResend ? 'Resend' : `Resend (${countdown}s)`}
             </button>
           </div>
         </div>

@@ -26,12 +26,15 @@ const FilterCheckbox = ({ label, checked, onChange, icon }) => (
     </label>
 );
 
-export default function FilterDrawer({ isOpen, onClose }) {
-    const [selectedTaskTypes, setSelectedTaskTypes] = useState([]);
-    const [selectedPlatforms, setSelectedPlatforms] = useState([]);
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
-    const [taskTypesState, setTaskTypesState] = useState({ pro: false, nonPro: false });
+export default function FilterDrawer({ isOpen, onClose, onApplyFilters, initialFilters = {} }) {
+    const [selectedTaskTypes, setSelectedTaskTypes] = useState(initialFilters.taskTypes || []);
+    const [selectedPlatforms, setSelectedPlatforms] = useState(initialFilters.platforms || []);
+    const [minPrice, setMinPrice] = useState(initialFilters.minPrice || '');
+    const [maxPrice, setMaxPrice] = useState(initialFilters.maxPrice || '');
+    const [taskTypesState, setTaskTypesState] = useState({ 
+        pro: initialFilters.isPro === true, 
+        nonPro: initialFilters.isPro === false 
+    });
 
     const handlePriceChange = (value, setter) => {
         const numericValue = value.replace(/[^0-9]/g, '');

@@ -32,7 +32,13 @@ export default function MyLogins() {
             const res = await getUserActivity({}, token || '');
             const activityList = res?.data?.activities
             if (Array.isArray(activityList)) {
-                setActivities(activityList.filter(activity => activity.device_id !== deviceId));
+                const otherSessions = activityList.filter(activity => activity.device_id !== deviceId);
+                const currentSession = activityList.find(activity => activity.device_id === deviceId);
+                if (currentSession) {
+                    setActivities([{ ...currentSession, isCurrent: true }, ...otherSessions]);
+                } else {
+                    setActivities(otherSessions);
+                }
             } else {
                 setActivities([]);
             }
@@ -51,13 +57,14 @@ export default function MyLogins() {
 
     const handleHeaderCheckboxChange = (e) => {
         if (e.target.checked) {
-            setSelectedActivities(activities.map((a, i) => a.id || i));
+            setSelectedActivities(activities.filter(a => !a.isCurrent).map((a, i) => a.id || i));
         } else {
             setSelectedActivities([]);
         }
     };
 
-    const handleRowCheckboxChange = (id) => {
+    const handleRowCheckboxChange = (id, isCurrent) => {
+        if (isCurrent) return;
         setSelectedActivities(prev =>
             prev.includes(id)
                 ? prev.filter(item => item !== id)
@@ -65,7 +72,8 @@ export default function MyLogins() {
         );
     };
 
-    const isAllSelected = activities.length > 0 && selectedActivities.length === activities.length;
+    const nonCurrentActivities = activities.filter(a => !a.isCurrent);
+    const isAllSelected = nonCurrentActivities.length > 0 && selectedActivities.length === nonCurrentActivities.length;
 
     const openConfirmModal = (type, data = null) => {
         setModalConfig({
@@ -158,9 +166,9 @@ export default function MyLogins() {
                         <p>Monitor and manage all your active devices.</p>
                     </div>
                     <button
-                        className={`${styles.primaryBtn} ${activities.length === 0 ? styles.primaryBtnDisabled : ''}`}
+                        className={`${styles.primaryBtn} ${nonCurrentActivities.length === 0 ? styles.primaryBtnDisabled : ''}`}
                         onClick={() => openConfirmModal('multi', selectedActivities.length > 0 ? [...selectedActivities] : null)}
-                        disabled={activities.length === 0}
+                        disabled={nonCurrentActivities.length === 0}
                     >
                         {selectedActivities.length > 0
                             ? `Log Out ${selectedActivities.length} Session${selectedActivities.length > 1 ? 's' : ''}`
@@ -197,33 +205,38 @@ export default function MyLogins() {
                                 </tr>
                             ) : (
                                 activities.map((activity, index) => (
-                                    <tr key={activity.id || index}>
+                                    <tr key={activity.id || index} className={activity.isCurrent ? styles.currentSession : ''}>
                                         <td className={styles.checkboxColumn}>
-                                            <input
-                                                type="checkbox"
-                                                className={styles.customCheckbox}
-                                                checked={selectedActivities.includes(activity.id || index)}
-                                                onChange={() => handleRowCheckboxChange(activity.id || index)}
-                                            />
+                                            {!activity.isCurrent && (
+                                                <input
+                                                    type="checkbox"
+                                                    className={styles.customCheckbox}
+                                                    checked={selectedActivities.includes(activity.id || index)}
+                                                    onChange={() => handleRowCheckboxChange(activity.id || index, activity.isCurrent)}
+                                                />
+                                            )}
                                         </td>
                                         <td className={styles.browserCell}>
                                             <div className={styles.iconWrapper}>
                                                 <ChromeIcon />
                                             </div>
                                             {activity.browser || activity.device || '-'}
+                                            {activity.isCurrent && <span className={styles.currentBadge}>Current</span>}
                                         </td>
                                         <td>{activity.location || activity.city || '-'}</td>
                                         <td>{activity.ip_address || activity.ip || '-'}</td>
                                         <td>
-                                            <button
-                                                className={styles.actionBtn}
-                                                onClick={() => {
-                                                    const token = activity.access_token || activity.token;
-                                                    openConfirmModal('single', token);
-                                                }}
-                                            >
-                                                <LogoutIcon />
-                                            </button>
+                                            {!activity.isCurrent && (
+                                                <button
+                                                    className={styles.actionBtn}
+                                                    onClick={() => {
+                                                        const token = activity.access_token || activity.token;
+                                                        openConfirmModal('single', token);
+                                                    }}
+                                                >
+                                                    <LogoutIcon />
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))

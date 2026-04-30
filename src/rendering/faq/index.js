@@ -13,8 +13,8 @@ export default function Faq() {
         getFaqs()
             .then((res) => {
                 if (res.success) {
-                    setFaqData(res.data);
-                    const categories = ['All', ...new Set(res.data.map((item) => item.category))];
+                    setFaqData(res?.data?.items);
+                    const categories = ['All', ...new Set(res?.data?.items.map((item) => item.category))];
                     setTabs(categories);
                 }
             })

@@ -9,25 +9,44 @@ import PerformIcon from '@/icons/performIcon';
 import ProIcon from '@/icons/proIcon';
 import TaskStatusModal from '@/components/modal/taskStatusModal';
 import InfoIcon from '@/icons/infoIcon';
+import { submitTask } from '@/services/task';
+import toast from 'react-hot-toast';
 
-export default function TaskDrawer({ isOpen, onClose, task }) {
+export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const [view, setView] = useState('details'); // 'details' or 'perform'
     const [agreed, setAgreed] = useState(false);
     const [proofImage, setProofImage] = useState(null);
+    const [proofFile, setProofFile] = useState(null);
+    const [performanceUrl, setPerformanceUrl] = useState('');
+    const [submissionLink, setSubmissionLink] = useState('');
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [proofSubmitted, setProofSubmitted] = useState(false);
     const isUserPro = false;
     const isPrimeTask = task?.isPrime;
     const [copied, setCopied] = useState(false);
     const fileInputRef = useRef(null);
+    
+    const isSubmission = task?.isSubmission || false;
+    const submissionStatus = task?.status; // pending, approved, rejected
 
     React.useEffect(() => {
         if (isOpen) {
-            setView('details');
-            setAgreed(false);
-            setProofImage(null);
-            setIsStatusModalOpen(false);
+            if (isSubmission) {
+                setIsStatusModalOpen(true);
+            } else {
+                setView('details');
+                setAgreed(false);
+                setProofImage(null);
+                setProofFile(null);
+                setPerformanceUrl('');
+                setSubmissionLink('');
+                setIsStatusModalOpen(false);
+                setIsSubmitting(false);
+                setProofSubmitted(false);
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, isSubmission]);
 
     if (!isOpen || !task) return null;
 
@@ -37,8 +56,55 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
         }
     }
 
-    const handleCompleteTask = () => {
-        setIsStatusModalOpen(true);
+    const handleCompleteTask = async () => {
+        if (!task?.rawData?.id) {
+            toast.error('Invalid task data');
+            return;
+        }
+
+        // Validate required fields
+        if (task.screenshotRequired && !proofFile) {
+            toast.error('Please upload a screenshot');
+            return;
+        }
+
+        if (task.performanceLinkRequired && !submissionLink.trim()) {
+            toast.error('Please enter the submission link');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('task_campaign_id', task.rawData.id);
+            
+            if (proofFile) {
+                formData.append('media_files', proofFile);
+            }
+
+            if (submissionLink.trim()) {
+                formData.append('task_performance_url', submissionLink.trim());
+            }
+
+            const response = await submitTask(formData);
+            
+            if (response.success) {
+                toast.success('Task submitted successfully!');
+                setProofSubmitted(true);
+                setIsStatusModalOpen(true);
+                // Call the callback to refresh tasks
+                if (onTaskSubmitted) {
+                    onTaskSubmitted();
+                }
+            }
+        } catch (error) {
+            console.error('Error submitting proof:', error);
+            toast.error(error?.message || 'Failed to submit task');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleFile = (file) => {
@@ -47,6 +113,7 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
             const reader = new FileReader();
             reader.onload = (e) => setProofImage(e.target.result);
             reader.readAsDataURL(file);
+            setProofFile(file);
         }
     }
 
@@ -64,24 +131,23 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
     const handleClearImage = (e) => {
         e.stopPropagation();
         setProofImage(null);
+        setProofFile(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const isPerformView = view === 'perform';
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText('https://www.tasklink.com/Credblaze');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (task?.taskUrl) {
+            navigator.clipboard.writeText(task.taskUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
     };
 
-    const standardConditions = [
-        "Must follow official page only",
-        "Do not unfollow within 24 hours",
-        "Screenshot must be clear",
-        "Fake submissions will be rejected",
-        "Make it Fake submissions will be rejected"
-    ];
+    const standardConditions = task?.termsAndConditions 
+        ? task.termsAndConditions.split('\n').filter(c => c.trim()).map(c => c.trim())
+        : [];
 
     return (
         <>
@@ -110,8 +176,8 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                                 {/* Task Info */}
                                 <div className={styles.taskInfo}>
                                     <div className={styles.textInfo}>
-                                        <h3>Follow our official Facebook page to earn rewards.</h3>
-                                        <p>Visit our Facebook page and give us a like to support our community</p>
+                                        <h3>{task?.title}</h3>
+                                        <p>{task?.description}</p>
                                     </div>
                                     <div className={`${styles.priceTag} ${task?.rewardType === 'coin' ? styles.coin : ''}`}>
                                         {task?.rewardType === 'coin' ? (
@@ -119,17 +185,17 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                                                 <div className={styles.rewardIcon}>
                                                     <img src="/assets/icons/star.svg" alt="reward" />
                                                 </div>
-                                                <span>{task?.reward || 35} CB</span>
+                                                <span>{task?.reward} CB</span>
                                             </div>
                                         ) : (
-                                            <span>₹ {task?.reward || 800}</span>
+                                            <span>₹ {task?.reward}</span>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Media */}
                                 <div className={styles.mediaSection}>
-                                    <img src="/assets/images/task.png" alt="task" />
+                                    <img src={task?.taskBanner} alt="task" />
                                     {isPrimeTask && (
                                         <div className={styles.proBadge}>
                                             <ProIcon />
@@ -196,8 +262,8 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                                 {/* Perform View Content */}
                                 <div className={styles.taskInfo}>
                                     <div className={styles.textInfo}>
-                                        <h3>Subscribe to YouTube Channel</h3>
-                                        <p>Visit our Facebook page and give us a like to support our community</p>
+                                        <h3>{task?.title}</h3>
+                                        <p>{task?.description}</p>
                                     </div>
                                     <div className={`${styles.priceTag} ${task?.rewardType === 'coin' ? styles.coin : styles.rupee}`}>
                                         {task?.rewardType === 'coin' ? (
@@ -205,35 +271,37 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                                                 <div className={styles.rewardIcon}>
                                                     <img src="/assets/icons/star.svg" alt="reward" />
                                                 </div>
-                                                {task?.reward || 35} CB
+                                                {task?.reward} CB
                                             </div>
-                                        ) : `₹ ${task?.reward || 800}`}
+                                        ) : `₹ ${task?.reward}`}
                                     </div>
                                 </div>
 
                                 <div className={styles.performMediaWrapper}>
                                     <div className={styles.mediaSectionPerform}>
-                                        <img src="/assets/images/task.png" alt="task" />
+                                        <img src={task?.taskBanner} alt="task" />
                                     </div>
-                                    <div className={styles.readOnlyInput}>
-                                        <div className={styles.label}>https://www.tasklink.com/Credblaze</div>
-                                        <div className={styles.copyWrapper}>
-                                            {copied && <span className={styles.copiedMsg}>Copied!</span>}
-                                            <div className={styles.icon} onClick={handleCopyLink} style={{ cursor: 'pointer' }}>
-                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <g clipPath="url(#clip0_486_10212)">
-                                                        <path d="M5.83594 8.056C5.83594 7.46655 6.07009 6.90125 6.48689 6.48445C6.90369 6.06765 7.46899 5.8335 8.05844 5.8335H15.2801C15.572 5.8335 15.861 5.89098 16.1306 6.00267C16.4003 6.11437 16.6453 6.27807 16.8516 6.48445C17.058 6.69083 17.2217 6.93584 17.3334 7.20548C17.4451 7.47513 17.5026 7.76413 17.5026 8.056V15.2777C17.5026 15.5695 17.4451 15.8585 17.3334 16.1282C17.2217 16.3978 17.058 16.6428 16.8516 16.8492C16.6453 17.0556 16.4003 17.2193 16.1306 17.331C15.861 17.4427 15.572 17.5002 15.2801 17.5002H8.05844C7.76657 17.5002 7.47757 17.4427 7.20792 17.331C6.93828 17.2193 6.69327 17.0556 6.48689 16.8492C6.28051 16.6428 6.11681 16.3978 6.00512 16.1282C5.89342 15.8585 5.83594 15.5695 5.83594 15.2777V8.056Z" stroke="#3D3D3D" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-                                                        <path d="M3.34333 13.9475C3.08779 13.8018 2.87523 13.5912 2.72715 13.3371C2.57906 13.0829 2.50071 12.7942 2.5 12.5V4.16667C2.5 3.25 3.25 2.5 4.16667 2.5H12.5C13.125 2.5 13.465 2.82083 13.75 3.33333" stroke="#3D3D3D" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </g>
-                                                    <defs>
-                                                        <clipPath id="clip0_486_10212">
-                                                            <rect width="20" height="20" fill="white" />
-                                                        </clipPath>
-                                                    </defs>
-                                                </svg>
+                                    {task?.taskUrl && (
+                                        <div className={styles.readOnlyInput}>
+                                            <div className={styles.label}>{task.taskUrl}</div>
+                                            <div className={styles.copyWrapper}>
+                                                {copied && <span className={styles.copiedMsg}>Copied!</span>}
+                                                <div className={styles.icon} onClick={handleCopyLink} style={{ cursor: 'pointer' }}>
+                                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <g clipPath="url(#clip0_486_10212)">
+                                                            <path d="M5.83594 8.056C5.83594 7.46655 6.07009 6.90125 6.48689 6.48445C6.90369 6.06765 7.46899 5.8335 8.05844 5.8335H15.2801C15.572 5.8335 15.861 5.89098 16.1306 6.00267C16.4003 6.11437 16.6453 6.27807 16.8516 6.48445C17.058 6.69083 17.2217 6.93584 17.3334 7.20548C17.4451 7.47513 17.5026 7.76413 17.5026 8.056V15.2777C17.5026 15.5695 17.4451 15.8585 17.3334 16.1282C17.2217 16.3978 17.058 16.6428 16.8516 16.8492C16.6453 17.0556 16.4003 17.2193 16.1306 17.331C15.861 17.4427 15.572 17.5002 15.2801 17.5002H8.05844C7.76657 17.5002 7.47757 17.4427 7.20792 17.331C6.93828 17.2193 6.69327 17.0556 6.48689 16.8492C6.28051 16.6428 6.11681 16.3978 6.00512 16.1282C5.89342 15.8585 5.83594 15.5695 5.83594 15.2777V8.056Z" stroke="#3D3D3D" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+                                                            <path d="M3.34333 13.9475C3.08779 13.8018 2.87523 13.5912 2.72715 13.3371C2.57906 13.0829 2.50071 12.7942 2.5 12.5V4.16667C2.5 3.25 3.25 2.5 4.16667 2.5H12.5C13.125 2.5 13.465 2.82083 13.75 3.33333" stroke="#3D3D3D" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </g>
+                                                        <defs>
+                                                            <clipPath id="clip0_486_10212">
+                                                                <rect width="20" height="20" fill="white" />
+                                                            </clipPath>
+                                                        </defs>
+                                                    </svg>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
 
                                 <div className={styles.guidelines}>
@@ -312,6 +380,18 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                                         </div>
                                     </div>
                                 </div>
+
+                                {task?.performanceLinkRequired && (
+                                    <div className={styles.submissionLinkInput}>
+                                        <label>Submission link</label>
+                                        <input
+                                            type="url"
+                                            placeholder="Enter your submission link"
+                                            value={submissionLink}
+                                            onChange={(e) => setSubmissionLink(e.target.value)}
+                                        />
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>
@@ -346,9 +426,9 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                             <button
                                 className={`${styles.mainBtn} ${styles.back}`}
                                 onClick={handleCompleteTask}
-                                disabled={!proofImage}
+                                disabled={!proofImage || isSubmitting || (task?.performanceLinkRequired && !submissionLink.trim())}
                             >
-                                Complete Task
+                                {isSubmitting ? 'Submitting...' : 'Complete Task'}
                             </button>
                         </div>
                     )}
@@ -361,7 +441,8 @@ export default function TaskDrawer({ isOpen, onClose, task }) {
                     setIsStatusModalOpen(false);
                     onClose();
                 }}
-                status="review"
+                status={isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : "review"}
+                reward={isSubmission ? (task?.earnedAmount || task?.earnedPoints || '0') : '0'}
             />
         </>
     )

@@ -1,11 +1,12 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './tasks.module.scss'
 import SearchIcon from '@/icons/searchIcon'
 import FilterIcon from '@/icons/filterIcon'
 import TaskDrawer from '@/components/modal/taskDrawer';
 import FilterDrawer from '@/components/modal/filterDrawer';
 import ProIcon from '@/icons/proIcon';
+import { getAvailableTasks, getMySubmissions } from '@/services/task';
 
 export default function TasksPage() {
     const [activeTab, setActiveTab] = useState('available');
@@ -14,24 +15,104 @@ export default function TasksPage() {
     const [selectedTask, setSelectedTask] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [submissions, setSubmissions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [appliedFilters, setAppliedFilters] = useState({});
 
-    const tasks = [
-        { id: 1, title: 'Like Our Facebook Page', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: false, image: '/assets/platforms/facebook.svg', category: 'social' },
-        { id: 2, title: 'Follow Us on Instagram', description: 'Visit our Facebook page and give us a like to suppo...', reward: 800, rewardType: 'rupee', isPrime: false, image: '/assets/platforms/instagram.svg', category: 'social' },
-        { id: 3, title: 'Subscribe to YouTube Channel', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: true, image: '/assets/platforms/utube.svg', category: 'social' },
-        { id: 4, title: 'Like Our Facebook Page', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: true, image: '/assets/platforms/facebook.svg', category: 'social' },
-        { id: 5, title: 'Subscribe to YouTube Channel', description: 'Visit our Facebook page and give us a like to suppo...', reward: 800, rewardType: 'rupee', isPrime: false, image: '/assets/platforms/utube.svg', category: 'social' },
-        { id: 6, title: 'Follow Us on Instagram', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: false, image: '/assets/platforms/instagram.svg', category: 'social' },
-        { id: 7, title: 'Subscribe to YouTube Channel', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: false, image: '/assets/platforms/utube.svg', category: 'social' },
-        { id: 8, title: 'Follow Us on Instagram', description: 'Visit our Facebook page and give us a like to suppo...', reward: 800, rewardType: 'rupee', isPrime: false, image: '/assets/platforms/instagram.svg', category: 'social' },
-        { id: 9, title: 'Like Our Facebook Page', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: true, image: '/assets/platforms/facebook.svg', category: 'social' },
-        { id: 10, title: 'Subscribe to YouTube Channel', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: false, image: '/assets/platforms/utube.svg', category: 'social' },
-        { id: 11, title: 'Follow Us on Instagram', description: 'Visit our Facebook page and give us a like to suppo...', reward: 800, rewardType: 'rupee', isPrime: false, image: '/assets/platforms/instagram.svg', category: 'social' },
-        { id: 12, title: 'Like Our Facebook Page', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: true, image: '/assets/platforms/facebook.svg', category: 'social' },
-        { id: 13, title: 'Subscribe to YouTube Channel', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: false, image: '/assets/platforms/utube.svg', category: 'social' },
-        { id: 14, title: 'Follow Us on Instagram', description: 'Visit our Facebook page and give us a like to suppo...', reward: 800, rewardType: 'rupee', isPrime: false, image: '/assets/platforms/instagram.svg', category: 'social' },
-        { id: 15, title: 'Like Our Facebook Page', description: 'Visit our Facebook page and give us a like to suppo...', reward: 50, rewardType: 'coin', isPrime: true, image: '/assets/platforms/facebook.svg', category: 'social' },
-    ];
+    useEffect(() => {
+        if (activeTab === 'available') {
+            fetchAvailableTasks();
+        } else {
+            fetchMySubmissions();
+        }
+    }, [activeTab, categoryTab, searchQuery, appliedFilters]);
+
+    const fetchAvailableTasks = async () => {
+        try {
+            setLoading(true);
+            
+            const filters = {
+                ...appliedFilters,
+                search: searchQuery,
+                category: categoryTab === 'social' ? 'social' : 
+                         categoryTab === 'surveys' ? 'surveys' : 
+                         categoryTab === 'reviews' ? 'reviews' : undefined
+            };
+            
+            const response = await getAvailableTasks(filters);
+            if (response.success) {
+                setTasks(response.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchMySubmissions = async () => {
+        try {
+            setLoading(true);
+            const response = await getMySubmissions();
+            if (response.success) {
+                setSubmissions(response.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching submissions:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Map API data to component format
+    const mapTaskData = (task) => ({
+        id: task.id,
+        title: task.task_title,
+        description: task.task_description,
+        reward: task.task_cost_per_user,
+        rewardType: task.task_cost_per_user_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
+        isPrime: task.task_for_prime_user,
+        image: task.platform?.platform_logo_url,
+        category: 'social',
+        taskUrl: task.task_url,
+        taskBanner: task.task_banner,
+        termsAndConditions: task.task_term_and_condition,
+        screenshotRequired: task.task_screenshot_required,
+        performanceLinkRequired: task.task_performance_link_required,
+        manualApprovalRequired: task.task_manual_apprval_required,
+        platformName: task.platform?.platform_name,
+        categoryName: task.category?.category_name,
+        surveys: task.surveys || [],
+        rawData: task
+    });
+
+    const mapSubmissionData = (submission) => {
+        return {
+            id: submission.id,
+            taskCampaignId: submission.task_campaign_id,
+            title: submission.task_title || 'Task',
+            description: submission.task_description || '',
+            reward: submission.task_performance_real_amount_earned || submission.task_performance_cashpoints_amount_earned || 0,
+            rewardType: submission.task_performance_cashpoints_amount_earned > 0 ? 'coin' : 'rupee',
+            isPrime: false,
+            image: submission.platform?.platform_logo_url,
+            taskBanner: submission.task_banner,
+            taskUrl: submission.task_performance_url,
+            status: submission.task_status, // pending, approved, rejected
+            submittedAt: submission.created_at,
+            media: submission.media || [],
+            earnedAmount: submission.task_performance_real_amount_earned,
+            earnedPoints: submission.task_performance_cashpoints_amount_earned,
+            platformName: submission.platform?.platform_name,
+            isSubmission: true,
+            rawData: submission
+        };
+    };
+
+    const displayTasks = activeTab === 'available' 
+        ? tasks.map(mapTaskData)
+        : submissions.map(mapSubmissionData);
 
     return (
         <div className={styles.container}>
@@ -81,58 +162,77 @@ export default function TasksPage() {
                 </div>
 
                 <div className={styles.taskGrid}>
-                    {tasks.map((task) => (
-                        <div key={task.id} className={styles.taskCard}>
-                            <div className={styles.cardHeader}>
-                                <img src={task.image} alt={task.title} className={styles.taskImage} />
-                                {task.isPrime && (
-                                    <div className={styles.proBadge}>
-                                        <ProIcon />
-                                        <span>Pro Task</span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className={styles.cardBody}>
-                                <h3>{task.title}</h3>
-                                <p>{task.description}</p>
-                            </div>
-                            <div className={styles.divider} />
-                            <div className={styles.cardFooter}>
-                                <div className={styles.reward}>
-                                    {task.rewardType === 'coin' ? (
-                                        <>
-                                            <div className={styles.rewardIcon}>
-                                                <img src="/assets/icons/star.svg" alt="reward" />
-                                            </div>
-                                            <span>{task.reward} CB</span>
-                                        </>
-                                    ) : (
-                                        <span>₹ {task.reward}</span>
+                    {loading ? (
+                        <div className={styles.loadingState}>Loading tasks...</div>
+                    ) : displayTasks.length === 0 ? (
+                        <div className={styles.emptyState}>No tasks available</div>
+                    ) : (
+                        displayTasks.map((task) => (
+                            <div key={task.id} className={styles.taskCard}>
+                                <div className={styles.cardHeader}>
+                                    <img src={task.image} alt={task.title} className={styles.taskImage} />
+                                    {task.isPrime && (
+                                        <div className={styles.proBadge}>
+                                            <ProIcon />
+                                            <span>Pro Task</span>
+                                        </div>
                                     )}
                                 </div>
-                                <button
-                                    className={styles.viewBtn}
-                                    onClick={() => {
-                                        setSelectedTask(task);
-                                        setIsDrawerOpen(true);
-                                    }}
-                                >
-                                    View
-                                </button>
+                                <div className={styles.cardBody}>
+                                    <h3>{task.title}</h3>
+                                    <p>{task.description}</p>
+                                </div>
+                                <div className={styles.divider} />
+                                <div className={styles.cardFooter}>
+                                    <div className={styles.reward}>
+                                        {task.rewardType === 'coin' ? (
+                                            <>
+                                                <div className={styles.rewardIcon}>
+                                                    <img src="/assets/icons/star.svg" alt="reward" />
+                                                </div>
+                                                <span>{task.reward} CB</span>
+                                            </>
+                                        ) : (
+                                            <span>₹ {task.reward}</span>
+                                        )}
+                                    </div>
+                                    <button
+                                        className={styles.viewBtn}
+                                        onClick={() => {
+                                            setSelectedTask(task);
+                                            setIsDrawerOpen(true);
+                                        }}
+                                    >
+                                        View
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
 
             <TaskDrawer
                 isOpen={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
+                onClose={() => {
+                    setIsDrawerOpen(false);
+                }}
                 task={selectedTask}
+                onTaskSubmitted={() => {
+                    if (activeTab === 'available') {
+                        fetchAvailableTasks();
+                    } else {
+                        fetchMySubmissions();
+                    }
+                }}
             />
             <FilterDrawer
                 isOpen={isFilterOpen}
                 onClose={() => setIsFilterOpen(false)}
+                initialFilters={appliedFilters}
+                onApplyFilters={(filters) => {
+                    setAppliedFilters(filters);
+                }}
             />
         </div>
     );
