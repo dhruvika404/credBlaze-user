@@ -12,6 +12,12 @@ export default function TasksPage() {
     const [activeTab, setActiveTab] = useState('available');
     const [categoryTab, setCategoryTab] = useState('social');
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
     const [selectedTask, setSelectedTask] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -26,23 +32,14 @@ export default function TasksPage() {
         } else {
             fetchMySubmissions();
         }
-    }, [activeTab, categoryTab, searchQuery, appliedFilters]);
+    }, [activeTab, categoryTab, appliedFilters]);
 
     const fetchAvailableTasks = async () => {
         try {
             setLoading(true);
-            
-            const filters = {
-                ...appliedFilters,
-                search: searchQuery,
-                category: categoryTab === 'social' ? 'social' : 
-                         categoryTab === 'surveys' ? 'surveys' : 
-                         categoryTab === 'reviews' ? 'reviews' : undefined
-            };
-            
-            const response = await getAvailableTasks(filters);
+            const response = await getAvailableTasks();
             if (response.success) {
-                setTasks(response.data || []);
+                setTasks(response.data?.tasks || []);
             }
         } catch (error) {
             console.error('Error fetching tasks:', error);
@@ -56,7 +53,7 @@ export default function TasksPage() {
             setLoading(true);
             const response = await getMySubmissions();
             if (response.success) {
-                setSubmissions(response.data || []);
+                setSubmissions(response.data?.submissions || []);
             }
         } catch (error) {
             console.error('Error fetching submissions:', error);
@@ -94,12 +91,12 @@ export default function TasksPage() {
             title: submission.task_title || 'Task',
             description: submission.task_description || '',
             reward: submission.task_performance_real_amount_earned || submission.task_performance_cashpoints_amount_earned || 0,
-            rewardType: submission.task_performance_cashpoints_amount_earned > 0 ? 'coin' : 'rupee',
-            isPrime: false,
+            rewardType: submission.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
+            isPrime: submission.task_for_prime_user || false,
             image: submission.platform?.platform_logo_url,
             taskBanner: submission.task_banner,
             taskUrl: submission.task_performance_url,
-            status: submission.task_status, // pending, approved, rejected
+            status: submission.task_status,
             submittedAt: submission.created_at,
             media: submission.media || [],
             earnedAmount: submission.task_performance_real_amount_earned,
@@ -110,9 +107,13 @@ export default function TasksPage() {
         };
     };
 
-    const displayTasks = activeTab === 'available' 
+    const allDisplayTasks = activeTab === 'available' 
         ? tasks.map(mapTaskData)
         : submissions.map(mapSubmissionData);
+
+    const displayTasks = debouncedSearch.trim()
+        ? allDisplayTasks.filter(t => t.title?.toLowerCase().includes(debouncedSearch.toLowerCase()))
+        : allDisplayTasks;
 
     return (
         <div className={styles.container}>

@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import toast from 'react-hot-toast';
 import { getBankList, createBank, updateBank, deleteBank } from '@/services/bank';
 import LogoutModal from '@/components/modal/logoutModal';
+import { sanitizeAlpha, sanitizeDigits, sanitizeIFSC, validateName, validateIFSC, validateAccountNumber, validateLength } from '@/utils/validation';
 
 const HomeImage = '/assets/images/home.svg';
 const AddIcon = '/assets/icons/add.svg';
@@ -31,29 +32,28 @@ const EMPTY_FORM = {
   is_default: false,
 };
 
-const onlyLetters = (v) => v.replace(/[^a-zA-Z\s]/g, '');
-const onlyDigits = (v) => v.replace(/\D/g, '');
-const ifscFormat = (v) => v.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+const onlyLetters = (v) => sanitizeAlpha(v);
+const onlyDigits = (v) => sanitizeDigits(v);
+const ifscFormat = (v) => sanitizeIFSC(v);
 
 function validate(form) {
   const e = {};
-  if (!form.account_holder_name.trim()) e.account_holder_name = 'Account holder name is required';
-  else if (form.account_holder_name.trim().length < 3) e.account_holder_name = 'Minimum 3 characters required';
+  const holderErr = validateName(form.account_holder_name, 'Account holder name', { min: 3, max: 50 });
+  if (holderErr) e.account_holder_name = holderErr;
 
-  if (!form.bank_name.trim()) e.bank_name = 'Bank name is required';
-  else if (form.bank_name.trim().length < 2) e.bank_name = 'Minimum 2 characters required';
+  const bankErr = validateLength(form.bank_name, 'Bank name', { min: 2, max: 50 });
+  if (bankErr) e.bank_name = bankErr;
 
-  if (!form.account_number.trim()) e.account_number = 'Account number is required';
-  else if (form.account_number.length < 9) e.account_number = 'Minimum 9 digits required';
-  else if (form.account_number.length > 18) e.account_number = 'Maximum 18 digits allowed';
+  const accErr = validateAccountNumber(form.account_number);
+  if (accErr) e.account_number = accErr;
 
   if (!form.account_type) e.account_type = 'Account type is required';
 
-  if (!form.IFSC_code.trim()) e.IFSC_code = 'IFSC code is required';
-  else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.IFSC_code)) e.IFSC_code = 'Enter a valid IFSC code (e.g. HDFC0001234)';
+  const ifscErr = validateIFSC(form.IFSC_code);
+  if (ifscErr) e.IFSC_code = ifscErr;
 
-  if (!form.branch_name.trim()) e.branch_name = 'Branch name is required';
-  else if (form.branch_name.trim().length < 2) e.branch_name = 'Minimum 2 characters required';
+  const branchErr = validateLength(form.branch_name, 'Branch name', { min: 2, max: 60 });
+  if (branchErr) e.branch_name = branchErr;
 
   return e;
 }
@@ -292,23 +292,23 @@ export default function PayoutAccounts() {
           <div className={styles.formGrid}>
             <Input labelChange required label="Account Holder Name" placeholder="e.g. Naitik Kumar"
               value={form.account_holder_name} onChange={set('account_holder_name', onlyLetters)}
-              error={errors.account_holder_name} maxLength={50} />
+              error={errors.account_holder_name} maxLength={50} sanitize={onlyLetters} />
             <Input labelChange required label="Bank Name" placeholder="e.g. HDFC Bank"
               value={form.bank_name} onChange={set('bank_name', onlyLetters)}
-              error={errors.bank_name} maxLength={50} />
+              error={errors.bank_name} maxLength={50} sanitize={onlyLetters} />
             <Input labelChange required label="Account Number" placeholder="e.g. 245445555"
               value={form.account_number} onChange={set('account_number', onlyDigits)}
-              error={errors.account_number} maxLength={18} inputMode="numeric" />
+              error={errors.account_number} maxLength={18} inputMode="numeric" sanitize={onlyDigits} />
             <Dropdown labelChange required label="Account Type" options={ACCOUNT_TYPE_OPTIONS}
               placeholder="Select account type" value={selectedAccountType}
               onChange={(opt) => { setForm((f) => ({ ...f, account_type: opt?.value || '' })); setErrors((e) => { const n = { ...e }; delete n.account_type; return n; }); }}
               error={errors.account_type} />
             <Input labelChange required label="IFSC Code" placeholder="e.g. HDFC0001234"
               value={form.IFSC_code} onChange={set('IFSC_code', ifscFormat)}
-              error={errors.IFSC_code} maxLength={11} />
+              error={errors.IFSC_code} maxLength={11} sanitize={ifscFormat} />
             <Input labelChange required label="Branch Name" placeholder="e.g. Connaught Place"
               value={form.branch_name} onChange={set('branch_name', onlyLetters)}
-              error={errors.branch_name} maxLength={60} />
+              error={errors.branch_name} maxLength={60} sanitize={onlyLetters} />
           </div>
         )}
       </div>

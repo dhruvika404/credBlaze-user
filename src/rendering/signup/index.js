@@ -11,6 +11,7 @@ import Input from '@/components/input';
 import Button from '@/components/button';
 import { getRoles } from '@/services/auth';
 import { signupAction } from '@/app/actions/auth/auth';
+import { sanitizeName, sanitizeCode, validateEmail, validatePassword, validateConfirmPassword, validateName } from '@/utils/validation';
 
 const EyeIcon = '/assets/icons/eye.svg';
 const EyeFillIcon = '/assets/icons/eye-fill.svg';
@@ -49,17 +50,17 @@ export default function Signup() {
 
   const validate = () => {
     const e = {};
-    if (!form.first_name.trim()) e.first_name = 'First name is required';
-    if (!form.last_name.trim()) e.last_name = 'Last name is required';
-    if (!form.email) e.email = 'Email is required';
-    else if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(form.email) || /\.@/.test(form.email) || /^\./.test(form.email)) e.email = 'Enter a valid email';
+    const fnErr = validateName(form.first_name, 'First name');
+    if (fnErr) e.first_name = fnErr;
+    const lnErr = validateName(form.last_name, 'Last name');
+    if (lnErr) e.last_name = lnErr;
+    const emailErr = validateEmail(form.email);
+    if (emailErr) e.email = emailErr;
     if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
-    if (!form.password) e.password = 'Password is required';
-    else if (form.password.length < 8) e.password = 'At least 8 characters';
-    else if (!/[A-Z]/.test(form.password)) e.password = 'Must include an uppercase letter';
-    else if (!/[0-9]/.test(form.password)) e.password = 'Must include a number';
-    if (!form.confirm_password) e.confirm_password = 'Please confirm your password';
-    else if (form.password !== form.confirm_password) e.confirm_password = 'Passwords do not match';
+    const pwErr = validatePassword(form.password);
+    if (pwErr) e.password = pwErr;
+    const cpErr = validateConfirmPassword(form.password, form.confirm_password);
+    if (cpErr) e.confirm_password = cpErr;
     if (!form.agreed) e.agreed = 'You must accept the terms';
     return e;
   };
@@ -121,9 +122,11 @@ export default function Signup() {
           <form onSubmit={handleSubmit} noValidate>
             <div className={styles.twocol}>
               <Input label="First Name" placeholder="John" name="first_name" heightChange
-                value={form.first_name} onChange={set('first_name')} error={errors.first_name} required />
+                value={form.first_name} onChange={set('first_name')} error={errors.first_name} required
+                sanitize={sanitizeName} maxLength={50} />
               <Input label="Last Name" placeholder="Doe" name="last_name" heightChange
-                value={form.last_name} onChange={set('last_name')} error={errors.last_name} required />
+                value={form.last_name} onChange={set('last_name')} error={errors.last_name} required
+                sanitize={sanitizeName} maxLength={50} />
             </div>
             <div className={styles.spacing}>
               <Input label="Email Address" placeholder="you@example.com" type="email" name="email" heightChange
@@ -155,7 +158,7 @@ export default function Signup() {
                 value={form.confirm_password} onChange={set('confirm_password')} error={errors.confirm_password} required maxLength={12} />
 
               <Input label="Referral Code (optional)" placeholder="Enter referral code" name="referralCode" heightChange
-                value={form.referralCode} onChange={set('referralCode')} />
+                value={form.referralCode} onChange={set('referralCode')} sanitize={sanitizeCode} maxLength={20} />
             </div>
 
             <div className={styles.checkboxText}>

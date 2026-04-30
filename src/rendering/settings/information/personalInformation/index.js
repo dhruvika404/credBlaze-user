@@ -9,6 +9,7 @@ import 'react-phone-number-input/style.css';
 import { Country } from 'country-state-city'; import toast from 'react-hot-toast';
 import { updateProfileDetails } from '@/services/profile';
 import { toFormData } from '@/utils/formData';
+import { sanitizeName, validateName } from '@/utils/validation';
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
@@ -36,8 +37,8 @@ function toDateInput(val) {
   return '';
 }
 
-function sanitizeName(val) {
-  return val.replace(/[^a-zA-Z\s'\-]/g, '');
+function sanitizeNameLocal(val) {
+  return sanitizeName(val);
 }
 
 function capitaliseName(val) {
@@ -47,14 +48,11 @@ function capitaliseName(val) {
 
 function validate(form) {
   const e = {};
-  if (!form.first_name.trim()) e.first_name = 'First name is required';
-  else if (form.first_name.trim().length < 2) e.first_name = 'At least 2 characters';
-
-  if (!form.last_name.trim()) e.last_name = 'Last name is required';
-  else if (form.last_name.trim().length < 2) e.last_name = 'At least 2 characters';
-
+  const fnErr = validateName(form.first_name, 'First name');
+  if (fnErr) e.first_name = fnErr;
+  const lnErr = validateName(form.last_name, 'Last name');
+  if (lnErr) e.last_name = lnErr;
   if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
-
   return e;
 }
 
@@ -93,7 +91,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
   };
 
   const setName = (field) => (v) => {
-    set(field)(capitaliseName(sanitizeName(v)));
+    set(field)(capitaliseName(sanitizeNameLocal(v)));
   };
 
   const handleSave = async () => {
@@ -177,11 +175,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
       <div className={styles.twocol}>
         <Input label="First Name" labelChange placeholder="Naitik" name="first_name"
           value={form.first_name} onChange={setName('first_name')}
-          error={errors.first_name} maxLength={50} required />
+          error={errors.first_name} maxLength={50} required sanitize={sanitizeName} />
 
         <Input label="Last Name" labelChange placeholder="Kumar" name="last_name"
           value={form.last_name} onChange={setName('last_name')}
-          error={errors.last_name} maxLength={50} required />
+          error={errors.last_name} maxLength={50} required sanitize={sanitizeName} />
 
         <div className={styles.phoneField}>
           <label className={styles.phoneLabel}>Phone Number</label>

@@ -27,8 +27,6 @@ export default function CreatePassword() {
     const e = {};
     if (!form.new_password) e.new_password = 'Password is required';
     else if (form.new_password.length < 8) e.new_password = 'At least 8 characters';
-    else if (!/[A-Z]/.test(form.new_password)) e.new_password = 'Must include an uppercase letter';
-    else if (!/[0-9]/.test(form.new_password)) e.new_password = 'Must include a number';
     if (!form.confirm_password) e.confirm_password = 'Please confirm your password';
     else if (form.new_password !== form.confirm_password) e.confirm_password = 'Passwords do not match';
     return e;
@@ -60,7 +58,7 @@ export default function CreatePassword() {
         <div className={styles.box}>
           <div className={styles.text}>
             <h1>Create a new password</h1>
-            <p>Must be at least 8 characters with a number and uppercase letter.</p>
+            <p>Must be at least 8 characters.</p>
           </div>
           <form onSubmit={handleSubmit} noValidate>
             <div className={styles.inputAlignment}>

@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import { getAddressList, createAddress, updateAddress, deleteAddress } from '@/services/address';
 import { Country, State, City } from 'country-state-city';
 import LogoutModal from '@/components/modal/logoutModal';
+import { sanitizeName, sanitizeAddress, sanitizeZipCode, validateName, validateZipCode } from '@/utils/validation';
 
 const AddIcon = '/assets/icons/add.svg';
 
@@ -23,8 +24,10 @@ const EMPTY_FORM = {
 
 function validate(form) {
   const e = {};
-  if (!form.first_name.trim()) e.first_name = 'First name is required';
-  if (!form.last_name.trim()) e.last_name = 'Last name is required';
+  const fnErr = validateName(form.first_name, 'First name');
+  if (fnErr) e.first_name = fnErr;
+  const lnErr = validateName(form.last_name, 'Last name');
+  if (lnErr) e.last_name = lnErr;
   if (!form.phone) e.phone = 'Phone number is required';
   else if (!isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
   if (!form.address.trim()) e.address = 'Address is required';
@@ -246,9 +249,11 @@ export default function DeliveryAddresses() {
             <div className={styles.formGrid}>
               {/* Row 1: First Name + Last Name */}
               <Input labelChange required label="First Name" placeholder="Enter first name"
-                value={form.first_name} onChange={set('first_name')} error={errors.first_name} maxLength={50} />
+                value={form.first_name} onChange={set('first_name')} error={errors.first_name} maxLength={50}
+                sanitize={sanitizeName} />
               <Input labelChange required label="Last Name" placeholder="Enter last name"
-                value={form.last_name} onChange={set('last_name')} error={errors.last_name} maxLength={50} />
+                value={form.last_name} onChange={set('last_name')} error={errors.last_name} maxLength={50}
+                sanitize={sanitizeName} />
 
               {/* Row 2: Phone number */}
               <div>
@@ -272,7 +277,8 @@ export default function DeliveryAddresses() {
               {/* Row 3: Address (full width) */}
               <div className={styles.fullWidth}>
                 <Input labelChange required label="Address" placeholder="Enter address"
-                  value={form.address} onChange={set('address')} error={errors.address} maxLength={100} />
+                  value={form.address} onChange={set('address')} error={errors.address} maxLength={100}
+                  sanitize={sanitizeAddress} />
               </div>
 
               {/* Row 4: Country + State */}

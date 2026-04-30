@@ -1,5 +1,11 @@
 import api, { request } from './api';
 
+export const getPlatforms = () =>
+  request(() => api.get('/campaign/platform'));
+
+export const getCategories = () =>
+  request(() => api.get('/campaign/category'));
+
 export const getAvailableTasks = () =>
   request(() => api.get('/task-submission/available-tasks'));
 
