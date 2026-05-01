@@ -248,6 +248,7 @@
 .taskGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-content: start;
     gap: 20px;
     padding: 16px;
     overflow-y: auto;
