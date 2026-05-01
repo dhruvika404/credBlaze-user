@@ -34,6 +34,11 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
 
     useEffect(() => {
         if (!isOpen) return;
+        setSelectedTaskTypes(initialFilters?.taskTypes || []);
+        setSelectedPlatforms(initialFilters?.platforms || []);
+        setMinPrice(initialFilters?.minPrice || '');
+        setMaxPrice(initialFilters?.maxPrice || '');
+        setTaskTypesState({ pro: initialFilters?.pro || false, nonPro: initialFilters?.nonPro || false });
         getCategories().then(res => {
             if (res.success) setCategories(res.data?.categories || []);
         });

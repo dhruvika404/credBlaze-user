@@ -37,7 +37,14 @@ export default function TasksPage() {
     const fetchAvailableTasks = async () => {
         try {
             setLoading(true);
-            const response = await getAvailableTasks();
+            const params = {};
+            if (appliedFilters.platforms?.length) params.platform_ids = appliedFilters.platforms;
+            if (appliedFilters.taskTypes?.length) params.category_ids = appliedFilters.taskTypes;
+            if (appliedFilters.minPrice) params.min_task_cost = Number(appliedFilters.minPrice);
+            if (appliedFilters.maxPrice) params.max_task_cost = Number(appliedFilters.maxPrice);
+            if (appliedFilters.pro && !appliedFilters.nonPro) params.is_prime = true;
+            if (appliedFilters.nonPro && !appliedFilters.pro) params.is_prime = false;
+            const response = await getAvailableTasks(params);
             if (response.success) {
                 setTasks(response.data?.tasks || []);
             }
@@ -51,7 +58,14 @@ export default function TasksPage() {
     const fetchMySubmissions = async () => {
         try {
             setLoading(true);
-            const response = await getMySubmissions();
+            const params = {};
+            if (appliedFilters.platforms?.length) params.platform_ids = appliedFilters.platforms;
+            if (appliedFilters.taskTypes?.length) params.category_ids = appliedFilters.taskTypes;
+            if (appliedFilters.minPrice) params.min_task_cost = Number(appliedFilters.minPrice);
+            if (appliedFilters.maxPrice) params.max_task_cost = Number(appliedFilters.maxPrice);
+            if (appliedFilters.pro && !appliedFilters.nonPro) params.is_prime = true;
+            if (appliedFilters.nonPro && !appliedFilters.pro) params.is_prime = false;
+            const response = await getMySubmissions(params);
             if (response.success) {
                 setSubmissions(response.data?.submissions || []);
             }
@@ -106,6 +120,21 @@ export default function TasksPage() {
             rawData: submission
         };
     };
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && tasks.length > 0) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const taskId = urlParams.get('taskId');
+            if (taskId) {
+                const foundTaskRaw = tasks.find(t => t.id === taskId);
+                if (foundTaskRaw) {
+                    setSelectedTask(mapTaskData(foundTaskRaw));
+                    setIsDrawerOpen(true);
+                    window.history.replaceState({}, '', window.location.pathname);
+                }
+            }
+        }
+    }, [tasks]);
 
     const allDisplayTasks = activeTab === 'available' 
         ? tasks.map(mapTaskData)

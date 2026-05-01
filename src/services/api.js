@@ -9,6 +9,17 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true',
   },
+  paramsSerializer: (params) => {
+    const parts = [];
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => parts.push(`${key}=${encodeURIComponent(v)}`));
+      } else if (value !== undefined && value !== null) {
+        parts.push(`${key}=${encodeURIComponent(value)}`);
+      }
+    });
+    return parts.join('&');
+  },
 });
 
 // Request Interceptor: Automatically add Token

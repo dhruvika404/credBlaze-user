@@ -11,7 +11,7 @@ import TaskStatusModal from '@/components/modal/taskStatusModal';
 import InfoIcon from '@/icons/infoIcon';
 import { submitTask } from '@/services/task';
 import toast from 'react-hot-toast';
-
+import { useAuth } from '@/context/AuthContext';
 export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const [view, setView] = useState('details'); // 'details' or 'perform'
     const [agreed, setAgreed] = useState(false);
@@ -22,9 +22,11 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [proofSubmitted, setProofSubmitted] = useState(false);
-    const isUserPro = false;
+    const { user } = useAuth();
+    const isUserPro = user?.is_prime;
     const isPrimeTask = task?.isPrime;
     const [copied, setCopied] = useState(false);
+    const [shareCopied, setShareCopied] = useState(false);
     const fileInputRef = useRef(null);
     
     const isSubmission = task?.isSubmission || false;
@@ -75,11 +77,11 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
 
         try {
             setIsSubmitting(true);
-            
+
             // Create FormData
             const formData = new FormData();
             formData.append('task_campaign_id', task.rawData.id);
-            
+
             if (proofFile) {
                 formData.append('media_files', proofFile);
             }
@@ -89,7 +91,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
             }
 
             const response = await submitTask(formData);
-            
+
             if (response.success) {
                 toast.success('Task submitted successfully!');
                 setProofSubmitted(true);
@@ -145,7 +147,22 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
         }
     };
 
-    const standardConditions = task?.termsAndConditions 
+    const handleShareTask = async () => {
+        if (!task) return;
+
+        const shareUrl = `${window.location.origin}/tasks?taskId=${task.id}`;
+
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            setShareCopied(true);
+            setTimeout(() => setShareCopied(false), 2000);
+        } catch (err) {
+            console.error('Error copying task link:', err);
+            toast.error('Failed to copy link');
+        }
+    };
+
+    const standardConditions = task?.termsAndConditions
         ? task.termsAndConditions.split('\n').filter(c => c.trim()).map(c => c.trim())
         : [];
 
@@ -416,8 +433,8 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                     <PerformIcon />
                                 </button>
                             )}
-                            <button className={styles.shareBtn}>
-                                Share Tasks
+                            <button className={styles.shareBtn} onClick={handleShareTask}>
+                                {shareCopied ? 'Link Copied!' : 'Share Tasks'}
                                 <ShareIcon />
                             </button>
                         </div>
