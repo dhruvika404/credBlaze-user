@@ -6,11 +6,11 @@ export const getPlatforms = (params = {}) =>
 export const getCategories = (params = {}) =>
   request(() => api.get('/campaign/category', { params }));
 
-export const getAvailableTasks = (params = {}) =>
-  request(() => api.get('/task-submission/available-tasks', { params }));
+export const getAvailableTasks = (payload = {}) =>
+  request(() => api.post('/task-submission/available-tasks', payload));
 
-export const getMySubmissions = (params = {}) =>
-  request(() => api.get('/task-submission/my-submissions', { params }));
+export const getMySubmissions = (payload = {}) =>
+  request(() => api.post('/task-submission/my-submissions', payload));
 
 export const getSubmissionDetails = (submissionId) =>
   request(() => api.get(`/task-submission/${submissionId}`));
