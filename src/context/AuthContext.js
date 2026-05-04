@@ -36,16 +36,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token') || Cookies.get('token');
+      const storedToken = localStorage.getItem('token');
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (storedToken) {
-      setToken(storedToken);
-      if (!localStorage.getItem('token')) localStorage.setItem('token', storedToken);
-      if (!Cookies.get('token')) Cookies.set('token', storedToken, { expires: 7 });
-    }
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      if (storedToken) {
+        setToken(storedToken);
+      }
 
       const id = getDeviceId();
       setDeviceId(id);
@@ -66,9 +64,6 @@ export const AuthProvider = ({ children }) => {
     if (userData) {
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-          Cookies.set('token', token, { expires: 7 });
-    setUser(userData);
-    setToken(token);
     }
     await fetchAndSetProfile();
   };
@@ -76,7 +71,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    Cookies.remove('token');
+
     document.cookie.split(";").forEach((c) => {
       document.cookie = c
         .replace(/^ +/, "")

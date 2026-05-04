@@ -1,10 +1,10 @@
 import api, { request } from './api';
 
-export const getPlatforms = () =>
-  request(() => api.get('/campaign/platform'));
+export const getPlatforms = (params = {}) =>
+  request(() => api.get('/campaign/platform', { params }));
 
-export const getCategories = () =>
-  request(() => api.get('/campaign/category'));
+export const getCategories = (params = {}) =>
+  request(() => api.get('/campaign/category', { params }));
 
 export const getAvailableTasks = (params = {}) =>
   request(() => api.get('/task-submission/available-tasks', { params }));

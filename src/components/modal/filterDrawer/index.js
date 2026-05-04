@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './filterDrawer.module.scss';
 import CloseIcon from '@/icons/closeIcon';
-import SearchIcon from '@/icons/searchIcon';
 import { getCategories, getPlatforms } from '@/services/task';
 
 const FilterCheckbox = ({ label, checked, onChange, icon }) => (
@@ -39,10 +38,10 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
         setMinPrice(initialFilters?.minPrice || '');
         setMaxPrice(initialFilters?.maxPrice || '');
         setTaskTypesState({ pro: initialFilters?.pro || false, nonPro: initialFilters?.nonPro || false });
-        getCategories().then(res => {
+        getCategories({ limit: 500 }).then(res => {
             if (res.success) setCategories(res.data?.categories || []);
         });
-        getPlatforms().then(res => {
+        getPlatforms({ limit: 500 }).then(res => {
             if (res.success) setPlatforms(res.data?.platforms || []);
         });
     }, [isOpen]);
@@ -90,8 +89,13 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
                     <div className={styles.filterGroups}>
                         {/* Membership Filters */}
                         <div className={styles.topFilters}>
-                            <label className={styles.checkboxLabel}>
-                                <input type="checkbox" checked={taskTypesState.pro} onChange={() => setTaskTypesState(prev => ({ ...prev, pro: !prev.pro }))} />
+                            <label className={`${styles.checkboxLabel} ${taskTypesState.nonPro ? styles.disabled : ''}`}>
+                                <input
+                                    type="checkbox"
+                                    checked={taskTypesState.pro}
+                                    disabled={taskTypesState.nonPro}
+                                    onChange={() => setTaskTypesState(prev => ({ ...prev, pro: !prev.pro }))}
+                                />
                                 <div className={styles.customCheckbox}>
                                     <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1 5L4.5 8.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -99,8 +103,13 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
                                 </div>
                                 <span>Pro Tasks</span>
                             </label>
-                            <label className={styles.checkboxLabel}>
-                                <input type="checkbox" checked={taskTypesState.nonPro} onChange={() => setTaskTypesState(prev => ({ ...prev, nonPro: !prev.nonPro }))} />
+                            <label className={`${styles.checkboxLabel} ${taskTypesState.pro ? styles.disabled : ''}`}>
+                                <input
+                                    type="checkbox"
+                                    checked={taskTypesState.nonPro}
+                                    disabled={taskTypesState.pro}
+                                    onChange={() => setTaskTypesState(prev => ({ ...prev, nonPro: !prev.nonPro }))}
+                                />
                                 <div className={styles.customCheckbox}>
                                     <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1 5L4.5 8.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -148,7 +157,6 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
                         <div className={styles.section}>
                             <div className={styles.sectionHeader}>
                                 <h3>Filter By Platform</h3>
-                                <SearchIcon />
                             </div>
                             <div className={styles.platformGrid}>
                                 {platforms.map((platform) => (

@@ -193,8 +193,8 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                 {/* Task Info */}
                                 <div className={styles.taskInfo}>
                                     <div className={styles.textInfo}>
-                                        <h3>{task?.title}</h3>
-                                        <p>{task?.description}</p>
+                                        <h3>{task?.title || '-'}</h3>
+                                        <p>{task?.description || '-'}</p>
                                     </div>
                                     <div className={`${styles.priceTag} ${task?.rewardType === 'coin' ? styles.coin : ''}`}>
                                         {task?.rewardType === 'coin' ? (
@@ -279,8 +279,8 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                 {/* Perform View Content */}
                                 <div className={styles.taskInfo}>
                                     <div className={styles.textInfo}>
-                                        <h3>{task?.title}</h3>
-                                        <p>{task?.description}</p>
+                                        <h3>{task?.title || '-'}</h3>
+                                        <p>{task?.description || '-'}</p>
                                     </div>
                                     <div className={`${styles.priceTag} ${task?.rewardType === 'coin' ? styles.coin : styles.rupee}`}>
                                         {task?.rewardType === 'coin' ? (

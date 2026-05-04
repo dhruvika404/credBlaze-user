@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from './tasks.module.scss'
 import SearchIcon from '@/icons/searchIcon'
 import FilterIcon from '@/icons/filterIcon'
@@ -25,28 +25,45 @@ export default function TasksPage() {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
+    const [offset, setOffset] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const gridRef = useRef(null);
+    const LIMIT = 30;
 
     useEffect(() => {
-        if (activeTab === 'available') {
-            fetchAvailableTasks();
-        } else {
-            fetchMySubmissions();
-        }
-    }, [activeTab, categoryTab, appliedFilters]);
+        setAppliedFilters({});
+    }, [activeTab]);
 
-    const fetchAvailableTasks = async () => {
+    const fetchTasks = async (newOffset = 0, isInitial = false) => {
         try {
             setLoading(true);
-            const params = {};
+            const params = {
+                limit: LIMIT,
+                offset: newOffset,
+            };
             if (appliedFilters.platforms?.length) params.platform_ids = appliedFilters.platforms;
             if (appliedFilters.taskTypes?.length) params.category_ids = appliedFilters.taskTypes;
             if (appliedFilters.minPrice) params.min_task_cost = Number(appliedFilters.minPrice);
             if (appliedFilters.maxPrice) params.max_task_cost = Number(appliedFilters.maxPrice);
             if (appliedFilters.pro && !appliedFilters.nonPro) params.is_prime = true;
             if (appliedFilters.nonPro && !appliedFilters.pro) params.is_prime = false;
-            const response = await getAvailableTasks(params);
+
+            const response = activeTab === 'available'
+                ? await getAvailableTasks(params)
+                : await getMySubmissions(params);
+
             if (response.success) {
-                setTasks(response.data?.tasks || []);
+                const rawData = activeTab === 'available' ? response.data?.tasks : response.data?.submissions;
+                const newItems = rawData || [];
+
+                if (isInitial) {
+                    if (activeTab === 'available') setTasks(newItems);
+                    else setSubmissions(newItems);
+                } else {
+                    if (activeTab === 'available') setTasks(prev => [...prev, ...newItems]);
+                    else setSubmissions(prev => [...prev, ...newItems]);
+                }
+                setHasMore(newItems.length === LIMIT);
             }
         } catch (error) {
             console.error('Error fetching tasks:', error);
@@ -55,24 +72,21 @@ export default function TasksPage() {
         }
     };
 
-    const fetchMySubmissions = async () => {
-        try {
-            setLoading(true);
-            const params = {};
-            if (appliedFilters.platforms?.length) params.platform_ids = appliedFilters.platforms;
-            if (appliedFilters.taskTypes?.length) params.category_ids = appliedFilters.taskTypes;
-            if (appliedFilters.minPrice) params.min_task_cost = Number(appliedFilters.minPrice);
-            if (appliedFilters.maxPrice) params.max_task_cost = Number(appliedFilters.maxPrice);
-            if (appliedFilters.pro && !appliedFilters.nonPro) params.is_prime = true;
-            if (appliedFilters.nonPro && !appliedFilters.pro) params.is_prime = false;
-            const response = await getMySubmissions(params);
-            if (response.success) {
-                setSubmissions(response.data?.submissions || []);
-            }
-        } catch (error) {
-            console.error('Error fetching submissions:', error);
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        setOffset(0);
+        setHasMore(true);
+        fetchTasks(0, true);
+        if (gridRef.current) {
+            gridRef.current.scrollTop = 0;
+        }
+    }, [activeTab, categoryTab, appliedFilters]);
+
+    const handleScroll = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollHeight - scrollTop <= clientHeight + 100 && !loading && hasMore) {
+            const nextOffset = offset + LIMIT;
+            setOffset(nextOffset);
+            fetchTasks(nextOffset, false);
         }
     };
 
@@ -102,8 +116,8 @@ export default function TasksPage() {
         return {
             id: submission.id,
             taskCampaignId: submission.task_campaign_id,
-            title: submission.task_title || 'Task',
-            description: submission.task_description || '',
+            title: submission.task_title,
+            description: submission.task_description,
             reward: submission.task_performance_real_amount_earned || submission.task_performance_cashpoints_amount_earned || 0,
             rewardType: submission.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
             isPrime: submission.task_for_prime_user || false,
@@ -136,7 +150,7 @@ export default function TasksPage() {
         }
     }, [tasks]);
 
-    const allDisplayTasks = activeTab === 'available' 
+    const allDisplayTasks = activeTab === 'available'
         ? tasks.map(mapTaskData)
         : submissions.map(mapSubmissionData);
 
@@ -191,53 +205,58 @@ export default function TasksPage() {
                     </div>
                 </div>
 
-                <div className={styles.taskGrid}>
-                    {loading ? (
-                        <div className={styles.loadingState}>Loading tasks...</div>
-                    ) : displayTasks.length === 0 ? (
+                <div className={styles.taskGrid} ref={gridRef} onScroll={handleScroll}>
+                    {displayTasks.length === 0 && !loading ? (
                         <div className={styles.emptyState}>No tasks available</div>
                     ) : (
-                        displayTasks.map((task) => (
-                            <div key={task.id} className={styles.taskCard}>
-                                <div className={styles.cardHeader}>
-                                    <img src={task.image} alt={task.title} className={styles.taskImage} />
-                                    {task.isPrime && (
-                                        <div className={styles.proBadge}>
-                                            <ProIcon />
-                                            <span>Pro Task</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className={styles.cardBody}>
-                                    <h3>{task.title}</h3>
-                                    <p>{task.description}</p>
-                                </div>
-                                <div className={styles.divider} />
-                                <div className={styles.cardFooter}>
-                                    <div className={styles.reward}>
-                                        {task.rewardType === 'coin' ? (
-                                            <>
-                                                <div className={styles.rewardIcon}>
-                                                    <img src="/assets/icons/star.svg" alt="reward" />
-                                                </div>
-                                                <span>{task.reward} CB</span>
-                                            </>
-                                        ) : (
-                                            <span>₹ {task.reward}</span>
+                        <>
+                            {displayTasks.map((task) => (
+                                <div key={task.id} className={styles.taskCard}>
+                                    <div className={styles.cardHeader}>
+                                        <img src={task.image} alt={task.title} className={styles.taskImage} />
+                                        {task.isPrime && (
+                                            <div className={styles.proBadge}>
+                                                <ProIcon />
+                                                <span>Pro Task</span>
+                                            </div>
                                         )}
                                     </div>
-                                    <button
-                                        className={styles.viewBtn}
-                                        onClick={() => {
-                                            setSelectedTask(task);
-                                            setIsDrawerOpen(true);
-                                        }}
-                                    >
-                                        View
-                                    </button>
+                                    <div className={styles.cardBody}>
+                                        <h3>{task.title || '-'}</h3>
+                                        <p>{task.description || '-'}</p>
+                                    </div>
+                                    <div className={styles.divider} />
+                                    <div className={styles.cardFooter}>
+                                        <div className={styles.reward}>
+                                            {task.rewardType === 'coin' ? (
+                                                <>
+                                                    <div className={styles.rewardIcon}>
+                                                        <img src="/assets/icons/star.svg" alt="reward" />
+                                                    </div>
+                                                    <span>{task.reward} CB</span>
+                                                </>
+                                            ) : (
+                                                <span>₹ {task.reward}</span>
+                                            )}
+                                        </div>
+                                        <button
+                                            className={styles.viewBtn}
+                                            onClick={() => {
+                                                setSelectedTask(task);
+                                                setIsDrawerOpen(true);
+                                            }}
+                                        >
+                                            View
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                            {loading && (
+                                <div className={styles.loadingState}>
+                                    {offset === 0 ? 'Loading tasks...' : 'Loading more tasks...'}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

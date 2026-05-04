@@ -18,18 +18,15 @@ export default function TakeSelfie({ onContinue, onCancel }) {
     const [cameraError, setCameraError] = useState(null);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const broadcastChannelRef = useRef(null);
 
     useEffect(() => {
         if (selfieMode === 'webcam') {
             startWebcam();
         } else {
             stopWebcam();
-            setupBroadcastChannel();
         }
         return () => {
             stopWebcam();
-            closeBroadcastChannel();
         };
     }, [selfieMode]);
 
@@ -59,28 +56,6 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
-        }
-    };
-
-    const setupBroadcastChannel = () => {
-        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-            // Create a broadcast channel for this session
-            broadcastChannelRef.current = new BroadcastChannel(`kyc_upload_${sessionId}`);
-            
-            // Listen for messages
-            broadcastChannelRef.current.onmessage = (event) => {
-                if (event.data.type === 'IMAGE_UPLOADED' && event.data.sessionId === sessionId) {
-                    setMobileImageData(event.data.data);
-                    setMobileImage(event.data.data.media_url);
-                }
-            };
-        }
-    };
-
-    const closeBroadcastChannel = () => {
-        if (broadcastChannelRef.current) {
-            broadcastChannelRef.current.close();
-            broadcastChannelRef.current = null;
         }
     };
 
@@ -131,9 +106,9 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                 .then(res => res.blob())
                 .then(blob => {
                     const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
-                    onContinue({ 
+                    onContinue({
                         selfie_image: file,
-                        media_key: mobileImageData.media_key 
+                        media_key: mobileImageData.media_key
                     });
                 });
         }
@@ -144,7 +119,7 @@ export default function TakeSelfie({ onContinue, onCancel }) {
         setMobileImageData(null);
     };
 
-    const mobileUrl = typeof window !== 'undefined' 
+    const mobileUrl = typeof window !== 'undefined'
         ? `${window.location.origin}/mobile-capture?session=${sessionId}&token=${localStorage.getItem('token') || ''}`
         : '';
 
@@ -191,10 +166,10 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                                 </div>
                             ) : !capturedImage ? (
                                 <>
-                                    <video 
-                                        ref={videoRef} 
-                                        autoPlay 
-                                        playsInline 
+                                    <video
+                                        ref={videoRef}
+                                        autoPlay
+                                        playsInline
                                         className={styles.videoFeed}
                                     />
                                     <button className={styles.cameraButton} onClick={captureWebcam}>
