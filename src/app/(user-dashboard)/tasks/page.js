@@ -10,7 +10,7 @@ import { getAvailableTasks, getMySubmissions } from '@/services/task';
 
 export default function TasksPage() {
     const [activeTab, setActiveTab] = useState('available');
-    const [categoryTab, setCategoryTab] = useState('social');
+    const [categoryTab, setCategoryTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -37,20 +37,22 @@ export default function TasksPage() {
     const fetchTasks = async (newOffset = 0, isInitial = false) => {
         try {
             setLoading(true);
-            const params = {
+            const payload = {
                 limit: LIMIT,
                 offset: newOffset,
             };
-            if (appliedFilters.platforms?.length) params.platform_ids = appliedFilters.platforms;
-            if (appliedFilters.taskTypes?.length) params.category_ids = appliedFilters.taskTypes;
-            if (appliedFilters.minPrice) params.min_task_cost = Number(appliedFilters.minPrice);
-            if (appliedFilters.maxPrice) params.max_task_cost = Number(appliedFilters.maxPrice);
-            if (appliedFilters.pro && !appliedFilters.nonPro) params.is_prime = true;
-            if (appliedFilters.nonPro && !appliedFilters.pro) params.is_prime = false;
+            if (categoryTab === 'social') payload.is_survey_task = false;
+            if (categoryTab === 'surveys') payload.is_survey_task = true;
+            if (appliedFilters.platforms?.length) payload.platform_ids = appliedFilters.platforms;
+            if (appliedFilters.taskTypes?.length) payload.category_ids = appliedFilters.taskTypes;
+            if (appliedFilters.minPrice) payload.min_task_cost = Number(appliedFilters.minPrice);
+            if (appliedFilters.maxPrice) payload.max_task_cost = Number(appliedFilters.maxPrice);
+            if (appliedFilters.pro && !appliedFilters.nonPro) payload.is_prime = true;
+            if (appliedFilters.nonPro && !appliedFilters.pro) payload.is_prime = false;
 
             const response = activeTab === 'available'
-                ? await getAvailableTasks(params)
-                : await getMySubmissions(params);
+                ? await getAvailableTasks(payload)
+                : await getMySubmissions(payload);
 
             if (response.success) {
                 const rawData = activeTab === 'available' ? response.data?.tasks : response.data?.submissions;
@@ -99,7 +101,7 @@ export default function TasksPage() {
         rewardType: task.task_cost_per_user_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
         isPrime: task.task_for_prime_user,
         image: task.platform?.platform_logo_url,
-        category: 'social',
+        is_survey: task.is_survey_task || false,
         taskUrl: task.task_url,
         taskBanner: task.task_banner,
         termsAndConditions: task.task_term_and_condition,
@@ -122,6 +124,7 @@ export default function TasksPage() {
             rewardType: submission.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
             isPrime: submission.task_for_prime_user || false,
             image: submission.platform?.platform_logo_url,
+            is_survey: submission.is_survey_task || false,
             taskBanner: submission.task_banner,
             taskUrl: submission.task_performance_url,
             status: submission.task_status,
@@ -194,8 +197,8 @@ export default function TasksPage() {
                     </div>
                     <div className={styles.rightControls}>
                         <div className={styles.categoryTabs}>
+                            <button className={categoryTab === 'all' ? styles.active : ''} onClick={() => setCategoryTab('all')}>All Tasks</button>
                             <button className={categoryTab === 'social' ? styles.active : ''} onClick={() => setCategoryTab('social')}>Social Tasks</button>
-                            <button className={categoryTab === 'reviews' ? styles.active : ''} onClick={() => setCategoryTab('reviews')}>Reviews and ratings</button>
                             <button className={categoryTab === 'surveys' ? styles.active : ''} onClick={() => setCategoryTab('surveys')}>Surveys</button>
                         </div>
                         <button className={styles.filterBtn} onClick={() => setIsFilterOpen(true)}>
@@ -251,11 +254,6 @@ export default function TasksPage() {
                                     </div>
                                 </div>
                             ))}
-                            {loading && (
-                                <div className={styles.loadingState}>
-                                    {offset === 0 ? 'Loading tasks...' : 'Loading more tasks...'}
-                                </div>
-                            )}
                         </>
                     )}
                 </div>

@@ -22,7 +22,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [proofSubmitted, setProofSubmitted] = useState(false);
-    const { user } = useAuth();
+    const { user, fetchAndSetProfile } = useAuth();
     const isUserPro = user?.is_prime;
     const isPrimeTask = task?.isPrime;
     const [copied, setCopied] = useState(false);
@@ -64,7 +64,6 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
             return;
         }
 
-        // Validate required fields
         if (task.screenshotRequired && !proofFile) {
             toast.error('Please upload a screenshot');
             return;
@@ -78,7 +77,6 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
         try {
             setIsSubmitting(true);
 
-            // Create FormData
             const formData = new FormData();
             formData.append('task_campaign_id', task.rawData.id);
 
@@ -96,7 +94,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                 toast.success('Task submitted successfully!');
                 setProofSubmitted(true);
                 setIsStatusModalOpen(true);
-                // Call the callback to refresh tasks
+                await fetchAndSetProfile();
                 if (onTaskSubmitted) {
                     onTaskSubmitted();
                 }
@@ -344,59 +342,61 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                     </div>
                                 </div>
 
-                                <div className={styles.submitProofWrapper}>
-                                    <div className={styles.statusHeader}>
-                                        <div className={styles.titleWrapper}>
-                                            <div className={styles.icon}>
-                                                <FileIcon />
-                                            </div>
-                                            <div className={styles.textStack}>
-                                                <span className={styles.titleText}>Submit Proof</span>
-                                                <span className={styles.subText}>Upload a clear screenshot showing you've completed the task</span>
-                                            </div>
-                                        </div>
-                                        <div className={styles.helpIcon} style={{ opacity: 0 }}>
-                                            <QuestionNMark />
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.uploadSection}>
-                                        <div
-                                            className={`${styles.dragUpload} ${proofImage ? styles.hasPreview : ''}`}
-                                            onClick={() => fileInputRef.current?.click()}
-                                            onDragOver={(e) => e.preventDefault()}
-                                            onDrop={handleDrop}
-                                        >
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                style={{ display: 'none' }}
-                                                accept="image/*"
-                                                onChange={handleChange}
-                                            />
-                                            {proofImage ? (
-                                                <div className={styles.previewContainer}>
-                                                    <img src={proofImage} alt="proof" className={styles.previewImg} />
-                                                    <button className={styles.clearBtn} onClick={handleClearImage}>✕</button>
+                                {task?.screenshotRequired && (
+                                    <div className={styles.submitProofWrapper}>
+                                        <div className={styles.statusHeader}>
+                                            <div className={styles.titleWrapper}>
+                                                <div className={styles.icon}>
+                                                    <FileIcon />
                                                 </div>
-                                            ) : (
-                                                <>
-                                                    <div className={styles.icon}>
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="#0000EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                        </svg>
+                                                <div className={styles.textStack}>
+                                                    <span className={styles.titleText}>Submit Proof</span>
+                                                    <span className={styles.subText}>Upload a clear screenshot showing you've completed the task</span>
+                                                </div>
+                                            </div>
+                                            <div className={styles.helpIcon} style={{ opacity: 0 }}>
+                                                <QuestionNMark />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.uploadSection}>
+                                            <div
+                                                className={`${styles.dragUpload} ${proofImage ? styles.hasPreview : ''}`}
+                                                onClick={() => fileInputRef.current?.click()}
+                                                onDragOver={(e) => e.preventDefault()}
+                                                onDrop={handleDrop}
+                                            >
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    style={{ display: 'none' }}
+                                                    accept="image/*"
+                                                    onChange={handleChange}
+                                                />
+                                                {proofImage ? (
+                                                    <div className={styles.previewContainer}>
+                                                        <img src={proofImage} alt="proof" className={styles.previewImg} />
+                                                        <button className={styles.clearBtn} onClick={handleClearImage}>✕</button>
                                                     </div>
-                                                    <div className={styles.text}>
-                                                        <div className={styles.mainText}>
-                                                            Drag your file(s) or <span className={styles.browse}>browse</span>
+                                                ) : (
+                                                    <>
+                                                        <div className={styles.icon}>
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="#0000EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                            </svg>
                                                         </div>
-                                                        <div className={styles.subText}>Max 10 MB files are allowed</div>
-                                                    </div>
-                                                </>
-                                            )}
+                                                        <div className={styles.text}>
+                                                            <div className={styles.mainText}>
+                                                                Drag your file(s) or <span className={styles.browse}>browse</span>
+                                                            </div>
+                                                            <div className={styles.subText}>Max 10 MB files are allowed</div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {task?.performanceLinkRequired && (
                                     <div className={styles.submissionLinkInput}>
@@ -443,7 +443,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                             <button
                                 className={`${styles.mainBtn} ${styles.back}`}
                                 onClick={handleCompleteTask}
-                                disabled={!proofImage || isSubmitting || (task?.performanceLinkRequired && !submissionLink.trim())}
+                                disabled={(task?.screenshotRequired && !proofImage) || isSubmitting || (task?.performanceLinkRequired && !submissionLink.trim())}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Complete Task'}
                             </button>
