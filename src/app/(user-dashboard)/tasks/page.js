@@ -268,11 +268,7 @@ export default function TasksPage() {
                 }}
                 task={selectedTask}
                 onTaskSubmitted={() => {
-                    if (activeTab === 'available') {
-                        fetchAvailableTasks();
-                    } else {
-                        fetchMySubmissions();
-                    }
+                    fetchTasks(0, true);
                 }}
             />
             <FilterDrawer
