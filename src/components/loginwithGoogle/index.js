@@ -40,7 +40,7 @@ export default function LoginwithGoogle() {
                 shape="rectangular"
                 logo_alignment="left"
                 width="100%"
-                itp_support={true}
+                itp_support={false}
             />
         </div>
     );
