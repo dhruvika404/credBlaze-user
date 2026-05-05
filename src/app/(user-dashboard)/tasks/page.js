@@ -4,6 +4,7 @@ import styles from './tasks.module.scss'
 import SearchIcon from '@/icons/searchIcon'
 import FilterIcon from '@/icons/filterIcon'
 import TaskDrawer from '@/components/modal/taskDrawer';
+import SurveyDrawer from '@/components/modal/surveyDrawer';
 import FilterDrawer from '@/components/modal/filterDrawer';
 import ProIcon from '@/icons/proIcon';
 import { getAvailableTasks, getMySubmissions } from '@/services/task';
@@ -20,6 +21,7 @@ export default function TasksPage() {
     }, [searchQuery]);
     const [selectedTask, setSelectedTask] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isSurveyDrawerOpen, setIsSurveyDrawerOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [submissions, setSubmissions] = useState([]);
@@ -246,7 +248,11 @@ export default function TasksPage() {
                                             className={styles.viewBtn}
                                             onClick={() => {
                                                 setSelectedTask(task);
-                                                setIsDrawerOpen(true);
+                                                if (task.is_survey) {
+                                                    setIsSurveyDrawerOpen(true);
+                                                } else {
+                                                    setIsDrawerOpen(true);
+                                                }
                                             }}
                                         >
                                             View
@@ -263,6 +269,16 @@ export default function TasksPage() {
                 isOpen={isDrawerOpen}
                 onClose={() => {
                     setIsDrawerOpen(false);
+                }}
+                task={selectedTask}
+                onTaskSubmitted={() => {
+                    fetchTasks(0, true);
+                }}
+            />
+            <SurveyDrawer
+                isOpen={isSurveyDrawerOpen}
+                onClose={() => {
+                    setIsSurveyDrawerOpen(false);
                 }}
                 task={selectedTask}
                 onTaskSubmitted={() => {

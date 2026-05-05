@@ -243,24 +243,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                     </div>
                                 </div>
 
-                                {/* Agreement - Only for standard tasks or pro users */}
-                                {(!isPrimeTask || isUserPro) && (
-                                    <label className={styles.checkboxLabel}>
-                                        <input
-                                            type="checkbox"
-                                            checked={agreed}
-                                            onChange={(e) => setAgreed(e.target.checked)}
-                                        />
-                                        <div className={styles.customCheckbox}>
-                                            {agreed && (
-                                                <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M1 5L4.5 8.5L11 1" stroke="#0000EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            )}
-                                        </div>
-                                        <span>I have read and agree to the task guidelines.</span>
-                                    </label>
-                                )}
+
 
                                 {/* Info Alert - Only for non-pro users on pro tasks */}
                                 {isPrimeTask && !isUserPro && (
@@ -416,6 +399,23 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                     {/* Footer Buttons */}
                     {!isPerformView ? (
                         <div className={styles.footer}>
+                            {(!isPrimeTask || isUserPro) && (
+                                <label className={styles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        checked={agreed}
+                                        onChange={(e) => setAgreed(e.target.checked)}
+                                    />
+                                    <div className={styles.customCheckbox}>
+                                        {agreed && (
+                                            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M1 5L4.5 8.5L11 1" stroke="#0000EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </div>
+                                    <span>I have read and agree to the task guidelines.</span>
+                                </label>
+                            )}
                             {isPrimeTask && !isUserPro ? (
                                 <button
                                     className={`${styles.mainBtn} ${styles.pro}`}

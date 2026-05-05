@@ -263,7 +263,7 @@
         .cancelBtn {
             height: 46px;
             border-radius: 8px;
-            border: none;
+            border: 1px solid rgba(89, 59, 242, 0.10);
             background: #F5F5F5;
             color: #171717;
             font-family: 'Manrope', sans-serif;
@@ -271,9 +271,11 @@
             font-weight: 600;
             cursor: pointer;
             line-height: 22px;
+            transition: .3s ease-in-out;
 
             &:hover {
-                background: #EBEBEB;
+                background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                color: #fff;
             }
         }
     }
