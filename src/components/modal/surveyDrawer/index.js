@@ -17,6 +17,16 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
     const isSubmission = task?.isSubmission || false;
     const submissionStatus = task?.status || task?.task_status;
 
+    const computedStatus = isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : 'review';
+    const computedReward = isSubmission
+        ? (task?.earning_type === 'CASHBACKPOINT'
+            ? (task?.task_performance_cashpoints_amount_earned || task?.earnedPoints || '0')
+            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0'))
+        : (task?.reward || '0');
+    const computedRewardType = isSubmission
+        ? (task?.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee')
+        : (task?.rewardType || 'rupee');
+
     React.useEffect(() => {
         if (isOpen) {
             if (isSubmission) {
@@ -59,8 +69,6 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
         const newErrors = {}
         for (const q of questions) {
             if (!q.is_required) continue
-            const type = q.question_type?.toLowerCase()
-            if (type === 'image' || type === 'video') continue
             const a = answers[q.id]
             if (!a || (Array.isArray(a) && !a.length) || (typeof a === 'string' && !a.trim())) {
                 newErrors[q.id] = 'This is a required question.'
@@ -85,11 +93,6 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                     return // skip empty
                 }
 
-                const getOptionId = (text) => {
-                    const opt = q.options?.find(o => (o.option_text || o.text || o.value) === text)
-                    return opt ? opt.id : null
-                }
-
                 const type = q.question_type?.toLowerCase()
 
                 if (type === 'multiple_choice' || type === 'radio' || type === 'dropdown' || type === 'select') {
@@ -97,26 +100,30 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                         surveyResponses.push({
                             survey_id: survey.id,
                             question_id: q.id,
-                            response_text: answers[`${q.id}_other`] || '',
-                            selected_option: null
+                            response_text: null,
+                            selected_option: null,
+                            is_other_option_selected: true
                         })
                     } else {
                         surveyResponses.push({
                             survey_id: survey.id,
                             question_id: q.id,
                             response_text: null,
-                            selected_option: getOptionId(a)
+                            selected_option: a,
+                            is_other_option_selected: false
                         })
                     }
                 } else if (type === 'checkbox' || type === 'checkboxes') {
                     if (Array.isArray(a)) {
-                        a.forEach(val => {
-                            surveyResponses.push({
-                                survey_id: survey.id,
-                                question_id: q.id,
-                                response_text: null,
-                                selected_option: getOptionId(val)
-                            })
+                        const selectedOptions = a.filter(val => val !== '__other__')
+                        const hasOther = a.includes('__other__')
+
+                        surveyResponses.push({
+                            survey_id: survey.id,
+                            question_id: q.id,
+                            response_text: null,
+                            selected_option: selectedOptions,
+                            is_other_option_selected: hasOther
                         })
                     }
                 } else {
@@ -124,7 +131,8 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                         survey_id: survey.id,
                         question_id: q.id,
                         response_text: String(a),
-                        selected_option: null
+                        selected_option: null,
+                        is_other_option_selected: false
                     })
                 }
             })
@@ -185,7 +193,8 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                 return (
                     <div className={styles.optionsList}>
                         {options.map((opt, i) => {
-                            const val = opt.option_text || opt.text || opt.value
+                            const val = opt.id
+                            const text = opt.option_text || opt.text || opt.value
                             return (
                                 <label key={opt.id || i} className={styles.radioOption}>
                                     <input type="radio" name={id} value={val}
@@ -194,7 +203,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                                     <div className={`${styles.radioCircle} ${answers[id] === val ? styles.selected : ''}`}>
                                         {answers[id] === val && <div className={styles.radioInner} />}
                                     </div>
-                                    <span>{val}</span>
+                                    <span>{text}</span>
                                 </label>
                             )
                         })}
@@ -208,13 +217,6 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                                 </div>
                                 <span>Other</span>
                             </label>
-                        )}
-                        {answers[id] === '__other__' && (
-                            <div className={styles.textInput}>
-                                <input type="text" placeholder="Please specify"
-                                    value={answers[`${id}_other`] || ''}
-                                    onChange={(e) => handleChange(`${id}_other`, e.target.value)} />
-                            </div>
                         )}
                     </div>
                 )
@@ -244,7 +246,8 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                 return (
                     <div className={styles.optionsList}>
                         {options.map((opt, i) => {
-                            const val = opt.option_text || opt.text || opt.value
+                            const val = opt.id
+                            const text = opt.option_text || opt.text || opt.value
                             const checked = (answers[id] || []).includes(val)
                             return (
                                 <label key={opt.id || i} className={styles.checkboxOption}>
@@ -257,10 +260,25 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                                             </svg>
                                         )}
                                     </div>
-                                    <span>{val}</span>
+                                    <span>{text}</span>
                                 </label>
                             )
                         })}
+                        {question.has_other_option && (
+                            <label className={styles.checkboxOption}>
+                                <input type="checkbox"
+                                    checked={(answers[id] || []).includes('__other__')}
+                                    onChange={(e) => handleCheckbox(id, '__other__', e.target.checked)} />
+                                <div className={`${styles.checkboxSquare} ${(answers[id] || []).includes('__other__') ? styles.selected : ''}`}>
+                                    {(answers[id] || []).includes('__other__') && (
+                                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+                                            <path d="M1 5L4.5 8.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    )}
+                                </div>
+                                <span>Other</span>
+                            </label>
+                        )}
                     </div>
                 )
 
@@ -272,8 +290,9 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                             onChange={(e) => handleChange(id, e.target.value)}>
                             <option value="">Dropdown</option>
                             {options.map((opt, i) => {
-                                const val = opt.option_text || opt.text || opt.value
-                                return <option key={opt.id || i} value={val}>{val}</option>
+                                const val = opt.id
+                                const text = opt.option_text || opt.text || opt.value
+                                return <option key={opt.id || i} value={val}>{text}</option>
                             })}
                         </select>
                         <div className={styles.dropdownArrow}>
@@ -297,7 +316,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
 
     return (
         <>
-            <div className={styles.overlay} onClick={onClose}
+            <div className={styles.overlay}
                 style={{ display: isStatusModalOpen ? 'none' : 'flex' }}>
                 <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                     {/* Header */}
@@ -317,7 +336,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                     <div className={styles.scrollContent}>
                         {/* Form Info Card */}
                         <div className={styles.formInfoCard}>
-                            <div>
+                            <div className={styles.titleDescContainer}>
                                 <h3 className={styles.formTitle}>{surveyTitle}</h3>
                                 <p className={styles.formDescription}>{surveyDescription}</p>
                             </div>
@@ -339,8 +358,9 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                                 )}
                             </div>
                         ))}
+                    </div>
 
-                        {/* Action Buttons */}
+                    <div className={styles?.stickyFooter}>
                         <div className={styles.footerActions}>
                             <button className={styles.submitBtn}
                                 onClick={handleSubmit}
@@ -369,8 +389,10 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                     setIsStatusModalOpen(false)
                     onClose()
                 }}
-                status={isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : "review"}
-                reward={isSubmission ? (task?.earnedAmount || task?.earnedPoints || task?.task_performance_cashpoints_amount_earned || task?.task_performance_real_amount_earned || '0') : (task?.reward || '0')}
+                status={computedStatus}
+                reward={computedReward}
+                rewardType={computedRewardType}
+                rejectionReason={task?.rejection_reason}
             />
         </>
     )

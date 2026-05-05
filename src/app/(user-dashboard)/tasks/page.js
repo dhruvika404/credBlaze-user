@@ -32,9 +32,15 @@ export default function TasksPage() {
     const gridRef = useRef(null);
     const LIMIT = 30;
 
-    useEffect(() => {
-        setAppliedFilters({});
-    }, [activeTab]);
+    const handleTabChange = (tab) => {
+        if (tab !== activeTab) {
+            setActiveTab(tab);
+            setCategoryTab('all');
+            setAppliedFilters({});
+            setSearchQuery('');
+            setDebouncedSearch('');
+        }
+    };
 
     const fetchTasks = async (newOffset = 0, isInitial = false) => {
         try {
@@ -117,13 +123,17 @@ export default function TasksPage() {
     });
 
     const mapSubmissionData = (submission) => {
+        const isCashbackPoint = submission.earning_type === 'CASHBACKPOINT';
         return {
             id: submission.id,
             taskCampaignId: submission.task_campaign_id,
             title: submission.task_title,
             description: submission.task_description,
-            reward: submission.task_performance_real_amount_earned || submission.task_performance_cashpoints_amount_earned || 0,
-            rewardType: submission.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee',
+            reward: isCashbackPoint
+                ? (submission.task_performance_cashpoints_amount_earned || 0)
+                : (submission.task_performance_real_amount_earned || 0),
+            rewardType: isCashbackPoint ? 'coin' : 'rupee',
+            earning_type: submission.earning_type,
             isPrime: submission.task_for_prime_user || false,
             image: submission.platform?.platform_logo_url,
             is_survey: submission.is_survey_task || false,
@@ -134,6 +144,8 @@ export default function TasksPage() {
             media: submission.media || [],
             earnedAmount: submission.task_performance_real_amount_earned,
             earnedPoints: submission.task_performance_cashpoints_amount_earned,
+            task_performance_real_amount_earned: submission.task_performance_real_amount_earned,
+            task_performance_cashpoints_amount_earned: submission.task_performance_cashpoints_amount_earned,
             platformName: submission.platform?.platform_name,
             isSubmission: true,
             rawData: submission
@@ -173,13 +185,13 @@ export default function TasksPage() {
                 <div className={styles.mainTabs}>
                     <button
                         className={activeTab === 'available' ? styles.active : ''}
-                        onClick={() => setActiveTab('available')}
+                        onClick={() => handleTabChange('available')}
                     >
                         Available Tasks
                     </button>
                     <button
                         className={activeTab === 'my' ? styles.active : ''}
-                        onClick={() => setActiveTab('my')}
+                        onClick={() => handleTabChange('my')}
                     >
                         My Task
                     </button>

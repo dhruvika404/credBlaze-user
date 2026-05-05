@@ -30,7 +30,17 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const fileInputRef = useRef(null);
     
     const isSubmission = task?.isSubmission || false;
-    const submissionStatus = task?.status; // pending, approved, rejected
+    const submissionStatus = task?.status || task?.task_status;
+
+    const computedStatus = isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : 'review';
+    const computedReward = isSubmission
+        ? (task?.earning_type === 'CASHBACKPOINT'
+            ? (task?.task_performance_cashpoints_amount_earned || task?.earnedPoints || '0')
+            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0'))
+        : (task?.reward || '0');
+    const computedRewardType = isSubmission
+        ? (task?.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee')
+        : (task?.rewardType || 'rupee');
 
     React.useEffect(() => {
         if (isOpen) {
@@ -166,7 +176,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
 
     return (
         <>
-            <div className={styles.overlay} onClick={onClose} style={{ display: isStatusModalOpen ? 'none' : 'flex' }}>
+            <div className={styles.overlay} style={{ display: isStatusModalOpen ? 'none' : 'flex' }}>
                 <div
                     className={`${styles.drawer} ${isPerformView ? styles.perform : (isPrimeTask ? styles.pro : styles.standard)}`}
                     onClick={(e) => e.stopPropagation()}
@@ -242,8 +252,6 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                         ))}
                                     </div>
                                 </div>
-
-
 
                                 {/* Info Alert - Only for non-pro users on pro tasks */}
                                 {isPrimeTask && !isUserPro && (
@@ -458,8 +466,10 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                     setIsStatusModalOpen(false);
                     onClose();
                 }}
-                status={isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : "review"}
-                reward={isSubmission ? (task?.earnedAmount || task?.earnedPoints || '0') : '0'}
+                status={computedStatus}
+                reward={computedReward}
+                rewardType={computedRewardType}
+                rejectionReason={task?.rejection_reason}
             />
         </>
     )

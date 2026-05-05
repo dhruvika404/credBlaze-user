@@ -4,7 +4,7 @@ import styles from './taskStatusModal.module.scss'
 import RupeeIcon from '@/icons/rupeeIcon';
 import InfoIcon from '@/icons/infoIcon';
 
-export default function TaskStatusModal({ isOpen, onClose, status = 'review', reward = '50' }) {
+export default function TaskStatusModal({ isOpen, onClose, status = 'review', reward = '50', rewardType = 'rupee', rejectionReason }) {
     if (!isOpen) return null;
 
     const renderContent = () => {
@@ -17,13 +17,17 @@ export default function TaskStatusModal({ isOpen, onClose, status = 'review', re
                         </div>
                         <div className={styles.textGroup}>
                             <h2>Submission Approved!</h2>
-                            <p>Coins have been added to your wallet</p>
+                            <p>{rewardType === 'coin' ? 'Coins have been added to your wallet' : 'Amount has been added to your wallet'}</p>
                         </div>
-                        <div className={styles.rewardBadge}>
+                        <div className={`${styles.rewardBadge} ${rewardType === 'coin' ? styles.coin : ''}`}>
                             <div className={styles.icon}>
-                                <RupeeIcon />
+                                {rewardType === 'coin' ? (
+                                    <img src="/assets/icons/star.svg" alt="coin" style={{ width: 20, height: 20 }} />
+                                ) : (
+                                    <RupeeIcon />
+                                )}
                             </div>
-                            <span>+₹{reward}</span>
+                            <span>{rewardType === 'coin' ? `+${reward} CB` : `+₹${reward}`}</span>
                         </div>
                     </div>
                 );
@@ -35,7 +39,7 @@ export default function TaskStatusModal({ isOpen, onClose, status = 'review', re
                         </div>
                         <div className={styles.textGroup}>
                             <h2>Submission Rejected!</h2>
-                            <p>Reason for rejection</p>
+                            <p>{rejectionReason || 'Reason for rejection'}</p>
                         </div>
                     </div>
                 );
@@ -62,7 +66,7 @@ export default function TaskStatusModal({ isOpen, onClose, status = 'review', re
     };
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
+        <div className={styles.overlay}>
             <div
                 className={`${styles.modal} ${styles[status]}`}
                 onClick={(e) => e.stopPropagation()}
