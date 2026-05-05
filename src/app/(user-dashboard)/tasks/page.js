@@ -42,6 +42,15 @@ export default function TasksPage() {
         }
     };
 
+    const handleCategoryChange = (cat) => {
+        if (cat !== categoryTab) {
+            setCategoryTab(cat);
+            setAppliedFilters({});
+            setSearchQuery('');
+            setDebouncedSearch('');
+        }
+    };
+
     const fetchTasks = async (newOffset = 0, isInitial = false) => {
         try {
             setLoading(true);
@@ -57,6 +66,7 @@ export default function TasksPage() {
             if (appliedFilters.maxPrice) payload.max_task_cost = Number(appliedFilters.maxPrice);
             if (appliedFilters.pro && !appliedFilters.nonPro) payload.is_prime = true;
             if (appliedFilters.nonPro && !appliedFilters.pro) payload.is_prime = false;
+            if (debouncedSearch.trim()) payload.task_title = debouncedSearch.trim();
 
             const response = activeTab === 'available'
                 ? await getAvailableTasks(payload)
@@ -89,7 +99,7 @@ export default function TasksPage() {
         if (gridRef.current) {
             gridRef.current.scrollTop = 0;
         }
-    }, [activeTab, categoryTab, appliedFilters]);
+    }, [activeTab, categoryTab, appliedFilters, debouncedSearch]);
 
     const handleScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -167,13 +177,9 @@ export default function TasksPage() {
         }
     }, [tasks]);
 
-    const allDisplayTasks = activeTab === 'available'
+    const displayTasks = activeTab === 'available'
         ? tasks.map(mapTaskData)
         : submissions.map(mapSubmissionData);
-
-    const displayTasks = debouncedSearch.trim()
-        ? allDisplayTasks.filter(t => t.title?.toLowerCase().includes(debouncedSearch.toLowerCase()))
-        : allDisplayTasks;
 
     return (
         <div className={styles.container}>
@@ -211,9 +217,9 @@ export default function TasksPage() {
                     </div>
                     <div className={styles.rightControls}>
                         <div className={styles.categoryTabs}>
-                            <button className={categoryTab === 'all' ? styles.active : ''} onClick={() => setCategoryTab('all')}>All Tasks</button>
-                            <button className={categoryTab === 'social' ? styles.active : ''} onClick={() => setCategoryTab('social')}>Social Tasks</button>
-                            <button className={categoryTab === 'surveys' ? styles.active : ''} onClick={() => setCategoryTab('surveys')}>Surveys</button>
+                            <button className={categoryTab === 'all' ? styles.active : ''} onClick={() => handleCategoryChange('all')}>All Tasks</button>
+                            <button className={categoryTab === 'social' ? styles.active : ''} onClick={() => handleCategoryChange('social')}>Social Tasks</button>
+                            <button className={categoryTab === 'surveys' ? styles.active : ''} onClick={() => handleCategoryChange('surveys')}>Surveys</button>
                         </div>
                         <button className={styles.filterBtn} onClick={() => setIsFilterOpen(true)}>
                             <FilterIcon />
