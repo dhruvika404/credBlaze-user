@@ -1,0 +1,19 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.cardListAlignment {
+    padding: 40px 0 0 0;
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+
+        .whiteFillBox {
+            border-radius: 12px;
+            border: 1px solid var(--Black-500, #F5F5F5);
+            background: var(--Black-600, #FFF);
+            padding: 10px;
+        }
+    }
+}

@@ -1,0 +1,64 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.cardPreview {
+    border-radius: 12px;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: var(--Black-600, #FFF);
+    padding: 18px 16px;
+
+    .cardheader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 0 15px 0;
+
+        h2 {
+            color: #171717;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .tabdesign {
+            border-radius: 8px;
+            border: 1px solid var(--Black-500, #F5F5F5);
+            background: var(--Black-600, #FFF);
+
+            button {
+                padding: 4px 38px;
+                border: none;
+                cursor: pointer;
+                background-color: transparent;
+                color: var(--Black-100, #171717);
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 24px;
+                text-transform: capitalize;
+                border-radius: 8px;
+
+                &.active {
+                    background: rgba(42, 39, 54, 0.04);
+                }
+            }
+        }
+    }
+
+    .buttonAlignment {
+        button {
+            width: 100%;
+            ;
+        }
+    }
+
+    .cardimage {
+        padding: 0 0 10px 0;
+
+        img {
+            display: block;
+            width: 100%;
+        }
+    }
+}

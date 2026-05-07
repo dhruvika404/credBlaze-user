@@ -1,0 +1,29 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.businessCard {
+    padding: 14px 32px;
+
+    .title {
+        padding: 0 0 26px 0;
+
+        h2 {
+            color: #020204;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+            margin: 0 0 4px 0;
+        }
+
+        p {
+            color: #6B7280;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+    }
+
+
+}

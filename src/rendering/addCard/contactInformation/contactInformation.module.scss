@@ -1,0 +1,54 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.contactInformation {
+    border-radius: 16px;
+    border: 1px solid #F3F4F6;
+    background: #FFF;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+    padding: 24px;
+
+    .cardtitle {
+        padding: 0 0 29px 0;
+
+        h2 {
+            color: var(--Black-100, #171717);
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+
+        .items {
+            display: grid;
+            grid-template-columns: 20px 1fr;
+            gap: 12px;
+            align-items: center;
+
+            a {
+                display: block;
+                color: var(--Black-200, #3D3D3D);
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            span {
+                display: block;
+                color: var(--Black-300, #6B7280);
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                text-transform: lowercase;
+            }
+        }
+    }
+}

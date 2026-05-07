@@ -1,10 +1,10 @@
-import Dashboard from '@/rendering/dashboard'
+import AddCard from '@/rendering/addCard'
 import React, { Suspense } from 'react'
 
 export default function page() {
   return (
      <Suspense>
-            <Dashboard />
+            <AddCard />
         </Suspense>
   )
 }

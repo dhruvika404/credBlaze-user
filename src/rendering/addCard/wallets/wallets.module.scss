@@ -1,0 +1,66 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.wallets {
+    padding: 26px 0;
+
+    .box {
+        border-radius: 16px;
+        border: 1px solid #F3F4F6;
+        background: #FFF;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+        padding: 24px;
+
+        .grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+
+            .items {
+                border-radius: 14px;
+                background: var(--Black-500, #F5F5F5);
+                padding: 13px 17px;
+                display: flex;
+                border: 1px solid #F5F5F5;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: .3s ease-in-out;
+
+                &:hover {
+                    border: 1px solid #6475F6;
+                }
+
+                .icontext {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+
+                    p {
+                        color: var(--Black-100, #171717);
+                        font-size: 16px;
+                        font-style: normal;
+                        font-weight: 500;
+                        line-height: normal;
+                    }
+                }
+            }
+        }
+
+        .boxheaderAlignment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0 16px 0;
+
+            h3 {
+                color: var(--Black-100, #171717);
+                font-size: 18px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+        }
+    }
+}
