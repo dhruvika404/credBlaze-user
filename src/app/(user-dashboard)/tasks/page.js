@@ -61,8 +61,8 @@ export default function TasksPage() {
         try {
             setLoading(true);
             const payload = {
-                limit: LIMIT,
-                offset: newOffset,
+                limit: activeTab === 'available' ? LIMIT : pageSize,
+                offset: activeTab === 'available' ? newOffset : (currentPage - 1) * pageSize,
             };
             if (categoryTab === 'social') payload.is_survey_task = false;
             if (categoryTab === 'surveys') payload.is_survey_task = true;
@@ -76,13 +76,7 @@ export default function TasksPage() {
 
             const response = activeTab === 'available'
                 ? await getAvailableTasks(payload)
-                : await getMySubmissions({
-                    limit: pageSize,
-                    offset: (currentPage - 1) * pageSize,
-                    ... (categoryTab === 'social' ? { is_survey_task: false } : {}),
-                    ... (categoryTab === 'surveys' ? { is_survey_task: true } : {}),
-                    ... (debouncedSearch.trim() ? { task_title: debouncedSearch.trim() } : {})
-                });
+                : await getMySubmissions(payload);
 
             if (response.success) {
                 if (activeTab === 'available') {
