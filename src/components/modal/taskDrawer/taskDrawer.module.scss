@@ -730,12 +730,34 @@
             }
 
             .icon {
-                width: 20px;
-                height: 20px;
+                width: 32px;
+                height: 32px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
+                transition: all 0.2s ease-in-out;
+                border-radius: 8px;
+
+                svg {
+                    width: 20px;
+                    height: 20px;
+                    
+                    path {
+                        transition: stroke 0.2s ease-in-out;
+                    }
+                }
+
+                &:hover {
+                    background-color: #EFF4FF;
+                    
+                    svg {
+                        stroke: #0000EE !important;
+                        path, line, polyline {
+                            stroke: #0000EE !important;
+                        }
+                    }
+                }
             }
         }
     }

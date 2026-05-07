@@ -82,16 +82,14 @@ export default function UserStories() {
                         style={{ cursor: 'grab' }}
                     >
                         {stories.map((story, index) => (
-                            <motion.div
-                                key={story.id}
-                                className={styles.storyItem}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                onClick={() => handleStoryClick(index)}
-                            >
-                                <div
+                            <div key={story.id} className={styles.storyItem}>
+                                <motion.div
                                     className={`${styles.avatarRing} ${story.seen ? styles.seen : ''}`}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                                    onClick={() => handleStoryClick(index)}
+                                    style={{ cursor: 'pointer' }}
                                 >
                                     <div className={styles.avatarInner}>
                                         <img
@@ -101,9 +99,9 @@ export default function UserStories() {
                                             draggable={false}
                                         />
                                     </div>
-                                </div>
+                                </motion.div>
                                 <span className={styles.username}>{story.username}</span>
-                            </motion.div>
+                            </div>
                         ))}
                     </motion.div>
                 </div>

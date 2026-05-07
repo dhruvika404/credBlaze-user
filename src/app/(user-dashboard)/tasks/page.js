@@ -8,6 +8,8 @@ import SurveyDrawer from '@/components/modal/surveyDrawer';
 import FilterDrawer from '@/components/modal/filterDrawer';
 import ProIcon from '@/icons/proIcon';
 import { getAvailableTasks, getMySubmissions } from '@/services/task';
+import DataTable from '@/components/dataTable';
+
 
 export default function TasksPage() {
     const [activeTab, setActiveTab] = useState('available');
@@ -29,6 +31,10 @@ export default function TasksPage() {
     const [appliedFilters, setAppliedFilters] = useState({});
     const [offset, setOffset] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalCount, setTotalCount] = useState(0);
+
     const gridRef = useRef(null);
     const LIMIT = 30;
 
@@ -70,20 +76,28 @@ export default function TasksPage() {
 
             const response = activeTab === 'available'
                 ? await getAvailableTasks(payload)
-                : await getMySubmissions(payload);
+                : await getMySubmissions({
+                    limit: pageSize,
+                    offset: (currentPage - 1) * pageSize,
+                    ... (categoryTab === 'social' ? { is_survey_task: false } : {}),
+                    ... (categoryTab === 'surveys' ? { is_survey_task: true } : {}),
+                    ... (debouncedSearch.trim() ? { task_title: debouncedSearch.trim() } : {})
+                });
 
             if (response.success) {
-                const rawData = activeTab === 'available' ? response.data?.tasks : response.data?.submissions;
-                const newItems = rawData || [];
-
-                if (isInitial) {
-                    if (activeTab === 'available') setTasks(newItems);
-                    else setSubmissions(newItems);
+                if (activeTab === 'available') {
+                    const newItems = response.data?.tasks || [];
+                    if (isInitial) {
+                        setTasks(newItems);
+                    } else {
+                        setTasks(prev => [...prev, ...newItems]);
+                    }
+                    setHasMore(newItems.length === LIMIT);
                 } else {
-                    if (activeTab === 'available') setTasks(prev => [...prev, ...newItems]);
-                    else setSubmissions(prev => [...prev, ...newItems]);
+                    const subData = response.data?.submissions || [];
+                    setSubmissions(subData);
+                    setTotalCount(response.data?.total_count || 0);
                 }
-                setHasMore(newItems.length === LIMIT);
             }
         } catch (error) {
             console.error('Error fetching tasks:', error);
@@ -93,13 +107,17 @@ export default function TasksPage() {
     };
 
     useEffect(() => {
-        setOffset(0);
-        setHasMore(true);
-        fetchTasks(0, true);
+        if (activeTab === 'available') {
+            setOffset(0);
+            setHasMore(true);
+            fetchTasks(0, true);
+        } else {
+            fetchTasks(0, true);
+        }
         if (gridRef.current) {
             gridRef.current.scrollTop = 0;
         }
-    }, [activeTab, categoryTab, appliedFilters, debouncedSearch]);
+    }, [activeTab, categoryTab, appliedFilters, debouncedSearch, currentPage, pageSize]);
 
     const handleScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -177,9 +195,120 @@ export default function TasksPage() {
         }
     }, [tasks]);
 
-    const displayTasks = activeTab === 'available'
-        ? tasks.map(mapTaskData)
-        : submissions.map(mapSubmissionData);
+    const displayTasks = tasks.map(mapTaskData);
+    const hasData = activeTab === 'available' ? displayTasks.length > 0 : submissions.length > 0;
+
+    const submissionColumns = [
+        {
+            key: 'sr_no',
+            label: 'Sr. No.',
+            render: (_, row, index) => (currentPage - 1) * pageSize + index + 1
+        },
+        {
+            key: 'platform.platform_name',
+            label: 'Platform',
+            render: (val, row) => (
+                <div className={styles.platformCell}>
+                    {row.platform?.platform_logo_url && (
+                        <img src={row.platform.platform_logo_url} alt={val} className={styles.platformLogo} />
+                    )}
+                    <span title={val}>{val}</span>
+                </div>
+            )
+        },
+        {
+            key: 'task_title',
+            label: 'Task Title',
+            render: (val, row) => (
+                <div className={styles.titleCell} title={val}>
+                    {row.task_for_prime_user && (
+                        <div className={styles.titleProIcon}>
+                            <ProIcon />
+                        </div>
+                    )}
+                    <span>{val}</span>
+                </div>
+            )
+        },
+        {
+            key: 'is_survey_task',
+            label: 'Type',
+            render: (val) => val ? 'Survey' : 'Social'
+        },
+        {
+            key: 'reward',
+            label: 'Reward',
+            render: (_, row) => {
+                const isCashbackPoint = row.earning_type === 'CASHBACKPOINT';
+                const amount = isCashbackPoint
+                    ? row.task_performance_cashpoints_amount_earned
+                    : row.task_performance_real_amount_earned;
+                return (
+                    <div className={styles.tableReward}>
+                        {isCashbackPoint ? (
+                            <span className={styles.coinText}>{amount} CB</span>
+                        ) : (
+                            <span className={styles.rupeeText}>₹ {amount}</span>
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
+            key: 'created_at',
+            label: 'Date',
+            render: (val) => {
+                if (!val) return '-';
+                const d = new Date(val);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                let hours = d.getHours();
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const hoursStr = String(hours).padStart(2, '0');
+                return `${day}-${month}-${year} | ${hoursStr}:${minutes} ${ampm}`;
+            }
+        },
+        {
+            key: 'task_status',
+            label: 'Status',
+            render: (val) => {
+                const status = val?.toLowerCase();
+                return (
+                    <div className={styles.statusActive}>
+                        <div className={`${styles.dot} ${status === 'approved' ? styles.greenDot :
+                            status === 'pending' || status === 'review' ? styles.yellowDot :
+                                styles.redDot
+                            }`}></div>
+                        {val || 'Pending'}
+                    </div>
+                )
+            }
+        },
+        {
+            key: 'actions',
+            label: 'Actions',
+            render: (_, row) => (
+                <button
+                    className={styles.tableActionBtn}
+                    onClick={() => {
+                        const taskData = mapSubmissionData(row);
+                        setSelectedTask(taskData);
+                        if (taskData.is_survey) {
+                            setIsSurveyDrawerOpen(true);
+                        } else {
+                            setIsDrawerOpen(true);
+                        }
+                    }}
+                >
+                    View Details
+                </button>
+            )
+        }
+    ];
 
     return (
         <div className={styles.container}>
@@ -228,10 +357,10 @@ export default function TasksPage() {
                     </div>
                 </div>
 
-                <div className={styles.taskGrid} ref={gridRef} onScroll={handleScroll}>
-                    {displayTasks.length === 0 && !loading ? (
-                        <div className={styles.emptyState}>No tasks available</div>
-                    ) : (
+                <div className={activeTab === 'available' ? styles.taskGrid : styles.tableView} ref={gridRef} onScroll={activeTab === 'available' ? handleScroll : undefined}>
+                    {activeTab === 'available' && !hasData && !loading ? (
+                        <div className={styles.emptyState}>No Data Found.</div>
+                    ) : activeTab === 'available' ? (
                         <>
                             {displayTasks.map((task) => (
                                 <div key={task.id} className={styles.taskCard}>
@@ -279,6 +408,21 @@ export default function TasksPage() {
                                 </div>
                             ))}
                         </>
+                    ) : (
+                        <DataTable
+                            columns={submissionColumns}
+                            data={submissions}
+                            loading={loading}
+                            totalItems={totalCount}
+                            totalPages={Math.ceil(totalCount / pageSize)}
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            onPageChange={(p) => setCurrentPage(p)}
+                            onPageSizeChange={(s) => {
+                                setPageSize(s);
+                                setCurrentPage(1);
+                            }}
+                        />
                     )}
                 </div>
             </div>

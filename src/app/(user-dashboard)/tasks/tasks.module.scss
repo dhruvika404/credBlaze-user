@@ -104,7 +104,9 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: initial;
+    height: auto;
+    max-height: 100%;
 }
 
 /* ── Filter bar row inside white card ── */
@@ -265,8 +267,8 @@
         text-align: center;
         padding: 48px 24px;
         font-family: 'Manrope', sans-serif;
-        font-size: 16px;
-        color: #6B7280;
+        font-size: 14px;
+        color: #9CA3AF;
     }
 }
 
@@ -373,6 +375,10 @@
             line-height: 22px;
             color: #171717;
             margin: 0;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         p {
@@ -521,5 +527,135 @@
         .rightControls {
             flex-wrap: wrap;
         }
+    }
+}
+/* ── Table View for My Task ── */
+.tableView {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    height: auto;
+    max-height: 100%;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+.statusActive {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6B7280;
+    font-weight: 500;
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .greenDot {
+        background: #3DB042;
+    }
+
+    .yellowDot {
+        background: #DE8806;
+    }
+
+    .redDot {
+        background: #EF4444;
+    }
+}
+
+.platformCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .platformLogo {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: contain;
+        border: 1px solid #D6D1E0;
+        background: #FFF;
+    }
+
+    span {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+    }
+}
+
+.titleCell {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.titleProIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(
+        90deg,
+        #A47A1E 0%,
+        #D3A84C 20%,
+        #D3A84C 36.01%,
+        #EBBE6B 55%,
+        #FFD87C 70%,
+        #B58F3E 85%,
+        #956D13 100%,
+        #A47A1E 200%
+    );
+    background-size: 200% auto;
+    animation: shine 5s linear infinite;
+    flex-shrink: 0;
+
+    svg {
+        width: 10px;
+        height: 10px;
+        color: #FFFFFF;
+    }
+}
+
+.tableReward {
+    display: flex;
+    align-items: center;
+
+    .coinText {
+        color: #DE8806;
+        font-weight: 700;
+    }
+
+    .rupeeText {
+        color: #3DB042;
+        font-weight: 700;
+    }
+}
+
+.tableActionBtn {
+    padding: 8px 16px;
+    background: #F5F5F5;
+    border: 1px solid #CCCBD0;
+    border-radius: 8px;
+    color: #171717;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background: #EEEEEE;
+        border-color: #9CA3AF;
     }
 }

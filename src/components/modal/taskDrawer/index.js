@@ -292,7 +292,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                             <div className={styles.label}>{task.taskUrl}</div>
                                             <div className={styles.copyWrapper}>
                                                 {copied && <span className={styles.copiedMsg}>Copied!</span>}
-                                                <div className={styles.icon} onClick={handleCopyLink} style={{ cursor: 'pointer' }}>
+                                                <div className={styles.icon} onClick={handleCopyLink} title="Copy Link">
                                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <g clipPath="url(#clip0_486_10212)">
                                                             <path d="M5.83594 8.056C5.83594 7.46655 6.07009 6.90125 6.48689 6.48445C6.90369 6.06765 7.46899 5.8335 8.05844 5.8335H15.2801C15.572 5.8335 15.861 5.89098 16.1306 6.00267C16.4003 6.11437 16.6453 6.27807 16.8516 6.48445C17.058 6.69083 17.2217 6.93584 17.3334 7.20548C17.4451 7.47513 17.5026 7.76413 17.5026 8.056V15.2777C17.5026 15.5695 17.4451 15.8585 17.3334 16.1282C17.2217 16.3978 17.058 16.6428 16.8516 16.8492C16.6453 17.0556 16.4003 17.2193 16.1306 17.331C15.861 17.4427 15.572 17.5002 15.2801 17.5002H8.05844C7.76657 17.5002 7.47757 17.4427 7.20792 17.331C6.93828 17.2193 6.69327 17.0556 6.48689 16.8492C6.28051 16.6428 6.11681 16.3978 6.00512 16.1282C5.89342 15.8585 5.83594 15.5695 5.83594 15.2777V8.056Z" stroke="#3D3D3D" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
@@ -303,6 +303,13 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                                                 <rect width="20" height="20" fill="white" />
                                                             </clipPath>
                                                         </defs>
+                                                    </svg>
+                                                </div>
+                                                <div className={styles.icon} onClick={() => window.open(task.taskUrl, '_blank')} title="Redirect to Link">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D3D3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                                        <line x1="10" y1="14" x2="21" y2="3"></line>
                                                     </svg>
                                                 </div>
                                             </div>
