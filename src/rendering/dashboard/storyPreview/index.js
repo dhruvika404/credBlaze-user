@@ -116,8 +116,6 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
         const currentItem = currentGroup?.items?.[activeItemIndex];
 
         if (currentItem && currentItem.id && !currentItem.seen && currentItem.isAd) {
-            // Uncomment when using real API
-            /*
             markStoryAsSeen(currentItem.id)
                 .then(response => {
                     if (response.success) {
@@ -125,7 +123,6 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
                     }
                 })
                 .catch(error => console.error('Error marking story as seen:', error));
-            */
         }
     }, [currentIndex, activeItemIndex, stories, onStorySeen]);
 
