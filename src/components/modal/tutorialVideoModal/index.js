@@ -27,10 +27,8 @@ export default function TutorialVideoModal({
                 <div className={styles.closeButton} onClick={onClose}>
                     <img src={CloseIcon} alt="close" />
                 </div>
-                <div 
-                    className={styles.videoContainer} 
-                    onClick={handleMediaClick}
-                    style={{ cursor: destinationLink ? 'pointer' : 'default' }}
+                <div
+                    className={styles.videoContainer}
                 >
                     {isVideo ? (
                         mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be') ? (
@@ -53,6 +51,18 @@ export default function TutorialVideoModal({
                         )
                     ) : (
                         <img src={mediaUrl} alt="Ad Content" className={styles.adImage} />
+                    )}
+
+                    {destinationLink && destinationLink !== '#' && (
+                        <button
+                            className={styles.visitButton}
+                            onClick={handleMediaClick}
+                        >
+                            Visit
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
                     )}
                 </div>
             </div>

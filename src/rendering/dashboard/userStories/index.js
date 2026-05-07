@@ -4,29 +4,6 @@ import styles from './userStories.module.scss';
 import StoryPreview from '../storyPreview';
 import { getStoryAds } from '@/services/ads';
 
-const staticStories = [
-    { id: 1, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 2, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 3, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 4, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 5, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 6, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 7, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 8, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 9, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 10, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 11, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 12, username: 'openaidalle', avatar: '/assets/images/story.png', seen: false },
-    { id: 13, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 14, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 15, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 16, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 17, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 18, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 19, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-    { id: 20, username: 'openaidalle', avatar: '/assets/images/story.png', seen: true },
-];
-
 export default function UserStories() {
     const viewportRef = useRef(null);
     const [stories, setStories] = useState([]);
@@ -80,17 +57,6 @@ export default function UserStories() {
             }
         };
         fetchStoryAds();
-
-        // const dummyGroupedStories = staticStories.map((s, idx) => ({
-        //     ...s,
-        //     items: [
-        //         { id: `${s.id}-1`, image: `https://picsum.photos/400/700?random=${idx * 3}`, type: "image", time: "3h", link: "https://rejoicehub.com/" },
-        //         { id: `${s.id}-2`, image: `https://picsum.photos/400/700?random=${idx * 3 + 1}`, type: "image", time: "2h", link: "#" },
-        //         { id: `${s.id}-3`, image: `https://picsum.photos/400/700?random=${idx * 3 + 2}`, type: "image", time: "1h", link: "#" }
-        //     ]
-        // }));
-
-        // setStories(dummyGroupedStories);
     }, []);
 
     const handleStoryClick = (index) => {
@@ -149,8 +115,13 @@ export default function UserStories() {
                         stories={stories}
                         onClose={handleClosePreview}
                         initialIndex={selectedStoryIndex}
-                        onStorySeen={(id) => {
-                            setStories(prev => prev.map(s => s.id === id ? { ...s, seen: true } : s));
+                        onStorySeen={(adId) => {
+                            setStories(prev => prev.map(story => ({
+                                ...story,
+                                items: story.items.map(item =>
+                                    item.id === adId ? { ...item, seen: true } : item
+                                )
+                            })));
                         }}
                     />
                 )}

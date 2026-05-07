@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './storyPreview.module.scss';
-import { markStoryAsSeen } from '@/services/ads';
+import { markAdAsSeen } from '@/services/ads';
 
 
 export default function StoryPreview({ stories = [], onClose, initialIndex = 0, onStorySeen }) {
@@ -88,7 +88,7 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
 
         let animationFrame;
         let start = Date.now();
-        const duration = 5000; // 5 seconds per image
+        const duration = 15000; // 15 seconds per image
 
         const tick = () => {
             if (!isPlaying) return;
@@ -116,7 +116,7 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
         const currentItem = currentGroup?.items?.[activeItemIndex];
 
         if (currentItem && currentItem.id && !currentItem.seen && currentItem.isAd) {
-            markStoryAsSeen(currentItem.id)
+            markAdAsSeen(currentItem.id)
                 .then(response => {
                     if (response.success) {
                         onStorySeen?.(currentItem.id);
@@ -140,7 +140,6 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
 
         let x = 0;
         if (absDiff > 0) {
-            // First adjacent card is 324px away, next ones are 248px further
             x = sign * (324 + (absDiff - 1) * 248);
         }
 
@@ -283,31 +282,20 @@ export default function StoryPreview({ stories = [], onClose, initialIndex = 0, 
                                                     <span className={styles.activeUsername}>{group.username}</span>
                                                     <span className={styles.activeTime}>{currentItem.time}</span>
                                                 </div>
-                                                <div className={styles.controls} style={{ position: 'relative', zIndex: 10 }}>
-                                                    {currentItem.type === 'video' && (
-                                                        <button
-                                                            className={styles.iconBtn}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setIsMuted(!isMuted);
-                                                            }}
-                                                        >
-                                                            {isMuted ? (
-                                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                    <path d="M11 5L6 9H2V15H6L11 19V5Z"></path>
-                                                                    <line x1="23" y1="9" x2="17" y2="15"></line>
-                                                                    <line x1="17" y1="9" x2="23" y2="15"></line>
-                                                                </svg>
-                                                            ) : (
-                                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                                                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-                                                                </svg>
-                                                            )}
-                                                        </button>
-                                                    )}
-                                                </div>
+                                                {/* <div className={styles.controls}>
+                                                    <button className={styles.iconBtn}>
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                                        </svg>
+                                                    </button>
+                                                    <button className={styles.iconBtn}>
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div> */}
                                             </div>
                                         </div>
 

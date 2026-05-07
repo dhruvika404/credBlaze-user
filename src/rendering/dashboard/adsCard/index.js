@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './adsCard.module.scss';
-import { getBannerAds } from '@/services/ads';
+import { getBannerAds, markAdAsSeen } from '@/services/ads';
 
 const slideVariants = {
     enter: (direction) => ({
@@ -33,6 +33,17 @@ export default function AdsCard() {
         const diff = idx - activeIndex;
         if (diff === 0) return;
         setPage([page + diff, diff > 0 ? 1 : -1]);
+    };
+
+    const handleVisitClick = (e, ad) => {
+        e.stopPropagation();
+        if (ad.link && ad.link !== '#') {
+            markAdAsSeen(ad.id)
+                .then(() => window.open(ad.link, '_blank'))
+                .catch(error => {
+                    console.error('Error marking ad as seen:', error);
+                });
+        }
     };
 
     useEffect(() => {
@@ -109,8 +120,7 @@ export default function AdsCard() {
                                     paginate(-1);
                                 }
                             }}
-                            onTap={() => currentSlide?.link !== '#' && window.open(currentSlide?.link, '_blank')}
-                            style={{ cursor: currentSlide?.link !== '#' ? 'pointer' : 'grab' }}
+                            style={{ cursor: 'grab' }}
                             className={styles.slide}
                         >
                             <img
@@ -118,6 +128,17 @@ export default function AdsCard() {
                                 alt={`Ad ${currentSlide?.id}`}
                                 draggable={false}
                             />
+                            {currentSlide?.link && currentSlide?.link !== '#' && (
+                                <button
+                                    className={styles.visitButton}
+                                    onClick={(e) => handleVisitClick(e, currentSlide)}
+                                >
+                                    Visit
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
+                            )}
                         </motion.div>
                     </AnimatePresence>
                 ) : (

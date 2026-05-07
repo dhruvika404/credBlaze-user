@@ -4,7 +4,7 @@ import styles from './dashboard.module.scss';
 import UserStories from './userStories';
 import CardList from './cardList';
 import TutorialVideoModal from '@/components/modal/tutorialVideoModal';
-import { getAd, AD_TYPES } from '@/services/ads';
+import { getPopupAd } from '@/services/ads';
 
 export default function Dashboard() {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -13,7 +13,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchPopUpAd = async () => {
             try {
-                const response = await getAd(AD_TYPES.POP_UP);
+                const response = await getPopupAd();
                 if (response.success && response.data) {
                     setPopUpData(response.data);
                     setIsPopUpOpen(true);
