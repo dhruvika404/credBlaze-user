@@ -58,7 +58,7 @@ export default function Faq() {
                     <div key={index} className={styles.faqItem}>
                         <h3>{item.question}</h3>
                         <div
-                            dangerouslySetInnerHTML={{ __html: item.answer }}
+                            dangerouslySetInnerHTML={{ __html: item.answer.replace(/&nbsp;/g, ' ') }}
                         />
                     </div>
                 ))}

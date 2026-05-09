@@ -33,13 +33,28 @@
     }
 
     .content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-height: 65vh;
+        overflow-y: auto;
+        padding-right: 10px;
+        
+        /* Optional: Add custom scrollbar for better appearance */
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #D9D9D9;
+            border-radius: 10px;
+        }
+
         p {
             color: #3D3D3D;
             font-size: 14px;
             font-style: normal;
             font-weight: 400;
             margin: 0 0 10px 0;
-            line-height: normal;
+            line-height: 1.5;
         }
 
         h3 {
@@ -49,6 +64,23 @@
             font-weight: 600;
             margin: 0 0 10px 0;
             line-height: normal;
+        }
+
+        ul, ol {
+            color: #3D3D3D;
+            font-size: 14px;
+            margin: 0 0 16px 20px;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong, b {
+            font-weight: 600;
+            color: #2C3333;
         }
     }
 }

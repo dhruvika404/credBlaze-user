@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
         getPrivacyPolicy()
             .then((res) => {
                 if (res.success) {
-                    setContent(res.data.content);
+                    setContent(res.data.content.replace(/&nbsp;/g, ' '));
                 }
             })
             .catch((err) => {
