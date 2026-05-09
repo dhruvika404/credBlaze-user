@@ -6,17 +6,21 @@ import CardList from './cardList';
 import TutorialVideoModal from '@/components/modal/tutorialVideoModal';
 import { getPopupAd } from '@/services/ads';
 
+let hasShownPopUp = false;
+
 export default function Dashboard() {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState(null);
 
     useEffect(() => {
+        if (hasShownPopUp) return;
         const fetchPopUpAd = async () => {
             try {
                 const response = await getPopupAd();
                 if (response.success && response.data) {
                     setPopUpData(response.data);
                     setIsPopUpOpen(true);
+                    hasShownPopUp = true;
                 }
             } catch (error) {
                 console.error('Error fetching pop-up ad:', error);

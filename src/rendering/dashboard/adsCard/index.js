@@ -60,7 +60,8 @@ export default function AdsCard() {
                                         allAds.push({
                                             id: ad.id,
                                             image: ad.ad_file,
-                                            link: ad.destination_link
+                                            link: ad.destination_link,
+                                            seen: ad.seen
                                         });
                                     });
                                 }
@@ -69,7 +70,8 @@ export default function AdsCard() {
                             allAds = response.data.map(ad => ({
                                 id: ad.id,
                                 image: ad.ad_file,
-                                link: ad.destination_link
+                                link: ad.destination_link,
+                                seen: ad.seen
                             }));
                         }
                     }
@@ -128,7 +130,7 @@ export default function AdsCard() {
                                 alt={`Ad ${currentSlide?.id}`}
                                 draggable={false}
                             />
-                            {currentSlide?.link && currentSlide?.link !== '#' && (
+                            {currentSlide?.link && currentSlide?.link !== '#' && !currentSlide?.seen && (
                                 <button
                                     className={styles.visitButton}
                                     onClick={(e) => handleVisitClick(e, currentSlide)}
