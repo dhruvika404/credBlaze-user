@@ -89,6 +89,7 @@
             }
 
             tbody {
+                transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
                 tr {
                     border-bottom: 1px solid #E9E9E9;
 
@@ -181,5 +182,10 @@
             background-repeat: no-repeat;
             background-position: center;
         }
+    }
+    .paginationWrapper {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #E9E9E9;
     }
 }

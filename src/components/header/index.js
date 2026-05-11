@@ -15,11 +15,21 @@ export default function Header() {
     const cashBalance = cashWallet ? Number(cashWallet.balance).toLocaleString('en-IN') : '0';
     const pointsBalance = pointsWallet ? Number(pointsWallet.balance).toLocaleString('en-IN') : '0';
     const profileImg = user?.profileImage || user?.profile_image
+    const [searchValue, setSearchValue] = React.useState('');
+
+    const handleSearchChange = (e) => {
+        const val = e.target.value;
+        const currentSearch = searchValue || '';
+        if (currentSearch.trim() === '' && val.trim() === '') {
+            return;
+        }
+        setSearchValue(val);
+    };
 
     return (
         <header className={styles.header}>
             <div className={styles.leftsearch}>
-                <input type='text' placeholder='Search' />
+                <input type='text' placeholder='Search' value={searchValue} onChange={handleSearchChange} />
                 <div className={styles.lefticon}>
                     <SearchIcon />
                 </div>

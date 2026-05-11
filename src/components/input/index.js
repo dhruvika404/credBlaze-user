@@ -29,22 +29,37 @@ export default function Input({
 }) {
   const handleChange = (e) => {
     let val = e.target.value;
+    
     if (sanitize) val = sanitize(val);
     onChange?.(val);
   };
 
+  const handleKeyDown = (e) => {
+    const currentValue = value || '';
+    if (e.key === ' ' && currentValue.trim() === '') {
+      e.preventDefault();
+    }
+  };
+
   // Also sanitize pasted content
   const handlePaste = (e) => {
-    if (!sanitize) return;
     e.preventDefault();
     const pasted = e.clipboardData.getData('text');
-    const sanitized = sanitize(pasted);
+    const currentValue = value || '';
+    
+    if (currentValue.trim() === '' && pasted.trim() === '') {
+      return;
+    }
+    
+    let processed = pasted;
+    if (sanitize) processed = sanitize(pasted);
+    
     // Insert at cursor position
     const input = e.target;
     const start = input.selectionStart ?? 0;
     const end = input.selectionEnd ?? 0;
-    const current = value ?? '';
-    const next = current.slice(0, start) + sanitized + current.slice(end);
+    const current = currentValue;
+    const next = current.slice(0, start) + processed + current.slice(end);
     const limited = maxLength ? next.slice(0, maxLength) : next;
     onChange?.(limited);
   };
@@ -76,6 +91,7 @@ export default function Input({
           inputMode={inputMode}
           required={required}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           aria-invalid={!!error}
           aria-describedby={error ? `${name}-error` : undefined}

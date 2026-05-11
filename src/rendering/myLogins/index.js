@@ -6,6 +6,7 @@ import { getUserActivity, logout, deleteAccount } from '@/services/auth';
 import LogoutModal from '@/components/modal/logoutModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-hot-toast';
+import Pagination from '@/components/pagination';
 
 
 const ChromeIcon = () => (
@@ -26,11 +27,23 @@ export default function MyLogins() {
         loading: false,
         data: null
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const pageSize = 5;
 
-    const fetchActivities = async () => {
+    const fetchActivities = async (isPageChange = false) => {
         try {
-            const res = await getUserActivity({}, token || '');
-            const activityList = res?.data?.activities
+
+            setLoading(true);
+            const offset = (currentPage - 1) * pageSize;
+            const res = await getUserActivity({ offset, limit: pageSize }, token || '');
+            const activityList = res?.data?.activities;
+            const totalCount = res?.data?.total_count || 0;
+            if (isPageChange) {
+                await new Promise(resolve => setTimeout(resolve, 150));
+            }
+
             if (Array.isArray(activityList)) {
                 const otherSessions = activityList.filter(activity => activity.device_id !== deviceId);
                 const currentSession = activityList.find(activity => activity.device_id === deviceId);
@@ -42,6 +55,9 @@ export default function MyLogins() {
             } else {
                 setActivities([]);
             }
+
+            setTotalItems(totalCount);
+            setTotalPages(Math.ceil(totalCount / pageSize));
         } catch (error) {
             console.error('Error fetching activities:', error);
         } finally {
@@ -51,9 +67,9 @@ export default function MyLogins() {
 
     useEffect(() => {
         if (deviceId) {
-            fetchActivities();
+            fetchActivities(currentPage > 1);
         }
-    }, [deviceId]);
+    }, [deviceId, currentPage]);
 
     const handleHeaderCheckboxChange = (e) => {
         if (e.target.checked) {
@@ -244,6 +260,21 @@ export default function MyLogins() {
                         </tbody>
                     </table>
                 </div>
+                {activities.length > 0 && (
+                    <div className={styles.paginationWrapper}>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            totalItems={totalItems}
+                            pageSize={pageSize}
+                            pageSizeOptions={[]}
+                            onPageChange={(page) => {
+                                setCurrentPage(page);
+                                setSelectedActivities([]);
+                            }}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Delete Account Section */}

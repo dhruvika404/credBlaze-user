@@ -6,6 +6,16 @@ const ProIcon = '/assets/icons/pro.svg';
 const CopyIcon = '/assets/icons/copy.svg';
 
 export default function CardStatus() {
+    const [cardLink, setCardLink] = React.useState('');
+    const handleCardLinkChange = (e) => {
+        const val = e.target.value;
+        const currentLink = cardLink || '';
+        if (currentLink.trim() === '' && val.trim() === '') {
+            return;
+        }
+        setCardLink(val);
+    };
+
     return (
         <div className={styles.cardStatus}>
             <div className={styles.outlineBorder}>
@@ -36,7 +46,7 @@ export default function CardStatus() {
                     <p>Your Card Link</p>
                 </div>
                 <div className={styles.input}>
-                    <input type='text' placeholder='card.app/johndoe' />
+                    <input type='text' placeholder='card.app/johndoe' value={cardLink} onChange={handleCardLinkChange} />
                 </div>
                 <div className={styles.buttonAlignment}>
                     <Button icon={CopyIcon} iconwithText text="Copy Link" />

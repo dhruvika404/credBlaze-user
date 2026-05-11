@@ -47,6 +47,9 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
     }, [isOpen]);
 
     const handlePriceChange = (value, setter) => {
+        if (!value.trim() && value.length > 0) {
+            return;
+        }
         const numericValue = value.replace(/[^0-9]/g, '');
         if (numericValue.length <= 10) setter(numericValue);
     };

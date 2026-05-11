@@ -37,7 +37,7 @@ const menuItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
-    const { logout: clearLocalAuth, token } = useAuth();
+    const { logout: clearLocalAuth, token, user } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -82,16 +82,18 @@ export default function Sidebar() {
                 </div>
                 <div>
                     <div className={styles.sidebarFooter}>
-                        <div className={styles.featuresBox}>
-                            <div className={styles.boxHeaderAlignment}>
-                                <StarGroupIcon />
-                                <h3>Unlock premium features</h3>
+                        {!user?.is_prime && (
+                            <div className={styles.featuresBox}>
+                                <div className={styles.boxHeaderAlignment}>
+                                    <StarGroupIcon />
+                                    <h3>Unlock premium features</h3>
+                                </div>
+                                <p>
+                                    Get early access & high-paying tasks with Pro Membership
+                                </p>
+                                <button>Upgrade to Pro</button>
                             </div>
-                            <p>
-                                Get early access & high-paying tasks with Pro Membership
-                            </p>
-                            <button>Upgrade to Pro</button>
-                        </div>
+                        )}
                         <div className={styles.asideFooter}>
                             <Link href='/help' className={styles.menu}>
                                 <HelpIcon />

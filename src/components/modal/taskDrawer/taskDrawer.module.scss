@@ -172,7 +172,8 @@
         align-items: center;
         padding: 8px 10px;
         gap: 8px;
-        height: 40px;
+        min-height: 40px;
+        height: auto;
         flex-shrink: 0;
         background: #3DB042;
         border: 1px solid rgba(61, 176, 66, 0.08);
@@ -183,11 +184,16 @@
         line-height: 22px;
         color: #FFFFFF;
         white-space: nowrap;
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &.coin {
             background: #DE8806;
-            width: 94.52px;
-            height: 40px;
+            min-width: 94.52px;
+            width: auto;
+            height: auto;
+            min-height: 40px;
             padding: 8px 10px;
         }
 
@@ -200,6 +206,8 @@
             align-items: center;
             gap: 8px;
             color: #FFFFFF;
+            max-width: 100%;
+            overflow: hidden;
 
             .rewardIcon {
                 width: 24px;
@@ -221,6 +229,9 @@
                 font-weight: 600;
                 font-size: 16px;
                 color: #FFFFFF;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
     }

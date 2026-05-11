@@ -48,6 +48,10 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
     const surveyDescription = survey.survey_short_description || task.description || ''
 
     const handleChange = (id, value) => {
+        const currentAnswer = answers[id] || '';
+        if (currentAnswer.trim() === '' && typeof value === 'string' && value.trim() === '') {
+            return;
+        }
         setAnswers(prev => ({ ...prev, [id]: value }))
         if (errors[id]) setErrors(prev => ({ ...prev, [id]: null }))
     }

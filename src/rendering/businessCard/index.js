@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './businessCard.module.scss';
 import NoDigitalBusinessCard from './noDigitalBusinessCard';
+
 export default function BusinessCard() {
     return (
         <div className={styles.businessCard}>
@@ -10,7 +11,7 @@ export default function BusinessCard() {
                     Share your professional identity with a tap
                 </p>
             </div>
-            {/* <NoDigitalBusinessCard /> */}
+            <NoDigitalBusinessCard />
         </div>
     )
 }
