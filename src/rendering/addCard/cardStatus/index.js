@@ -1,9 +1,11 @@
+'use client'
 import React from 'react'
 import styles from './cardStatus.module.scss';
 import LinkIcon from '@/icons/linkIcon';
 import Button from '@/components/button';
 const ProIcon = '/assets/icons/pro.svg';
 const CopyIcon = '/assets/icons/copy.svg';
+
 
 export default function CardStatus() {
     const [cardLink, setCardLink] = React.useState('');
