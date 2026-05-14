@@ -1,0 +1,44 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.balanceValue {
+    padding: 12px 0 0 0;
+
+    .box {
+        border-radius: 12px;
+        border: 1px solid var(--Black-500, #F5F5F5);
+        background: var(--Black-600, #FFF);
+        padding: 16px;
+
+        .boxheaderAlignment {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 0 16px 0;
+
+            h2 {
+                color: var(--Black-100, #171717);
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            button {
+                border-radius: 40px;
+                border: 1px solid var(--Pale-Blue-2, #D6E2FF);
+                background: var(--Pale-Blue-01-Pale-Blue, #EFF4FF);
+                padding: 6px 12px;
+                display: flex;
+                color: var(--Deep-Cobalt-1, #0040C1);
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: normal;
+                align-items: center;
+                gap: 6px;
+            }
+        }
+    }
+
+}

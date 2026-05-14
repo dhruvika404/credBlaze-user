@@ -1,0 +1,192 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.transactionHistory {
+    border-radius: 12px;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: #FFF;
+    padding: 16px;
+    box-sizing: border-box;
+
+    .tableHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+
+        .titleInfo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .icon {
+                border-radius: 8px;
+                border: 1px solid var(--Stroke-Primary, #E6E8EA);
+                background: var(--Background-Surface-Default, #FFF);
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            span {
+                display: block;
+                color: #020204;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 24px;
+            }
+        }
+
+        .rightControls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .filterBtn {
+                overflow: hidden;
+                color: #625F6E;
+                border-radius: 8px;
+                border: 1px solid #E6E8EA;
+                background: #FFF;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 20px;
+                padding: 11px 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    border-color: #6475F6;
+                    color: #6475F6;
+                    background: rgba(100, 117, 246, 0.05);
+                    transform: translateY(-1px);
+
+                    svg {
+                        path {
+                            stroke: #6475F6;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .statusActive {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #6B7280;
+        font-weight: 500;
+        font-size: 14px;
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .greenDot {
+            background: #3DB042;
+        }
+
+        .yellowDot {
+            background: #DE8806;
+        }
+
+        .redDot {
+            background: #EF4444;
+        }
+    }
+
+    .amountGreen {
+        color: #3DB042;
+        font-weight: 600;
+
+        .suffix {
+            font-weight: 500;
+            margin-left: 2px;
+        }
+    }
+
+    .amountRed {
+        color: #EF4444;
+        font-weight: 600;
+
+        .suffix {
+            font-weight: 500;
+            margin-left: 2px;
+        }
+    }
+
+    .categoryBadge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        width: fit-content;
+
+        &.cbPoints {
+            background: #FFF7EA;
+            color: #DE8806;
+        }
+
+        &.money {
+            background: #E6F7E7;
+            color: #3DB042;
+        }
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    .typeCell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .typeIcon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            
+            &.deposit {
+                background: #DCFCE7;
+                color: #00A63E;
+            }
+            
+            &.withdraw {
+                background: #FFE2E2;
+                color: #E7000B;
+            }
+        }
+
+        .typeName {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6B7280;
+            text-transform: capitalize;
+        }
+    .tableWrapper {
+        height: 450px;
+        overflow-y: auto;
+        border-radius: 8px;
+        border: 1px solid #F5F5F5;
+        position: relative;
+    }
+}
+}

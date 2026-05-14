@@ -48,6 +48,7 @@ export default function Login() {
           email: form.email,
           password: form.password,
           device_id: deviceId,
+          user_role_name: "User"
         });
 
         if (res.success) {

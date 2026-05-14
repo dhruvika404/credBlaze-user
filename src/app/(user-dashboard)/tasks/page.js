@@ -9,6 +9,7 @@ import FilterDrawer from '@/components/modal/filterDrawer';
 import ProIcon from '@/icons/proIcon';
 import { getAvailableTasks, getMySubmissions } from '@/services/task';
 import DataTable from '@/components/dataTable';
+import moment from 'moment'
 
 
 export default function TasksPage() {
@@ -251,20 +252,7 @@ export default function TasksPage() {
         {
             key: 'created_at',
             label: 'Date',
-            render: (val) => {
-                if (!val) return '-';
-                const d = new Date(val);
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = d.getFullYear();
-                let hours = d.getHours();
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12;
-                const hoursStr = String(hours).padStart(2, '0');
-                return `${day}-${month}-${year} | ${hoursStr}:${minutes} ${ampm}`;
-            }
+            render: (val) => val ? moment(val).format('DD-MM-YYYY | hh:mm A') : '-'
         },
         {
             key: 'task_status',

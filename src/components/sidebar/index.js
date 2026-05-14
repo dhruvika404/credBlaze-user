@@ -26,11 +26,11 @@ const BlackLogo = '/assets/logo/black-logo.svg';
 const menuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { href: '/tasks', label: 'Tasks', icon: <TasksIcon /> },
-    { href: '/utilities', label: 'Utilities', icon: <UtilitiesIcon /> },
-    { href: '/shop', label: 'Shop', icon: <ShopIcon /> },
+    // { href: '/utilities', label: 'Utilities', icon: <UtilitiesIcon /> },
+    // { href: '/shop', label: 'Shop', icon: <ShopIcon /> },
     { href: '/spin-earn', label: 'Spin & Earn', icon: <SpinIcon /> },
     { href: '/referrals', label: 'Referrals', icon: <ReferralsIcon /> },
-    { href: '/business-card', label: 'Business Card', icon: <CardIcon /> },
+    // { href: '/business-card', label: 'Business Card', icon: <CardIcon /> },
     { href: '/wallet', label: 'Wallet', icon: <WalletIcon /> },
     { href: '/settings', label: 'Settings', icon: <SettingIcon /> },
 ]

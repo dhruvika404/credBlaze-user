@@ -1,0 +1,185 @@
+@use '../../scss/main.scss' as *;
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.pickerContainer {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.1);
+    width: 640px;
+}
+
+.calendars {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.monthPanel {
+    flex: 1;
+
+    .monthHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .monthLabel {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .navBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            &:hover { background: #F3F4F6; }
+        }
+
+        .navSpacer { width: 28px; }
+    }
+
+    .dayNames {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        margin-bottom: 12px;
+
+        .dayName {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+    }
+
+    .daysGrid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+
+        .emptyCell { height: 40px; }
+
+        .dayCell {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            transition: all 0.2s;
+
+            &:hover:not(.selectedDay) {
+                background: #F3F4F6;
+            }
+
+            &.selectedDay {
+                background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                color: #FFFFFF;
+            }
+
+            &.inRange {
+                background: rgba(100, 117, 246, 0.1);
+                border-radius: 0;
+            }
+
+            &.rangeStart {
+                border-radius: 8px 0 0 8px;
+            }
+
+            &.rangeEnd {
+                border-radius: 0 8px 8px 0;
+            }
+        }
+    }
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid #F3F4F6;
+
+    .dateDisplay {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .dateBox {
+            padding: 8px 12px;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            min-width: 120px;
+            text-align: center;
+
+            &.activeDate {
+                border-color: #6475F6;
+                background: rgba(100, 117, 246, 0.05);
+            }
+        }
+
+        .toLabel {
+            font-size: 14px;
+            color: #6B7280;
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+
+        .cancelBtn {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4B5563;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .setDateBtn {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+
+            &:hover:not(:disabled) {
+                background: linear-gradient(90deg, #6475F6 -4.55%, #0040C1 102.73%);
+                transform: translateY(-1px);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+}

@@ -7,7 +7,7 @@
             background: #F5F5F5;
             color: #171717;
 
-            &:hover {
+            &:hover:not(:disabled) {
                 background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
                 color: #fff;
             }

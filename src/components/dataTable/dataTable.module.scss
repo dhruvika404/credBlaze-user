@@ -6,6 +6,7 @@
     margin-top: 0;
     display: flex;
     flex-direction: column;
+    gap: 12px;
     height: auto;
     max-height: 100%;
     width: 100%;
@@ -18,7 +19,8 @@
         width: 100%;
 
         &::-webkit-scrollbar {
-            height: 6px;
+            height: 4px;
+            width: 4px;
         }
 
         &::-webkit-scrollbar-track {
@@ -131,9 +133,6 @@
 
     // ── Pagination line ─────────────────────────────────────────────────────
     .paginationLine {
-        padding: 16px;
-        background: #FFF;
-        border-top: 1px solid #E6E8EA;
         flex-shrink: 0;
     }
 }
