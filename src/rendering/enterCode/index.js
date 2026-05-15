@@ -65,7 +65,7 @@ export default function EnterCode() {
     setLoading(true);
     try {
       if (mode === 'forgot') {
-        await verifyForgotOtp({ otp, email });
+        await verifyForgotOtp({ otp, email, user_role_name: 'User' });
         router.push(`/create-password?email=${encodeURIComponent(email)}`);
       } else {
         // mode === 'verify' (first-time signup email verification)

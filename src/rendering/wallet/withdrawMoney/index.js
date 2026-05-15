@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import WalletStatusModal from '@/components/modal/walletStatusModal';
 import { useAuth } from '@/context/AuthContext';
 
-export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
+export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', planDetails }) {
     const { user } = useAuth();
     const cashWallet = user?.wallets?.find(w => w.wallet_type === 'REAL');
     const cashBalance = cashWallet ? Number(cashWallet.balance).toLocaleString('en-IN') : '0';
@@ -34,6 +34,12 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
             if (expireTimerRef.current) clearTimeout(expireTimerRef.current);
         };
     }, []);
+
+    useEffect(() => {
+        if (isOpen && type === 'plan' && planDetails) {
+            setAmount(planDetails.price.toString());
+        }
+    }, [isOpen, type, planDetails]);
 
     const stopAllTimers = (messageHandler) => {
         if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
@@ -123,6 +129,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
 
     const isNextDisabled = !amount || loading;
     const isDepositDisabled = !amount || !selectedMethod || loading;
+    const isPlanDisabled = !amount || !selectedMethod || loading;
     const isWithdrawDisabled = !amount || !selectedMethod || !coinAddress || loading;
 
     const handleNext = async () => {
@@ -145,16 +152,23 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
     };
 
     const handleSubmit = async () => {
-        if (type === 'deposit') {
-            if (isDepositDisabled) return;
+        if (type === 'deposit' || type === 'plan') {
+            if (type === 'deposit' && isDepositDisabled) return;
+            if (type === 'plan' && isPlanDisabled) return;
             setLoading(true);
             try {
-                const payload = {
+                const payload = type === 'deposit' ? {
                     networkname: selectedMethod.networkname,
                     coinname: selectedMethod.coinname,
                     amount_usd: amount.toString(),
                     is_user_wallet_deposit: true,
                     is_user_wallet_withdraw: false
+                } : {
+                    networkname: selectedMethod.networkname,
+                    coinname: selectedMethod.coinname,
+                    amount_usd: amount.toString(),
+                    is_prime_membership_payment: true,
+                    plan_id: planDetails?.id
                 };
 
                 const response = await createCryptoPayment(payload);
@@ -218,7 +232,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
             <div className={styles.withdrawMoneyWrapper} style={{ display: isStatusModalOpen ? 'none' : 'flex' }}>
                 <div className={styles.modal}>
                     <div className={styles.modalHeader}>
-                        <h2>{type === 'deposit' ? 'Deposit Money' : 'Withdraw Money'}</h2>
+                        <h2>{type === 'deposit' ? 'Deposit Money' : type === 'plan' ? 'Upgrade Plan' : 'Withdraw Money'}</h2>
                         <div onClick={handleClose}>
                             <CloseIcon />
                         </div>
@@ -236,12 +250,13 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
                                 onChange={handleAmountChange}
                                 type="text"
                                 maxLength={8}
+                                disabled={type === 'plan'}
                             />
                             <span>
-                                Minimum {type === 'deposit' ? 'deposit' : 'withdrawal'}
+                                {type === 'plan' ? 'Plan price' : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
                             </span>
                         </div>
-                        {(type === 'deposit' || (step === 2 && availableCoins.length > 0)) && (
+                        {(type === 'deposit' || type === 'plan' || (step === 2 && availableCoins.length > 0)) && (
                             <div className={styles.withdrawal}>
                                 <div className={styles.withdrawalTitle}>
                                     <div className={styles.iconBox}>
@@ -298,7 +313,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
                                 <p>No payment methods available for the entered amount.</p>
                             </div>
                         )}
-                        {type === "deposit" && (
+                        {(type === "deposit" || type === "plan") && (
                             <div className={styles.warnning}>
                                 <InfoIcon />
                                 <p>
@@ -312,9 +327,9 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw' }) {
                                 <Button text="Next" onClick={handleNext} disabled={isNextDisabled} />
                             ) : (
                                 <Button
-                                    text={type === 'deposit' ? 'Deposit' : 'Withdraw'}
+                                    text={type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Pay Now' : 'Withdraw'}
                                     onClick={handleSubmit}
-                                    disabled={type === 'deposit' ? isDepositDisabled : isWithdrawDisabled}
+                                    disabled={type === 'deposit' ? isDepositDisabled : type === 'plan' ? isPlanDisabled : isWithdrawDisabled}
                                 />
                             )}
                         </div>

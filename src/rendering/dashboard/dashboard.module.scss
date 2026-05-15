@@ -3,4 +3,34 @@
 
 .dashboardPage {
     padding: 14px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.titleInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    h1 {
+        font-family: 'Manrope', sans-serif;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 30px;
+        color: #020204;
+        margin: 0;
+    }
+
+    p {
+        font-family: 'Manrope', sans-serif;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 22px;
+        color: #6B7280;
+        margin: 0;
+    }
 }

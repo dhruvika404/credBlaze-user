@@ -58,7 +58,7 @@ export default function EmailVerify() {
     setApiError('');
     setLoading(true);
     try {
-      await forgotPassword({ email });
+      await forgotPassword({ email, user_role_name: 'User' });
       router.push(`/enter-code?mode=forgot&email=${encodeURIComponent(email)}`);
     } catch (err) {
       setApiError(err?.message || 'Could not send reset email. Please try again.');

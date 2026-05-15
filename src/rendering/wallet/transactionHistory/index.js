@@ -20,14 +20,14 @@ export default function TransactionHistory() {
     const fetchTransactions = useCallback(async () => {
         try {
             setLoading(true);
-            
+
             const payload = {
                 limit: pageSize,
                 offset: (currentPage - 1) * pageSize,
-                wallet_type: appliedFilters.walletTypes?.[0] || undefined,
-                transaction_type: appliedFilters.transactionTypes?.[0] || undefined,
-                earning_type: appliedFilters.earningTypes?.[0] || undefined,
-                transaction_status: appliedFilters.statuses?.[0] || undefined,
+                wallet_type: appliedFilters.walletTypes,
+                transaction_type: appliedFilters.transactionTypes,
+                earning_type: appliedFilters.earningTypes,
+                transaction_status: appliedFilters.statuses,
             };
 
             if (appliedFilters.dateRange?.from) {
@@ -57,6 +57,11 @@ export default function TransactionHistory() {
         {
             key: 'transaction_id',
             label: 'Txn ID',
+            render: (val) => (
+                <div className={styles.txnIdCell} title={val}>
+                    {val}
+                </div>
+            )
         },
         {
             key: 'created_at',

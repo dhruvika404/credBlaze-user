@@ -5,10 +5,12 @@ import UserStories from './userStories';
 import CardList from './cardList';
 import TutorialVideoModal from '@/components/modal/tutorialVideoModal';
 import { getPopupAd } from '@/services/ads';
+import { useAuth } from '@/context/AuthContext';
 
 let hasShownPopUp = false;
 
 export default function Dashboard() {
+    const { user } = useAuth();
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState(null);
 
@@ -31,6 +33,12 @@ export default function Dashboard() {
 
     return (
         <div className={styles.dashboardPage}>
+            {user?.is_prime && (
+                <div className={styles.titleInfo}>
+                    <h1>Dashboard</h1>
+                    <p>Get early access & high-paying tasks with Pro Membership</p>
+                </div>
+            )}
             <UserStories />
             <CardList />
             <TutorialVideoModal

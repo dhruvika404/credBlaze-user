@@ -68,6 +68,8 @@ export default function UserStories() {
         setIsPreviewOpen(false);
     };
 
+    if (stories.length === 0) return null;
+
     return (
         <>
             <div className={styles.userStories}>

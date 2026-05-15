@@ -41,4 +41,4 @@ export const logout = (payload) =>
 // ─── Google Auth ─────────────────────────────────────────────────────────────
 
 export const googleLogin = (googleToken, deviceId = '') =>
-  request(() => api.post(`/auth/google/google_login?token=${encodeURIComponent(googleToken)}&device_id=${encodeURIComponent(deviceId)}`));
+  request(() => api.post(`/auth/google/google_login?token=${encodeURIComponent(googleToken)}&device_id=${encodeURIComponent(deviceId)}&user_role_name=User`));

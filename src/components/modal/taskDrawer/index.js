@@ -12,7 +12,9 @@ import InfoIcon from '@/icons/infoIcon';
 import { submitTask } from '@/services/task';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
+    const router = useRouter();
     const [view, setView] = useState('details'); // 'details' or 'perform'
     const [agreed, setAgreed] = useState(false);
     const [proofImage, setProofImage] = useState(null);
@@ -434,7 +436,10 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                             {isPrimeTask && !isUserPro ? (
                                 <button
                                     className={`${styles.mainBtn} ${styles.pro}`}
-                                    onClick={() => {/* Upgrade Logic */ }}
+                                    onClick={() => {
+                                        onClose();
+                                        router.push('/settings/plan-pricing');
+                                    }}
                                 >
                                     Upgrade to Pro
                                 </button>

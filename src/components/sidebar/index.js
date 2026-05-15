@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './sidebar.module.scss';
 import DashboardIcon from '@/icons/dashboardIcon';
 import TasksIcon from '@/icons/tasksIcon';
@@ -29,13 +29,14 @@ const menuItems = [
     // { href: '/utilities', label: 'Utilities', icon: <UtilitiesIcon /> },
     // { href: '/shop', label: 'Shop', icon: <ShopIcon /> },
     { href: '/spin-earn', label: 'Spin & Earn', icon: <SpinIcon /> },
-    { href: '/referrals', label: 'Referrals', icon: <ReferralsIcon /> },
+    { href: '/referral-invitation', label: 'Referrals', icon: <ReferralsIcon /> },
     // { href: '/business-card', label: 'Business Card', icon: <CardIcon /> },
     { href: '/wallet', label: 'Wallet', icon: <WalletIcon /> },
     { href: '/settings', label: 'Settings', icon: <SettingIcon /> },
 ]
 
 export default function Sidebar() {
+    const router = useRouter();
     const pathname = usePathname();
     const { logout: clearLocalAuth, token, user } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -91,7 +92,7 @@ export default function Sidebar() {
                                 <p>
                                     Get early access & high-paying tasks with Pro Membership
                                 </p>
-                                <button>Upgrade to Pro</button>
+                                <button onClick={() => router.push('/settings/plan-pricing')}>Upgrade to Pro</button>
                             </div>
                         )}
                         <div className={styles.asideFooter}>

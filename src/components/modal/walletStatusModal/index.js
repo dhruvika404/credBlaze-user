@@ -37,10 +37,10 @@ export default function WalletStatusModal({ isOpen, onClose, status = 'pending',
                             <img src="/assets/icons/info-yellow.svg" alt="pending" />
                         </div>
                         <div className={styles.textGroup}>
-                            <h2>Pending {type === 'deposit' ? 'Deposit' : 'Withdrawal'} Request</h2>
-                            <p>Once it's complete, the {type === 'deposit' ? 'Deposit' : 'Withdrawal'} will be processed.</p>
+                            <h2>Pending {type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Payment' : 'Withdrawal'} Request</h2>
+                            <p>Once it's complete, the {type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Plan Upgrade' : 'Withdrawal'} will be processed.</p>
                         </div>
-                        {type === 'deposit' ? (
+                        {(type === 'deposit' || type === 'plan') ? (
                             <div className={styles.infoAlert}>
                                 <div className={styles.icon}>
                                     <InfoIcon />
@@ -62,10 +62,10 @@ export default function WalletStatusModal({ isOpen, onClose, status = 'pending',
                             <img src="/assets/icons/success-green.svg" alt="approved" />
                         </div>
                         <div className={styles.textGroup}>
-                            <h2>{type === 'deposit' ? 'Deposit successfully' : 'Withdrawal successfully'}</h2>
-                            <p>{type === 'deposit' ? 'Deposit' : 'Withdrawal'} of ${amount || 0} initiated successfully!</p>
+                            <h2>{type === 'deposit' ? 'Deposit successfully' : type === 'plan' ? 'Plan upgraded successfully' : 'Withdrawal successfully'}</h2>
+                            <p>{type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Payment' : 'Withdrawal'} of ${amount || 0} initiated successfully!</p>
                         </div>
-                        {amount && (
+                        {amount && type !== 'plan' && (
                             <div className={styles.rewardBadge}>
                                 <span>{type === 'deposit' ? '+' : '-'}${amount}</span>
                             </div>
@@ -79,7 +79,7 @@ export default function WalletStatusModal({ isOpen, onClose, status = 'pending',
                             <img src="/assets/icons/close-vec.svg" alt="rejected" />
                         </div>
                         <div className={styles.textGroup}>
-                            <h2>Rejected {type === 'deposit' ? 'Deposit' : 'Withdrawal'} Request</h2>
+                            <h2>Rejected {type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Payment' : 'Withdrawal'} Request</h2>
                             <p>{'Please try again.'}</p>
                         </div>
                     </div>
