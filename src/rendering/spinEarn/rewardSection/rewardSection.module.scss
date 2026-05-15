@@ -1,0 +1,281 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.rewardSection {
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        .items {
+            &:first-child {
+                border-radius: 12px;
+                border: 1px solid var(--Black-500, #F5F5F5);
+                background: var(--Black-600, #FFF);
+                padding: 20px;
+
+                .icontextAlignment {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    justify-content: center;
+                    padding: 30px 0 20px 0;
+
+                    span {
+                        display: block;
+                        color: var(--Black-300, #6B7280);
+                        font-size: 13.349px;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: normal;
+                    }
+                }
+
+                .buttonCenter {
+                    max-width: 324px;
+                    margin: 0 auto;
+
+                    button {
+                        width: 100%;
+                    }
+                }
+
+                .centerAlignment {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+
+                    .loadingPlaceholder {
+                        height: 380px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 18px;
+                        color: #6B7280;
+
+                        @include respond-to("sm") {
+                            height: 300px;
+                        }
+                    }
+                }
+
+                .boxheader {
+                    h3 {
+                        color: #15185D;
+                        text-align: center;
+                        font-size: 26.698px;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: 100%;
+                    }
+                }
+            }
+
+            &:last-child {
+                border-radius: 12px;
+                border: 1px solid var(--Black-500, #F5F5F5);
+                background: var(--Black-600, #FFF);
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 20px;
+
+                .boxgrid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    padding: 0 0 20px 0;
+                    gap: 12px;
+
+                    .boxItems {
+                        padding: 20px 24px;
+                        border-radius: 12px;
+                        background: #EFF9FF;
+
+                        &:nth-child(2) {
+                            background: #F3F7EE;
+                        }
+
+                        &:nth-child(3) {
+                            background: #F3F4FB;
+                        }
+
+                        &:nth-child(4) {
+                            background: #FCF6EF;
+                        }
+
+                        h4 {
+                            color: var(--Black-100, #171717);
+                            font-size: 24px;
+                            font-style: normal;
+                            font-weight: 600;
+                            line-height: 32px;
+                        }
+
+                        .boxheader {
+                            display: flex;
+                            padding: 0 0 20px 0;
+                            align-items: center;
+                            gap: 8px;
+
+                            img {
+                                display: block;
+                            }
+
+                            h3 {
+                                color: var(--Black-100, #171717);
+                                font-size: 16px;
+                                font-style: normal;
+                                font-weight: 600;
+                                line-height: 24px;
+                            }
+                        }
+                    }
+                }
+
+                .howitWorks {
+                    border-radius: 12px;
+                    border: 1px solid var(--Black-500, #F5F5F5);
+                    background: var(--Black-600, #FFF);
+                    padding: 22px 16px;
+
+                    ul {
+                        margin: 0;
+                        padding: 0 0 0 20px;
+
+                        li {
+                            color: var(--Black-200, #3D3D3D);
+                            font-size: 16px;
+                            font-style: normal;
+                            font-weight: 600;
+                            line-height: normal;
+                            padding: 0 0 12px 0;
+
+                            &:last-child {
+                                padding: 0;
+                            }
+                        }
+                    }
+
+                    .howitWorksIcon {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 0 0 22px 0;
+
+                        span {
+                            color: var(--Black-100, #171717);
+                            font-size: 16px;
+                            font-style: normal;
+                            font-weight: 600;
+                            line-height: 24px;
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .historySection {
+        margin-top: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--Black-500, #F5F5F5);
+        background: #FFF;
+        padding: 16px;
+        box-sizing: border-box;
+
+        .historyHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+
+            .historyTitleInfo {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .historyIcon {
+                    border-radius: 8px;
+                    border: 1px solid var(--Stroke-Primary, #E6E8EA);
+                    background: var(--Background-Surface-Default, #FFF);
+                    width: 28px;
+                    height: 28px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                span {
+                    display: block;
+                    color: #020204;
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: 24px;
+                }
+            }
+
+            .rightControls {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .filterBtn {
+                    overflow: hidden;
+                    color: #625F6E;
+                    border-radius: 8px;
+                    border: 1px solid #E6E8EA;
+                    background: #FFF;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: 20px;
+                    padding: 11px 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        border-color: #6475F6;
+                        color: #6475F6;
+                        background: rgba(100, 117, 246, 0.05);
+                        transform: translateY(-1px);
+
+                        svg {
+                            path {
+                                stroke: #6475F6;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .tableWrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            max-height: 340px;
+            overflow: hidden;
+        }
+
+        .plainType {
+            font-size: 14px;
+            font-weight: 500;
+            color: #3D3D3D;
+            text-transform: capitalize;
+        }
+
+        .amountGreen {
+            color: #3DB042;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    }
+}

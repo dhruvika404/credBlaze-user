@@ -1,0 +1,172 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.benefitsSection {
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+
+        .items {
+            border-radius: 20px;
+            border-top: 1px solid var(--Black-500, #F5F5F5);
+            background: #FFF;
+            padding: 24px;
+
+            .benefits {
+                padding: 12px 0 0 0;
+
+                h3 {
+                    color: var(--Hyper-Blue-dark-blue, #1D1B27);
+                    font-size: 18px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                    margin: 0 0 17px 0;
+                }
+
+                ul {
+                    margin: 0;
+                    padding: 0 0 0 20px;
+
+                    li {
+                        color: var(--Black-200, #3D3D3D);
+                        font-size: 14px;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: normal;
+                        padding: 0 0 11px 0;
+
+                        &:last-child {
+                            padding: 0;
+                        }
+                    }
+                }
+            }
+
+            .shareViaText {
+                .iconAlignment {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    justify-content: space-between;
+
+                    .iconText {
+                        p {
+                            color: #0F0F0F;
+                            font-size: 14.932px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                            letter-spacing: 0.747px;
+                        }
+
+                        .iconCenter {
+                            display: flex;
+                            justify-content: center;
+
+                            img {
+                                display: block;
+                                max-width: 48px;
+                            }
+                        }
+                    }
+                }
+
+                p {
+                    color: var(--Black-100, #171717);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 600;
+                    margin: 0 0 5px 0;
+                    line-height: normal;
+                }
+            }
+
+            .referralLink {
+                padding: 12px 0 0 0;
+
+                span {
+                    display: block;
+                    color: var(--Black-100, #171717);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                    padding: 0 0 8px 0;
+                }
+
+
+                .inputButton {
+                    display: grid;
+                    grid-template-columns: 1fr 110px;
+                    gap: 16px;
+                    padding: 0 0 22px 0;
+
+                    .inputRelative {
+                        position: relative;
+
+                        .iconAlign {
+                            position: absolute;
+                            right: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        input {
+                            width: 100%;
+                            height: 48px;
+                            border-radius: var(--Radius-8, 8px);
+                            border: 1px solid var(--Black-500, #F5F5F5);
+                            background: var(--Black-500, #F5F5F5);
+                            padding-left: 16px;
+                            padding-right: 60px;
+                            color: var(--Black-200, #3D3D3D);
+                            font-size: 14px;
+                            font-style: normal;
+                            outline: none;
+                            font-weight: 600;
+                            line-height: normal;
+                        }
+
+                        ::placeholder {
+                            color: var(--Black-200, #3D3D3D);
+                            font-size: 14px;
+                            font-style: normal;
+                            font-weight: 600;
+                            line-height: normal;
+                        }
+
+                        button {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+
+            .referEarn {
+                padding: 0 0 12px 0;
+                border-bottom: 1px solid #F5F5F5;
+
+                h3 {
+                    color: var(--Black-100, #171717);
+                    margin: 0 0 5px 0;
+                    font-size: 22px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                }
+
+                p {
+                    color: rgba(0, 0, 0, 0.60);
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: normal;
+                }
+            }
+        }
+    }
+}

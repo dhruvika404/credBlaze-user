@@ -135,7 +135,7 @@ export default function Information() {
           </div>
 
           <div className={styles.spacingGrid}>
-            {!isEditing && <KycVerification />}
+            {/* {!isEditing && <KycVerification />} */}
             <PersonalInformation
               isEditing={isEditing}
               profile={profile}

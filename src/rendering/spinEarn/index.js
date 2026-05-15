@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import styles from './spinEarn.module.scss'
+import RewardSection from './rewardSection'
 
 export default function SpinEarn() {
 
@@ -10,6 +11,7 @@ export default function SpinEarn() {
                 <h2>Spin & Earn</h2>
                 <p>Try your luck and win rewards daily!</p>
             </div>
+            <RewardSection />
 
         </div>
     )

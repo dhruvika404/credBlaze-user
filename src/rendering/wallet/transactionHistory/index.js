@@ -66,7 +66,7 @@ export default function TransactionHistory() {
         {
             key: 'created_at',
             label: 'Date & time',
-            render: (val) => moment(val).format('YYYY-MM-DD hh:mm A')
+            render: (val) => moment.utc(val).local().format('YYYY-MM-DD hh:mm A')
         },
         {
             key: 'transaction_earned_type',

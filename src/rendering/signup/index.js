@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import PhoneInput, { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -19,6 +19,8 @@ const Logo = '/assets/logo/logo.svg';
 
 export default function Signup() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const referral_code = searchParams.get('referral_code');
   const [userRoleId, setUserRoleId] = useState('');
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
@@ -42,6 +44,12 @@ export default function Signup() {
       })
       .catch(() => { });
   }, []);
+
+  useEffect(() => {
+    if (referral_code) {
+      setForm(f => ({ ...f, referralCode: referral_code }));
+    }
+  }, [referral_code]);
 
   const set = (field) => (v) => {
     setForm(f => ({ ...f, [field]: v }));

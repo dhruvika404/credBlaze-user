@@ -252,7 +252,7 @@ export default function TasksPage() {
         {
             key: 'created_at',
             label: 'Date',
-            render: (val) => val ? moment(val).format('DD-MM-YYYY | hh:mm A') : '-'
+            render: (val) => val ? moment.utc(val).local().format('DD-MM-YYYY | hh:mm A') : '-'
         },
         {
             key: 'task_status',

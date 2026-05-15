@@ -1,0 +1,52 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.referralInvitationCard {
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        padding: 0 0 20px 0;
+
+        .items {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--Pale-Blue-1, #E1EAFF);
+            background: rgba(89, 59, 242, 0.04);
+
+            &:nth-child(2) {
+                border: 1px solid var(--Pale-Blue-1, #E1EAFF);
+                background: rgba(50, 171, 185, 0.04);
+            }
+
+            &:last-child {
+                border: 1px solid var(--Pale-Blue-1, #E1EAFF);
+                background: rgba(255, 105, 46, 0.04);
+            }
+
+            h4 {
+                color: var(--Black-100, #171717);
+                font-size: 24px;
+                font-style: normal;
+                font-weight: 600;
+                padding-left: 20px;
+                line-height: 32px;
+            }
+
+            .iconTextAlignment {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 0 0 23px 0;
+
+                h3 {
+                    color: var(--Black-100, #171717);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 24px;
+                }
+            }
+        }
+    }
+}
