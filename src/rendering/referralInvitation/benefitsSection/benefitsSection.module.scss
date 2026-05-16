@@ -45,41 +45,99 @@
             }
 
             .shareViaText {
-                .iconAlignment {
-                    display: flex;
-                    align-items: center;
-                    gap: 20px;
-                    justify-content: space-between;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
 
-                    .iconText {
-                        p {
-                            color: #0F0F0F;
-                            font-size: 14.932px;
-                            font-style: normal;
-                            font-weight: 400;
-                            line-height: normal;
-                            letter-spacing: 0.747px;
-                        }
-
-                        .iconCenter {
-                            display: flex;
-                            justify-content: center;
-
-                            img {
-                                display: block;
-                                max-width: 48px;
-                            }
-                        }
-                    }
-                }
-
-                p {
+                >p {
                     color: var(--Black-100, #171717);
+                    font-family: 'Manrope', sans-serif;
                     font-size: 16px;
                     font-style: normal;
                     font-weight: 600;
-                    margin: 0 0 5px 0;
-                    line-height: normal;
+                    line-height: 22px;
+                    margin: 0;
+                }
+
+                .iconAlignment {
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                    padding: 0;
+                    gap: 20px;
+                    justify-content: space-between;
+                    width: 100%;
+
+                    .iconText {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 8px;
+                        flex: 1;
+                        transition: all 0.3s ease;
+
+                        &.disabled {
+                            opacity: 0.4;
+                            pointer-events: none;
+                            filter: grayscale(1);
+                        }
+
+                        .iconCenter {
+                            width: 48px;
+                            height: 48px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+
+                            button {
+                                display: flex;
+                                border: none;
+                                background: none;
+                                padding: 0;
+                                cursor: pointer;
+                                transition: transform 0.2s ease;
+
+                                &:hover {
+                                    transform: scale(1.1);
+                                }
+
+                                svg {
+                                    display: block;
+                                }
+                            }
+                        }
+
+                        p {
+                            color: #0F0F0F;
+                            font-family: 'Manrope', sans-serif;
+                            font-size: 14.9324px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: 20px;
+                            letter-spacing: 0.448px;
+                            margin: 0;
+                            text-align: center;
+                            white-space: nowrap;
+                        }
+                    }
+                }
+            }
+
+            @media (max-width: 600px) {
+                .shareViaText {
+                    .iconAlignment {
+                        gap: 12px;
+                        overflow-x: auto;
+                        padding-bottom: 10px;
+                        justify-content: flex-start;
+
+                        .iconText,
+                        .moreButton {
+                            flex: 0 0 auto;
+                        }
+                    }
                 }
             }
 

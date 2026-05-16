@@ -1,14 +1,30 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import styles from './benefitsSection.module.scss';
 import Button from '@/components/button';
 import CopyIcon from '@/icons/copyIcon';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 
-const WhatsApp = '/assets/icons/WhatsApp.svg';
+import {
+    FacebookShareButton,
+    TwitterShareButton,
+    WhatsappShareButton,
+    RedditShareButton,
+    EmailShareButton,
+    TelegramShareButton,
+    LinkedinShareButton,
+    FacebookIcon,
+    TwitterIcon,
+    WhatsappIcon,
+    RedditIcon,
+    EmailIcon,
+    TelegramIcon,
+    LinkedinIcon,
+} from 'react-share';
 
 export default function BenefitsSection() {
     const { user } = useAuth();
+    const [isShareEnabled, setIsShareEnabled] = useState(false);
 
     const referralLink = useMemo(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -17,14 +33,30 @@ export default function BenefitsSection() {
         return `${origin}/signup?referral_code=${code}`;
     }, [user]);
 
+    const shareTitle = 'Join CradeBlaze and win assured money!';
+
     const handleCopyLink = () => {
         navigator.clipboard.writeText(referralLink);
-        toast.success('Referral link opied to clipboard!');
+        toast.success('Referral link copied to clipboard!');
     };
 
     const handleShare = () => {
-
+        setIsShareEnabled(true);
     };
+
+    const handlePlatformClick = () => {
+        setIsShareEnabled(false);
+    };
+
+    const sharePlatforms = [
+        { Button: WhatsappShareButton, Icon: WhatsappIcon, label: 'WhatsApp', color: '#65D072' },
+        { Button: FacebookShareButton, Icon: FacebookIcon, label: 'Facebook', color: '#425893' },
+        { Button: TwitterShareButton, Icon: TwitterIcon, label: 'Twitter', color: '#4D9FEB' },
+        { Button: EmailShareButton, Icon: EmailIcon, label: 'Email', color: '#888888' },
+        { Button: RedditShareButton, Icon: RedditIcon, label: 'Reddit', color: '#FF4500' },
+        { Button: TelegramShareButton, Icon: TelegramIcon, label: 'Telegram', color: '#0088cc' },
+        { Button: LinkedinShareButton, Icon: LinkedinIcon, label: 'LinkedIn', color: '#0077b5' },
+    ];
 
     return (
         <div className={styles.benefitsSection}>
@@ -61,14 +93,18 @@ export default function BenefitsSection() {
                         </p>
                         <div className={styles.iconAlignment}>
                             {
-                                [...Array(5)].map(() => {
+                                sharePlatforms.map((platform, index) => {
+                                    const PlatformButton = platform.Button;
+                                    const PlatformIcon = platform.Icon;
                                     return (
-                                        <div className={styles.iconText}>
+                                        <div className={`${styles.iconText} ${!isShareEnabled ? styles.disabled : ''}`} key={index}>
                                             <div className={styles.iconCenter}>
-                                                <img src={WhatsApp} alt='WhatsApp' />
+                                                <PlatformButton url={referralLink} title={shareTitle} onClick={handlePlatformClick}>
+                                                    <PlatformIcon size={48} round iconFillColor="white" bgStyle={{ fill: platform.color }} />
+                                                </PlatformButton>
                                             </div>
                                             <p>
-                                                WhatsApp
+                                                {platform.label}
                                             </p>
                                         </div>
                                     )

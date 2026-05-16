@@ -21,6 +21,7 @@
     "react-phone-number-input": "^3.4.16",
     "react-qr-code": "^2.0.18",
     "react-select": "^5.10.2",
+    "react-share": "^5.3.0",
     "sass": "^1.99.0"
   }
 }
