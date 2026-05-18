@@ -1,21 +1,98 @@
 'use client';
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './header.module.scss';
 import SearchIcon from '@/icons/searchIcon';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import UserIcon from '@/icons/userIcon';
+import NotificationPopup from '../notificationPopup';
+import { getNotificationHistory, seenAllNotifications } from '@/services/notification';
+import { useNotification } from '@/context/NotificationContext';
 
 const EscText = '/assets/icons/esc-text.svg';
 
 export default function Header() {
     const { user } = useAuth();
+    const { unseenCount, setUnseenCount } = useNotification();
     const cashWallet = user?.wallets?.find(w => w.wallet_type === 'REAL');
     const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS');
     const cashBalance = cashWallet ? Number(cashWallet.balance).toLocaleString('en-IN') : '0';
     const pointsBalance = pointsWallet ? Number(pointsWallet.balance).toLocaleString('en-IN') : '0';
     const profileImg = user?.profileImage || user?.profile_image
     const [searchValue, setSearchValue] = React.useState('');
+    const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [dismissedIds, setDismissedIds] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('dismissed_notifications');
+            if (saved) {
+                try {
+                    setDismissedIds(JSON.parse(saved));
+                } catch (e) {
+                    console.error('Error parsing dismissed notifications', e);
+                }
+            }
+        }
+    }, []);
+
+    const fetchNotifications = async () => {
+        if (!user) return;
+        setLoading(true);
+        try {
+            const res = await getNotificationHistory();
+            if (res?.success && res?.data) {
+                setNotifications(res.data);
+                const activeItems = res.data.filter(n => !dismissedIds.includes(n.id));
+                const currentUnseen = activeItems.filter(n => !n.is_seen).length;
+                setUnseenCount(currentUnseen);
+            }
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotifications();
+    }, [user, dismissedIds]);
+
+    useEffect(() => {
+        if (user) {
+            getNotificationHistory().then(res => {
+                if (res?.success && res?.data) {
+                    setNotifications(res.data);
+                }
+            }).catch(err => console.error(err));
+        }
+    }, [unseenCount, user]);
+
+    const handleDismiss = (id) => {
+        const updated = [...dismissedIds, id];
+        setDismissedIds(updated);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('dismissed_notifications', JSON.stringify(updated));
+        }
+        const item = notifications.find(n => n.id === id);
+        if (item && !item.is_seen) {
+            setUnseenCount(prev => Math.max(0, prev - 1));
+        }
+    };
+
+    const handleSeenAll = async () => {
+        try {
+            await seenAllNotifications();
+            setNotifications(prev => prev.map(n => ({ ...n, is_seen: true })));
+            setUnseenCount(0);
+        } catch (error) {
+            console.error('Failed to seen all notifications:', error);
+        }
+    };
+
+    const activeNotifications = notifications.filter(n => !dismissedIds.includes(n.id));
 
     const handleSearchChange = (e) => {
         const val = e.target.value;
@@ -73,13 +150,13 @@ export default function Header() {
 
                 <div className={styles.divider}></div>
 
-                <div className={styles.notificationWrapper}>
+                <div className={styles.notificationWrapper} onClick={() => setIsNotificationOpen(true)}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M8.55859 17.5C8.70488 17.7533 8.91527 17.9637 9.16863 18.11C9.42199 18.2563 9.70938 18.3333 10.0019 18.3333C10.2945 18.3333 10.5819 18.2563 10.8352 18.11C11.0886 17.9637 11.299 17.7533 11.4453 17.5" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M11.597 1.92585C10.8449 1.67241 10.0432 1.60165 9.25837 1.71942C8.4735 1.83718 7.72794 2.1401 7.08334 2.60311C6.43875 3.06612 5.91363 3.67592 5.55141 4.3821C5.18919 5.08827 5.00028 5.87053 5.0003 6.66418C5.0003 10.4134 3.82447 11.6275 2.71697 12.77C2.60828 12.8895 2.53664 13.0379 2.51076 13.1973C2.48489 13.3568 2.5059 13.5203 2.57122 13.6679C2.63655 13.8156 2.74339 13.9412 2.87874 14.0293C3.0141 14.1174 3.17213 14.1642 3.33363 14.1642H16.667C16.8285 14.1642 16.9865 14.1174 17.1219 14.0293C17.2572 13.9412 17.364 13.8156 17.4294 13.6679C17.4947 13.5203 17.5157 13.3568 17.4898 13.1973C17.464 13.0379 17.3923 12.8895 17.2836 12.77C17.1121 12.5934 16.9494 12.4085 16.7961 12.2159" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M15 9.16406C16.3807 9.16406 17.5 8.04477 17.5 6.66406C17.5 5.28335 16.3807 4.16406 15 4.16406C13.6193 4.16406 12.5 5.28335 12.5 6.66406C12.5 8.04477 13.6193 9.16406 15 9.16406Z" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <span className={styles.badge}>3</span>
+                    {unseenCount > 0 && <span className={styles.badge}>{unseenCount}</span>}
                 </div>
 
                 <Link href="/settings" className={styles.userProfile}>
@@ -93,6 +170,14 @@ export default function Header() {
                         </div>
                     </div>
                 </Link>
+                <NotificationPopup
+                    isOpen={isNotificationOpen}
+                    onClose={() => setIsNotificationOpen(false)}
+                    notifications={activeNotifications}
+                    onDismiss={handleDismiss}
+                    onSeenAll={handleSeenAll}
+                    loading={loading}
+                />
             </div>
         </header>
     )

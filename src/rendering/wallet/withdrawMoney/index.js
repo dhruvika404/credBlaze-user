@@ -5,7 +5,7 @@ import CloseIcon from '@/icons/closeIcon';
 import Input from '@/components/input';
 import InfoIcon from '@/icons/infoIcon';
 import Button from '@/components/button';
-import { createCryptoPayment, getFilteredBalance, insertWithdraw } from '@/services/wallet';
+import { createCryptoPayment, insertWithdraw } from '@/services/wallet';
 import toast from 'react-hot-toast';
 import WalletStatusModal from '@/components/modal/walletStatusModal';
 import { useAuth } from '@/context/AuthContext';
@@ -20,8 +20,6 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [modalStatus, setModalStatus] = useState('pending');
     const [expiryTime, setExpiryTime] = useState(null);
-    const [step, setStep] = useState(1);
-    const [availableCoins, setAvailableCoins] = useState([]);
     const [coinAddress, setCoinAddress] = useState('');
 
     const popupRef = useRef(null);
@@ -123,33 +121,9 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
         }
     };
 
-    const filteredMethods = type === 'withdraw'
-        ? paymentMethods.filter(m => availableCoins.includes(m.networkname))
-        : paymentMethods;
-
-    const isNextDisabled = !amount || loading;
     const isDepositDisabled = !amount || !selectedMethod || loading;
     const isPlanDisabled = !amount || !selectedMethod || loading;
     const isWithdrawDisabled = !amount || !selectedMethod || !coinAddress || loading;
-
-    const handleNext = async () => {
-        if (isNextDisabled) return;
-        setLoading(true);
-        try {
-            const response = await getFilteredBalance({ check_amount: Number(amount) });
-            if (response?.success) {
-                setAvailableCoins(response.coins || []);
-                setStep(2);
-            } else {
-                toast.error('Balance check failed or insufficient funds.');
-            }
-        } catch (error) {
-            console.error('Balance check error:', error);
-            toast.error(error?.message || 'Error checking balance.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSubmit = async () => {
         if (type === 'deposit' || type === 'plan') {
@@ -205,10 +179,9 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                     setModalStatus('pending');
                     setIsStatusModalOpen(true);
                 } else {
-                    toast.error(response?.message || 'Withdrawal request failed');
+                    toast.error(response?.error || response?.message || 'Withdrawal request failed');
                 }
             } catch (error) {
-                console.error('Withdraw error:', error);
                 toast.error(error?.message || 'Withdrawal failed. Please try again.');
             } finally {
                 setLoading(false);
@@ -217,8 +190,6 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     };
 
     const handleClose = () => {
-        setStep(1);
-        setAvailableCoins([]);
         setCoinAddress('');
         setSelectedMethod(null);
         setAmount('');
@@ -256,7 +227,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 {type === 'plan' ? 'Plan price' : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
                             </span>
                         </div>
-                        {(type === 'deposit' || type === 'plan' || (step === 2 && availableCoins.length > 0)) && (
+                        {(type === 'deposit' || type === 'plan' || type === 'withdraw') && (
                             <div className={styles.withdrawal}>
                                 <div className={styles.withdrawalTitle}>
                                     <div className={styles.iconBox}>
@@ -270,7 +241,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 </div>
 
                                 <div className={styles.methodsList}>
-                                    {filteredMethods.map((method) => (
+                                    {paymentMethods.map((method) => (
                                         <div
                                             key={method.id}
                                             className={`${styles.methodItem} ${selectedMethod?.id === method.id ? styles.active : ''}`}
@@ -293,7 +264,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                         </div>
                                     ))}
                                 </div>
-                                {type === 'withdraw' && step === 2 && (
+                                {type === 'withdraw' && (
                                     <div className={styles.amount} style={{ marginTop: '20px' }}>
                                         <Input
                                             label='Token Address'
@@ -307,12 +278,6 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 )}
                             </div>
                         )}
-                        {type === 'withdraw' && step === 2 && availableCoins.length === 0 && (
-                            <div className={styles.warnning}>
-                                <InfoIcon />
-                                <p>No payment methods available for the entered amount.</p>
-                            </div>
-                        )}
                         {(type === "deposit" || type === "plan") && (
                             <div className={styles.warnning}>
                                 <InfoIcon />
@@ -323,15 +288,11 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                         )}
                         <div className={styles.buttonAlignment}>
                             <Button text="Cancel" lightbutton onClick={handleClose} />
-                            {type === 'withdraw' && step === 1 ? (
-                                <Button text="Next" onClick={handleNext} disabled={isNextDisabled} />
-                            ) : (
-                                <Button
-                                    text={type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Pay Now' : 'Withdraw'}
-                                    onClick={handleSubmit}
-                                    disabled={type === 'deposit' ? isDepositDisabled : type === 'plan' ? isPlanDisabled : isWithdrawDisabled}
-                                />
-                            )}
+                            <Button
+                                text={type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Pay Now' : 'Withdraw'}
+                                onClick={handleSubmit}
+                                disabled={type === 'deposit' ? isDepositDisabled : type === 'plan' ? isPlanDisabled : isWithdrawDisabled}
+                            />
                         </div>
                     </div>
                 </div>

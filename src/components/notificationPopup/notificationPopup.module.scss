@@ -1,0 +1,197 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+
+}
+
+.popupContent {
+    background: #fff;
+    width: 440px;
+    height: fit-content;
+    max-height: 80vh;
+    border-radius: 16px;
+    box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    margin-top: 60px;
+    margin-right: 20px;
+
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 16px;
+    border-bottom: 1px solid #F0F0F0;
+
+    h2 {
+        color: #020204;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .closeButton {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: #F5F5F7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        transition: background 0.2s;
+
+        &:hover {
+            background: #E8E8ED;
+        }
+
+        svg {
+            color: #020204;
+        }
+    }
+}
+
+.tabContainer {
+    padding: 14px 20px;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #E6E8EA transparent;
+
+    &::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #E6E8EA;
+        border-radius: 10px;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        border: none;
+        background: #F5F5F7;
+        color: #625F6E;
+        transition: all 0.3s ease;
+
+        &.active {
+            background: #001AFF;
+            color: #fff;
+        }
+    }
+}
+
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 24px;
+    height: 500px;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #E6E8EA;
+        border-radius: 10px;
+    }
+}
+
+.dateGroup {
+    margin-top: 24px;
+
+    .dateLabel {
+        color: #625F6E;
+        font-size: 14px;
+        font-weight: 400;
+        margin-bottom: 16px;
+        display: block;
+    }
+}
+
+.notificationList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.notificationItem {
+    display: flex;
+    gap: 16px;
+    padding: 12px;
+    margin: 0 -12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+        background: #F8F9FA;
+    }
+
+    .iconBox {
+        width: 48px;
+        height: 48px;
+        background: #F5F7FF;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+            color: #001AFF;
+        }
+    }
+
+    .content {
+        flex: 1;
+
+        .topRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+
+            h3 {
+                font-size: 16px;
+                font-weight: 600;
+                color: #020204;
+                margin: 0;
+            }
+
+            .time {
+                font-size: 12px;
+                color: #625F6E;
+            }
+        }
+
+        p {
+            font-size: 14px;
+            color: #625F6E;
+            line-height: 1.4;
+            margin: 0;
+        }
+    }
+}
