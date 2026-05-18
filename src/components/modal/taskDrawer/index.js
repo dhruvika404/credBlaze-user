@@ -112,7 +112,6 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                 }
             }
         } catch (error) {
-            console.error('Error submitting proof:', error);
             toast.error(error?.message || 'Failed to submit task');
         } finally {
             setIsSubmitting(false);
@@ -167,7 +166,6 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
             setShareCopied(true);
             setTimeout(() => setShareCopied(false), 2000);
         } catch (err) {
-            console.error('Error copying task link:', err);
             toast.error('Failed to copy link');
         }
     };

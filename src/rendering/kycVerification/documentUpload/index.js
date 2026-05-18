@@ -11,7 +11,6 @@ const DrivingIcon = '/assets/icons/Driving.svg';
 export default function DocumentUpload({ onContinue, onCancel }) {
     const [activeTab, setActiveTab] = useState('id');
     const [uploadedFile, setUploadedFile] = useState(null);
-console.log(uploadedFile)
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         setUploadedFile(null); // Clear uploaded file when tab changes

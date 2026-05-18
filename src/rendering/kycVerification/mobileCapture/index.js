@@ -47,7 +47,6 @@ export default function MobileCapture() {
                 };
             }
         } catch (err) {
-            console.error('Camera error:', err);
             setCameraReady(false);
             if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
                 setError('Camera not found. Please ensure your device has a camera.');
@@ -98,7 +97,6 @@ export default function MobileCapture() {
             formData.append('session_id', sessionId);
             
             const result = await uploadMobileImage(formData);
-            console.log("API Response:", result);
             
             if (result?.success && result?.data) {
                 setSubmitted(true);
@@ -106,7 +104,6 @@ export default function MobileCapture() {
                 throw new Error('Invalid API response');
             }
         } catch (err) {
-            console.error('Upload error:', err);
             setError('Failed to submit image. Please try again.');
         }
     };

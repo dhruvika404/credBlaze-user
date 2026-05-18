@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +9,8 @@ import styles from './signup.module.scss';
 import AuthSlider from '@/components/authSlider';
 import Input from '@/components/input';
 import Button from '@/components/button';
+import Dropdown from '@/components/dropdown';
+import { Country } from 'country-state-city';
 import { getRoles } from '@/services/auth';
 import { signupAction } from '@/app/actions/auth/auth';
 import { sanitizeName, sanitizeCode, validateEmail, validatePassword, validateConfirmPassword, validateName } from '@/utils/validation';
@@ -25,7 +27,7 @@ export default function Signup() {
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
     password: '', confirm_password: '',
-    phone: '', referralCode: '', agreed: false,
+    phone: '', country: '', referralCode: '', agreed: false,
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
@@ -34,6 +36,13 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { deviceId, login: authLogin } = useAuth();
+
+  const countryOptions = useMemo(
+    () => Country.getAllCountries().map((c) => ({ value: c.isoCode, label: c.name })),
+    []
+  );
+
+  const selectedCountry = countryOptions.find((o) => o.value === form.country || o.label === form.country) || null;
 
   useEffect(() => {
     getRoles()
@@ -65,6 +74,7 @@ export default function Signup() {
     const emailErr = validateEmail(form.email);
     if (emailErr) e.email = emailErr;
     if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
+    if (!form.country) e.country = 'Country is required';
     const pwErr = validatePassword(form.password);
     if (pwErr) e.password = pwErr;
     const cpErr = validateConfirmPassword(form.password, form.confirm_password);
@@ -86,7 +96,8 @@ export default function Signup() {
         const parsed = form.phone ? parsePhoneNumber(form.phone) : null;
         const country_code = parsed ? `+${parsed.countryCallingCode}` : '';
         const phone = parsed ? parsed.nationalNumber : '';
-        const country = parsed?.country || '';
+        const selectedCountryObj = countryOptions.find((o) => o.value === form.country || o.label === form.country);
+        const countryFullName = selectedCountryObj ? selectedCountryObj.label : (form.country || '');
         const res = await signupAction({
           first_name: form.first_name,
           last_name: form.last_name,
@@ -94,7 +105,7 @@ export default function Signup() {
           password: form.password,
           phone,
           country_code,
-          country,
+          country: countryFullName,
           roleId: userRoleId,
           device_id: deviceId,
           ...(form.referralCode.trim() && { referralCode: form.referralCode.trim() }),
@@ -155,6 +166,9 @@ export default function Signup() {
                 {errors.phone && <p className={styles.errorMsg} role="alert">{errors.phone}</p>}
               </div>
 
+              <Dropdown label="Country" labelChange options={countryOptions} searchable heightChange
+                value={selectedCountry} onChange={(opt) => set('country')(opt?.value || '')}
+                placeholder="Select Country" error={errors.country} required />
 
               <Input label="Password" placeholder="Password" name="password" heightChange
                 type={showPassword ? 'text' : 'password'} rightIcon={showPassword ? EyeFillIcon : EyeIcon}

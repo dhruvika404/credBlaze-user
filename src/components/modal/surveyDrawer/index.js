@@ -151,7 +151,6 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                 if (onTaskSubmitted) onTaskSubmitted()
             }
         } catch (error) {
-            console.error('Error submitting survey:', error)
             toast.error(error?.message || 'Failed to submit survey')
         } finally {
             setIsSubmitting(false)

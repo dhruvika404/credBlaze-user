@@ -160,9 +160,9 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
             <PhoneInput international disabled value={form.phone || '+1'} className={styles.phoneInputDisabled} />
           </div>
           <Input label="Date of Birth" labelChange value={form.dob ? (() => { const [y, m, d] = form.dob.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })() : ''} placeholder="July 12, 1998" disabled />
-          <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Male" disabled />
+          <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Select Gender" disabled />
           <Input label="Country" labelChange value={selectedCountry?.label || form.country}
-            placeholder="United States of America" disabled />
+            placeholder="Select Country" disabled />
         </div>
       </div>
     );

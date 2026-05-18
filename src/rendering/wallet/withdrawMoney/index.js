@@ -157,7 +157,6 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                     toast.error('Failed to generate payment invoice');
                 }
             } catch (error) {
-                console.error('Payment error:', error);
                 toast.error(error?.message || 'Payment failed. Please try again.');
             } finally {
                 setLoading(false);

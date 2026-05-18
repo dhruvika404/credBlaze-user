@@ -84,7 +84,6 @@ export default function KycVerification() {
                 setCurrentStep('address');
             }
         } catch (error) {
-            console.error('Error submitting KYC:', error);
             toast.error(error?.message || 'Failed to submit KYC. Please try again.');
             setCurrentStep('address');
         }

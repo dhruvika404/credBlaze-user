@@ -41,7 +41,6 @@ export default function TakeSelfie({ onContinue, onCancel }) {
                 videoRef.current.srcObject = mediaStream;
             }
         } catch (err) {
-            console.error('Camera access denied:', err);
             if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
                 setCameraError('Camera not found. Please connect a camera.');
             } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
