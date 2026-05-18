@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './information.module.scss';
 import EditIcon from '@/icons/editIcon';
-import KycVerification from './kycVerification';
 import PersonalInformation from './personalInformation';
 import { getProfileDetails } from '@/services/profile';
 import { useAuth } from '@/context/AuthContext';
 import UserIcon from '@/icons/userIcon';
+import { Country } from 'country-state-city';
 
 function capitalise(str) {
   if (!str) return '';
@@ -68,7 +68,18 @@ export default function Information() {
   const lastName = profile?.last_name || profile?.lastName || '';
   const fullName = loading ? 'Loading...' : (`${capitalise(firstName)} ${capitalise(lastName)}`.trim() || 'Naitik Kumar');
   const userId = profile?.user_id || profile?.userId || profile?.id || 'CB-2025-00847';
-  const countryCode = profile?.country || '';
+  const countryVal = profile?.country || '';
+  let countryCode = '';
+  if (countryVal.length === 2) {
+    countryCode = countryVal;
+  } else if (countryVal) {
+    const matchedCountry = Country.getAllCountries().find(
+      (c) => c.name.toLowerCase() === countryVal.toLowerCase()
+    );
+    if (matchedCountry) {
+      countryCode = matchedCountry.isoCode;
+    }
+  }
   const flagUrl = getFlagUrl(countryCode);
   const avatarSrc = previewUrl || profile?.profile_image || profile?.profileImage;
 

@@ -109,11 +109,13 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
       }
       const dobISO = form.dob ? form.dob + 'T00:00:00' : '';
 
+      const selectedCountryObj = countryOptions.find((o) => o.value === form.country || o.label === form.country);
+      const countryFullName = selectedCountryObj ? selectedCountryObj.label : (form.country || '');
       const payload = {
         firstName: form.first_name.trim(),
         lastName: form.last_name.trim(),
         gender: form.gender || '',
-        country: form.country || '',
+        country: countryFullName || '',
         birthday: dobISO,
         phone: phone || '',
         countryCode: country_code || '',
@@ -140,7 +142,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
   );
 
   const selectedGender = GENDER_OPTIONS.find((o) => o.value === form.gender?.toLowerCase()) || null;
-  const selectedCountry = countryOptions.find((o) => o.value === form.country) || null;
+  const selectedCountry = countryOptions.find((o) => o.value === form.country || o.label === form.country) || null;
 
   if (!isEditing) {
     return (
