@@ -14,6 +14,7 @@ import { Country } from 'country-state-city';
 import { getRoles } from '@/services/auth';
 import { signupAction } from '@/app/actions/auth/auth';
 import { sanitizeName, sanitizeCode, validateEmail, validatePassword, validateConfirmPassword, validateName } from '@/utils/validation';
+import { getFcmToken } from '@/utils/firebase';
 
 const EyeIcon = '/assets/icons/eye.svg';
 const EyeFillIcon = '/assets/icons/eye-fill.svg';
@@ -98,6 +99,7 @@ export default function Signup() {
         const phone = parsed ? parsed.nationalNumber : '';
         const selectedCountryObj = countryOptions.find((o) => o.value === form.country || o.label === form.country);
         const countryFullName = selectedCountryObj ? selectedCountryObj.label : (form.country || '');
+        const fcmToken = await getFcmToken()
         const res = await signupAction({
           first_name: form.first_name,
           last_name: form.last_name,
@@ -108,6 +110,7 @@ export default function Signup() {
           country: countryFullName,
           roleId: userRoleId,
           device_id: deviceId,
+          fcm_token: fcmToken,
           ...(form.referralCode.trim() && { referralCode: form.referralCode.trim() }),
         });
 

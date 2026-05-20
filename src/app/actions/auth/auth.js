@@ -37,9 +37,9 @@ export async function loginAction(credentials) {
   }
 }
 
-export async function googleLoginAction(credential, deviceId) {
+export async function googleLoginAction(credential, deviceId, fcmToken = '') {
   try {
-    const data = await googleLogin(credential, deviceId);
+    const data = await googleLogin(credential, deviceId, fcmToken);
 
     const token = data?.data?.access_token || data?.access_token || data?.token;
 

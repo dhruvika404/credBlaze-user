@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './earning.module.scss';
 import { useAuth } from '@/context/AuthContext';
@@ -10,17 +10,22 @@ import ShareIcon from '@/icons/shareIcon';
 export default function Earning({ overviewData, loading }) {
     const router = useRouter();
     const { user } = useAuth();
+    const [referralLink, setReferralLink] = useState('');
     const remainingSpins = overviewData?.spin_and_earn?.available_spins ?? 0;
 
     const handleSpinClick = () => {
         router.push('/spin-earn');
     };
 
-    const referralLink = useMemo(() => {
-        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+    useEffect(() => {
+        const origin = window.location.origin;
         const code = user?.referralCode ?? '';
-        if (!code) return `${origin}/signup`;
-        return `${origin}/signup?referral_code=${code}`;
+        if (!code) {
+            setReferralLink(`${origin}/signup`);
+        } else {
+            setReferralLink(`${origin}/signup?referral_code=${code}`);
+        }
     }, [user]);
 
     const rewardText = overviewData?.refer_and_earn?.reward_text || "CB points per successful referral";

@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { googleLoginAction } from '@/app/actions/auth/auth';
 import styles from './loginwithGoogle.module.scss';
 import { useAuth } from '@/context/AuthContext';
+import { getFcmToken } from '@/utils/firebase';
 
 export default function LoginwithGoogle() {
     const router = useRouter();
@@ -13,7 +14,8 @@ export default function LoginwithGoogle() {
 
     const handleSuccess = async ({ credential }) => {
         try {
-            const res = await googleLoginAction(credential, deviceId);
+            const fcmToken = await getFcmToken();
+            const res = await googleLoginAction(credential, deviceId, fcmToken);
 
             if (res.success) {
                 const token = res.data?.data?.access_token || res.data?.access_token || res.data?.token || '';

@@ -96,17 +96,29 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
     const segAngle = 360 / (segments.length || 1);
     const cx = 200, cy = 200, radius = 175;
 
-    const splitLabel = (label) => {
-        if (!label) return [];
+    const splitLabel = (seg) => {
+        if (!seg.label) return [];
+        let lines = [];
         const threshold = segments.length <= 4 ? 14 : 10;
 
-        if (label.length <= threshold) return [label];
+        if (seg.label.length <= threshold) {
+            lines = [seg.label];
+        } else {
+            const words = seg.label.trim().split(/\s+/);
+            if (words.length <= 1) {
+                lines = [seg.label];
+            } else {
+                const mid = Math.ceil(words.length / 2);
+                lines = [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+            }
+        }
 
-        const words = label.trim().split(/\s+/);
-        if (words.length <= 1) return [label];
+        if (seg.reward_value !== undefined && seg.reward_value !== null && seg.reward_value > 0) {
+            const valStr = seg.reward_type === 'POINT' ? `${seg.reward_value} CB` : `$${seg.reward_value}`;
+            lines.push(valStr);
+        }
 
-        const mid = Math.ceil(words.length / 2);
-        return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+        return lines;
     };
 
     return (
@@ -162,7 +174,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                     const textR = radius * 0.68;
                     const textPos = polarToCartesian(cx, cy, textR, midAngle);
                     const isBlue = i % 2 !== 0;
-                    const lines = splitLabel(seg.label);
+                    const lines = splitLabel(seg);
 
                     return (
                         <g key={seg.id || i}>
@@ -188,7 +200,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                                     <tspan
                                         key={idx}
                                         x={textPos.x}
-                                        dy={idx === 0 ? (lines.length > 1 ? "-0.6em" : "0") : "1.2em"}
+                                        dy={idx === 0 ? `-${(lines.length - 1) * 0.6}em` : "1.2em"}
                                     >
                                         {line}
                                     </tspan>

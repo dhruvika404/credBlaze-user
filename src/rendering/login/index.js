@@ -10,6 +10,7 @@ import LoginwithGoogle from '@/components/loginwithGoogle';
 import Button from '@/components/button';
 import { loginAction } from '@/app/actions/auth/auth';
 import { useAuth } from '@/context/AuthContext';
+import { getFcmToken } from '@/utils/firebase';
 
 const EmailIcon = '/assets/icons/email.svg';
 const EyeIcon = '/assets/icons/eye.svg';
@@ -44,11 +45,13 @@ export default function Login() {
     setErrors({});
     startTransition(async () => {
       try {
+        const fcmToken = await getFcmToken();
         const res = await loginAction({
           email: form.email,
           password: form.password,
           device_id: deviceId,
-          user_role_name: "User"
+          user_role_name: "User",
+          fcm_token: fcmToken
         });
 
         if (res.success) {

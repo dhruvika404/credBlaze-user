@@ -64,19 +64,6 @@ export default function ReferralHistory() {
         fetchData();
     }, [currentPage, pageSize, appliedFilters]);
 
-    const getStatusText = (status) => {
-        if (!status) return 'Pending';
-        return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-    };
-
-    const getStatusStyle = (status) => {
-        const lowerStatus = (status || 'pending').toLowerCase();
-        if (lowerStatus === 'active' || lowerStatus === 'completed' || lowerStatus === 'success') return styles.statusActive;
-        if (lowerStatus === 'pending') return styles.statusPending;
-        if (lowerStatus === 'failed' || lowerStatus === 'rejected') return styles.statusFailed;
-        return styles.statusPending;
-    };
-
     return (
         <div className={styles.historySection}>
             <div className={styles.historyHeader}>
@@ -121,16 +108,6 @@ export default function ReferralHistory() {
                                 const amt = val || row?.reward_amount || row?.reward_value || 0;
                                 return <span className={styles.amountGreen}>${Number(amt).toFixed(2)}</span>;
                             }
-                        },
-                        {
-                            key: 'status',
-                            label: 'Status',
-                            render: (val) => (
-                                <div className={`${styles.statusBadge} ${getStatusStyle(val)}`}>
-                                    <span className={styles.dot}></span>
-                                    {getStatusText(val)}
-                                </div>
-                            )
                         }
                     ]}
                     data={historyList}

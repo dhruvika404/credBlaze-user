@@ -10,12 +10,14 @@ import ListviewIcon from '@/icons/listviewIcon';
 import moment from 'moment';
 import DataTable from '@/components/dataTable';
 import SpinHistoryFilterMenu from './spinHistoryFilterMenu';
+import { useAuth } from '@/context/AuthContext';
 
 const RupeeIcon = '/assets/icons/Rupee.svg';
 const HowItWorksIcon = '/assets/icons/how-it-works.svg';
 
 export default function RewardSection() {
     const spinnerRef = useRef(null);
+    const { fetchAndSetProfile } = useAuth();
     const [state, setState] = useState({
         rewards: [],
         status: null,
@@ -198,7 +200,10 @@ export default function RewardSection() {
 
             <SpinResultModal
                 isOpen={modalOpen}
-                onClose={() => updateState({ modalOpen: false })}
+                onClose={() => {
+                    updateState({ modalOpen: false });
+                    fetchAndSetProfile();
+                }}
                 result={spinResult}
                 remainingSpins={status?.remaining_spins || 0}
             />

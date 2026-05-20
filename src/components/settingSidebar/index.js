@@ -22,7 +22,7 @@ const menuItems = [
     { icon: <LocationIcon />, label: 'Delivery Addresses', href: '/settings/delivery-addresses' },
     { icon: <PayoutIcon />, label: 'Payout Accounts', href: '/settings/payout-accounts' },
     { icon: <PlanIcon />, label: 'Plan & Pricing', href: '/settings/plan-pricing' },
-    { icon: <BillingIcon />, label: 'Billing', href: '/settings/billing' },
+    // { icon: <BillingIcon />, label: 'Billing', href: '/settings/billing' },
     { icon: <NotificationIcon />, label: 'Notification Preferences', href: '/settings/notifications' },
     { icon: <LoginsIcon />, label: 'My Logins', href: '/settings/my-logins' },
     { icon: <SupportIcon />, label: 'Legal & Support', href: '/settings/legal-support' },
