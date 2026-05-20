@@ -33,6 +33,15 @@ export default function Information() {
   const { setUser } = useAuth();
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('edit') === 'true') {
+        setIsEditing(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     getProfileDetails()
       .then((res) => {
         const p = normaliseProfile(res);

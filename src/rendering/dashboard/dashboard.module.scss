@@ -5,7 +5,7 @@
     padding: 14px 32px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .titleInfo {
@@ -30,6 +30,7 @@
         font-weight: 600;
         font-size: 16px;
         line-height: 22px;
+        text-align: left;
         color: #6B7280;
         margin: 0;
     }

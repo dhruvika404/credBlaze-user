@@ -1,0 +1,520 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.parentContainer {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    min-height: 414.13px;
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 12px;
+
+    .taskStatistics {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 10px;
+        gap: 10px;
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 15px;
+
+        .statsFrame {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0px;
+            gap: 18px;
+            width: 100%;
+        }
+
+        .balanceHeader {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0px;
+            width: 100%;
+            gap: 12px;
+
+            .statusRow {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                height: 32px;
+
+                .balanceTitle {
+                    font-family: 'Manrope', sans-serif;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 18px;
+                    line-height: 25px;
+                    color: #171717;
+                }
+
+                .dropdownContainer {
+                    position: relative;
+
+                    .currencyFilter {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        padding: 4px 8px;
+                        gap: 6px;
+                        width: 83px;
+                        height: 32px;
+                        background: #F6F6F6;
+                        border-radius: 30px;
+                        cursor: pointer;
+                        transition: background 0.2s ease;
+
+                        &:hover {
+                            background: #EAEAEA;
+                        }
+
+                        &.disabled {
+                            opacity: 0.5;
+                            cursor: not-allowed;
+                            pointer-events: none;
+                        }
+
+                        .flag {
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 50%;
+                            overflow: hidden;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            }
+                        }
+
+                        span {
+                            font-family: 'Manrope', sans-serif;
+                            font-style: normal;
+                            font-weight: 600;
+                            font-size: 12px;
+                            color: #000000;
+                            line-height: 14px;
+                            letter-spacing: -0.02em;
+                        }
+
+                        svg {
+                            color: #000000;
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+
+                    .currencyDropdown {
+                        position: absolute;
+                        top: 105%;
+                        right: 0;
+                        background: #FFFFFF;
+                        border: 1px solid #F5F5F5;
+                        border-radius: 8px;
+                        z-index: 20;
+                        width: 200px;
+                        margin-top: 4px;
+                        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+
+                        .searchBox {
+                            padding: 8px;
+                            border-bottom: 1px solid #F5F5F5;
+
+                            input {
+                                width: 100%;
+                                padding: 6px 10px;
+                                border: 1px solid #E5E7EB;
+                                border-radius: 6px;
+                                font-size: 12px;
+                                outline: none;
+
+                                &:focus {
+                                    border-color: #0040C1;
+                                }
+                            }
+                        }
+
+                        .countryList {
+                            max-height: 150px;
+                            overflow-y: auto;
+
+                            .dropdownItem {
+                                padding: 8px 12px;
+                                cursor: pointer;
+                                transition: background 0.15s ease;
+
+                                &:hover {
+                                    background: #F3F4F6;
+                                }
+
+                                .itemText {
+                                    font-family: 'Manrope', sans-serif;
+                                    font-size: 12px;
+                                    color: #374151;
+                                    font-weight: 500;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .balanceInfo {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+                padding: 3px 0 10px 0;
+                width: 100%;
+                flex-wrap: wrap;
+
+                .amount {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .symbol {
+                        color: #000;
+                        font-size: 40px;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: 150%;
+                    }
+
+                    .value {
+                        color: #000;
+                        font-size: 40px;
+                        font-style: normal;
+                        font-weight: 600;
+                        line-height: 150%;
+                    }
+                }
+
+                .trend {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .text {
+                        font-size: 16px;
+                        color: #6B7280;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+
+        .buttonGroup {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 0px;
+            gap: 12px;
+            width: 297px;
+            height: 40px;
+
+            @media (max-width: 576px) {
+                width: 100%;
+            }
+
+            .depositBtn {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 14px;
+                gap: 4px;
+                width: 142.5px;
+                height: 40px;
+                background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                border-radius: 8px;
+                border: 1px solid rgba(89, 59, 242, 0.10);
+                cursor: pointer;
+                color: #FFFFFF;
+                font-family: 'Manrope', sans-serif;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 20px;
+                transition: .3s ease-in-out;
+
+                &:hover:not(:disabled) {
+                    background: linear-gradient(90deg, #6475F6 -4.55%, #0040C1 102.73%);
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                @media (max-width: 576px) {
+                    flex-grow: 1;
+                    width: auto;
+                }
+            }
+
+            .withdrawalBtn {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 14px;
+                gap: 8px;
+                width: 142.5px;
+                height: 40px;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 8px;
+                cursor: pointer;
+                color: #171717;
+                font-family: 'Manrope', sans-serif;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 20px;
+                transition: .3s ease-in-out;
+
+                &:hover:not(:disabled) {
+                    background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                    color: #FFFFFF;
+                    border-color: transparent;
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                @media (max-width: 576px) {
+                    flex-grow: 1;
+                    width: auto;
+                }
+            }
+        }
+    }
+
+    .taskActivity {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        gap: 16px;
+        width: 100%;
+        background: #FFFFFF;
+        border: 1px solid #F5F5F5;
+        border-radius: 12px;
+
+        .activityHeader {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 28px;
+
+            .activityTitle {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+
+                .activityIcon {
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 6px;
+                    width: 28px;
+                    height: 28px;
+                    background: #FFFFFF;
+                    border: 1px solid #F5F5F5;
+                    border-radius: 8px;
+                    color: #6B7280;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+
+                h3 {
+                    font-family: 'Manrope', sans-serif;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 24px;
+                    color: #171717;
+                    margin: 0;
+                }
+            }
+
+            .viewAllBtn {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 2px;
+                text-decoration: none;
+                color: #171717;
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 19px;
+                transition: color 0.15s ease;
+
+                &:hover {
+                    color: #0040C1;
+                }
+
+                .arrowIcon {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+
+        .activityList {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0px;
+            gap: 12px;
+            width: 100%;
+
+            .activityItem {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 18px;
+                width: 100%;
+                height: 55px;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 12px;
+
+                .itemLeft {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 8px;
+                    flex: 1;
+                    min-width: 0;
+
+                    .itemIconBox {
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 6px;
+                        width: 39px;
+                        height: 39px;
+                        border-radius: 8px;
+
+                        &.deposit {
+                            background: #DCFCE7;
+                            color: #00A63E;
+                            border: 1px solid transparent;
+                        }
+
+                        &.withdraw {
+                            background: #FFE2E2;
+                            color: #E7000B;
+                            border: 1px solid transparent;
+                        }
+
+                        svg {
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+
+                    .itemTextInfo {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        padding: 0px;
+                        gap: 2px;
+                        flex: 1;
+                        min-width: 0;
+
+                        h4 {
+                            font-family: 'Manrope', sans-serif;
+                            font-style: normal;
+                            font-weight: 600;
+                            font-size: 14px;
+                            line-height: 19px;
+                            color: #171717;
+                            margin: 0;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            width: 100%;
+                            max-width: 100%;
+
+                            @media (max-width: 480px) {
+                                max-width: 110px;
+                            }
+                        }
+
+                        span {
+                            font-family: 'Manrope', sans-serif;
+                            font-style: normal;
+                            font-weight: 400;
+                            font-size: 12px;
+                            line-height: 16px;
+                            color: #6B7280;
+                        }
+                    }
+                }
+
+                .itemRight {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                    padding: 0px;
+                    gap: 2px;
+                    flex-shrink: 0;
+                    margin-left: 12px;
+
+                    .amount {
+                        font-family: 'Manrope', sans-serif;
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 16px;
+                        line-height: 22px;
+                        text-align: right;
+                    }
+
+                    .earningLabel {
+                        font-family: 'Manrope', sans-serif;
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 12px;
+                        line-height: 16px;
+                        text-align: right;
+                        color: #6B7280;
+                    }
+                }
+            }
+        }
+    }
+}

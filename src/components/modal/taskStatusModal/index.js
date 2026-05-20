@@ -27,7 +27,7 @@ export default function TaskStatusModal({ isOpen, onClose, status = 'review', re
                                     <RupeeIcon />
                                 )}
                             </div>
-                            <span>{rewardType === 'coin' ? `+${reward} CB` : `+₹${reward}`}</span>
+                            <span>{rewardType === 'coin' ? `+${reward} CB` : `+$${reward}`}</span>
                         </div>
                     </div>
                 );

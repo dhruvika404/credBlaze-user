@@ -19,8 +19,8 @@ export default function Header() {
     const cashBalance = cashWallet ? Number(cashWallet.balance).toLocaleString('en-IN') : '0';
     const pointsBalance = pointsWallet ? Number(pointsWallet.balance).toLocaleString('en-IN') : '0';
     const profileImg = user?.profileImage || user?.profile_image
-    const [searchValue, setSearchValue] = React.useState('');
-    const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [dismissedIds, setDismissedIds] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -117,7 +117,7 @@ export default function Header() {
             <div className={styles.rightalignment}>
                 <div className={`${styles.walletItem} ${styles.green}`}>
                     <div className={styles.textInfo}>
-                        <span>{cashBalance} ₹</span>
+                        <span>{cashBalance} $</span>
                         <span className={styles.label}>Cash</span>
                     </div>
                     <div className={styles.iconWrapper}>

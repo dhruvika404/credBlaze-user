@@ -213,7 +213,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                                 <span>{task?.reward} CB</span>
                                             </div>
                                         ) : (
-                                            <span>₹ {task?.reward}</span>
+                                            <span>$ {task?.reward}</span>
                                         )}
                                     </div>
                                 </div>
@@ -279,7 +279,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                                 </div>
                                                 {task?.reward} CB
                                             </div>
-                                        ) : `₹ ${task?.reward}`}
+                                        ) : `$ ${task?.reward}`}
                                     </div>
                                 </div>
 

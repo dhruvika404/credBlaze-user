@@ -1,0 +1,458 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.recentTasksContainer {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 16px;
+    width: 100%;
+    min-height: 225px;
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.04);
+
+    @media (max-width: 1200px) {
+        height: auto;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 28px;
+
+        .titleArea {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+
+            .iconBox {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 6px;
+                width: 28px;
+                height: 28px;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 8px;
+            }
+
+            .title {
+                font-family: 'Manrope', sans-serif;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 24px;
+                color: #171717;
+            }
+        }
+
+        .viewAllBtn {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2px;
+            border: none;
+            background: none;
+            outline: none;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: none;
+            color: #171717;
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 19px;
+            transition: color 0.15s ease;
+
+            &:hover {
+                color: #0040C1;
+            }
+
+            span {
+                color: inherit;
+            }
+
+            .arrowIcon {
+                width: 16px;
+                height: 16px;
+                color: inherit;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+
+    .cardsRow {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+        height: 180px;
+
+        @media (max-width: 1200px) {
+            flex-direction: column;
+            height: auto;
+            gap: 16px;
+        }
+
+        .emptyState {
+            width: 100%;
+            text-align: center;
+            padding: 32px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: #9CA3AF;
+        }
+
+        .taskCard {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px 24px;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+            height: 180px;
+            background: #FFFFFF;
+            border: 1px solid #D6D1E0;
+            border-radius: 12px;
+            position: relative;
+
+            @media (max-width: 1200px) {
+                width: 100%;
+                height: auto;
+                min-height: 160px;
+            }
+
+            .cardHeader {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                height: 40px;
+
+                .taskImage {
+                    width: 34px;
+                    height: 34px;
+                    object-fit: contain;
+                    border: 1.13333px solid #D6D1E0;
+                    border-radius: 50%;
+                    background: #FFFFFF;
+                    flex-shrink: 0;
+                }
+
+                .proBadge {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding: 6px 12px;
+                    gap: 4.27px;
+                    height: 28px;
+                    background: linear-gradient(90deg, #A47A1E 0%, #D3A84C 20%, #D3A84C 36.01%, #EBBE6B 55%, #FFD87C 70%, #B58F3E 85%, #956D13 100%);
+                    border-radius: 21.3333px;
+
+                    svg {
+                        width: 8px;
+                        height: 8px;
+                        flex-shrink: 0;
+                    }
+
+                    span {
+                        font-family: 'Manrope', sans-serif;
+                        font-weight: 600;
+                        font-size: 12px;
+                        line-height: 16px;
+                        color: #FFFFFF;
+                    }
+                }
+            }
+
+            .cardBody {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                width: 100%;
+                height: 44px;
+
+                h3 {
+                    font-family: 'Manrope', sans-serif;
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 22px;
+                    color: #171717;
+                    margin: 0;
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                p {
+                    font-family: 'Manrope', sans-serif;
+                    font-weight: 600;
+                    font-size: 12px;
+                    line-height: 16px;
+                    color: #6B7280;
+                    margin: 0;
+                    width: 100%;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            }
+
+            .divider {
+                width: 100%;
+                height: 1px;
+                background: #F5F5F5;
+                border-radius: 8px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .cardFooter {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                height: 35px;
+
+                .reward {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 9px;
+                    height: 24px;
+
+                    .rewardIcon {
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-shrink: 0;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    span {
+                        font-family: 'Manrope', sans-serif;
+                        font-weight: 600;
+                        font-size: 16px;
+                        line-height: 22px;
+                        color: #171717;
+                    }
+                }
+
+                .viewBtn {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 8px 20px;
+                    gap: 12px;
+                    width: 72px;
+                    height: 35px;
+                    background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                    border: 1px solid rgba(89, 59, 242, 0.10);
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-family: 'Manrope', sans-serif;
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 19px;
+                    color: #FFFFFF;
+                    transition: .3s ease-in-out;
+
+                    &:hover:not(:disabled) {
+                        background: linear-gradient(90deg, #6475F6 -4.55%, #0040C1 102.73%);
+                    }
+
+                    &:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ── Shimmer Effects for Shimmering Shimmerers ──
+.shimmerCard {
+    pointer-events: none;
+
+    .shimmerHeader,
+    .shimmerTitle,
+    .shimmerDesc,
+    .shimmerDivider,
+    .shimmerFooter {
+        position: relative;
+        overflow: hidden;
+        background: #F3F4F6;
+        border-radius: 4px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: loading-shimmer 1.5s infinite;
+        }
+    }
+
+    .shimmerHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: transparent !important;
+        width: 100%;
+        height: 40px;
+
+        &::after {
+            display: none;
+        }
+
+        .shimmerCircle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #F3F4F6;
+            position: relative;
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: loading-shimmer 1.5s infinite;
+            }
+        }
+
+        .shimmerPill {
+            width: 80px;
+            height: 28px;
+            border-radius: 21.333px;
+            background: #F3F4F6;
+            position: relative;
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: loading-shimmer 1.5s infinite;
+            }
+        }
+    }
+
+    .shimmerTitle {
+        width: 70%;
+        height: 18px;
+        margin-top: 4px;
+    }
+
+    .shimmerDesc {
+        width: 90%;
+        height: 14px;
+    }
+
+    .shimmerDivider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .shimmerFooter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: transparent !important;
+        width: 100%;
+        height: 35px;
+
+        &::after {
+            display: none;
+        }
+
+        .shimmerPillSmall {
+            width: 60px;
+            height: 20px;
+            background: #F3F4F6;
+            position: relative;
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: loading-shimmer 1.5s infinite;
+            }
+        }
+
+        .shimmerButton {
+            width: 72px;
+            height: 35px;
+            border-radius: 10px;
+            background: #F3F4F6;
+            position: relative;
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: loading-shimmer 1.5s infinite;
+            }
+        }
+    }
+}
+
+@keyframes loading-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}

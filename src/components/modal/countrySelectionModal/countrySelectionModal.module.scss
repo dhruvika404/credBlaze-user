@@ -1,0 +1,179 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    width: 480px;
+    max-width: 90%;
+    box-sizing: border-box;
+    font-family: 'Manrope', sans-serif;
+    position: relative;
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.08);
+
+    h2 {
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 30px;
+        color: #171717;
+        margin: 16px 0 8px 0;
+        text-align: center;
+    }
+}
+
+.closeBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.illustrationWrapper {
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.description {
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    color: #6B7280;
+    text-align: center;
+    margin: 0 0 24px 0;
+    max-width: 92%;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 28px;
+}
+
+.featureRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+}
+
+.iconCircle {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 18px;
+        height: 18px;
+
+        path {
+            &[stroke] {
+                stroke: #4F46E5 !important;
+            }
+
+            &[fill] {
+                fill: #4F46E5 !important;
+            }
+        }
+    }
+}
+
+.featureText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    h3 {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 20px;
+        color: #171717;
+        margin: 0;
+    }
+
+    p {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 16px;
+        color: #6B7280;
+        margin: 0;
+    }
+}
+
+.actionWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+
+    button {
+        width: 100%;
+    }
+}
+
+.maybeLaterLink {
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #6B7280;
+    cursor: pointer;
+    padding: 8px 0;
+    text-align: center;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #171717;
+    }
+}

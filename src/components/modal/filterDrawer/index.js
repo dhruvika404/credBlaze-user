@@ -126,7 +126,7 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
 
                         {/* Price Range */}
                         <div className={styles.section}>
-                            <h3>Price, ₹</h3>
+                            <h3>Price, $</h3>
                             <div className={styles.priceInputs}>
                                 <div className={styles.inputWrapper}>
                                     <input type="text" placeholder="Min" value={minPrice} onChange={(e) => handlePriceChange(e.target.value, setMinPrice)} />

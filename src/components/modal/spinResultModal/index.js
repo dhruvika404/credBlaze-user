@@ -54,7 +54,7 @@ export default function SpinResultModal({ isOpen, onClose, result, remainingSpin
                         <span>
                             {result.reward_type === 'POINT'
                                 ? `CB Reward: ${result.reward_value} CB`
-                                : `${result.label || 'Cash Reward'}: ₹${result.reward_value}`}
+                                : `${result.label || 'Cash Reward'}: $${result.reward_value}`}
                         </span>
                     </div>
                 </div>

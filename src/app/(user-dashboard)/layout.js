@@ -1,5 +1,6 @@
 import Header from '@/components/header'
 import Sidebar from '@/components/sidebar'
+import CountryModalManager from '@/components/modal/countrySelectionModal/CountryModalManager'
 import React from 'react'
 
 export default function layout({ children }) {
@@ -14,6 +15,7 @@ export default function layout({ children }) {
           {children}
         </div>
       </div>
+      <CountryModalManager />
     </div>
   )
 }

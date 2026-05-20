@@ -1,0 +1,147 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.taskActivity {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 12px;
+    margin-top: 0;
+
+    .statusHeader {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: 40px;
+
+        .titleArea {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+
+            .iconContainer {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 6px;
+                width: 28px;
+                height: 28px;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 8px;
+                color: #6B7280;
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            h2 {
+                color: #171717;
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 24px;
+                margin: 0;
+            }
+        }
+
+        .dropdownWrapper {
+            position: relative;
+
+            .dropdownBtn {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 16px;
+                gap: 8px;
+                height: 40px;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    background: #F9FAFB;
+                    border-color: #E5E7EB;
+                }
+
+                .calIcon {
+                    color: #6B7280;
+                }
+
+                span {
+                    font-family: 'Manrope', sans-serif;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 12px;
+                    line-height: 16px;
+                    text-align: center;
+                    color: #171717;
+                }
+
+                .arrowIcon {
+                    color: #6B7280;
+                }
+            }
+
+            .dropdownMenu {
+                position: absolute;
+                top: 105%;
+                right: 0;
+                background: #FFFFFF;
+                border: 1px solid #F5F5F5;
+                border-radius: 8px;
+                z-index: 10;
+                min-width: 130px;
+                margin-top: 4px;
+                padding: 4px 0;
+                box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+
+                .menuItem {
+                    padding: 8px 16px;
+                    cursor: pointer;
+                    color: #374151;
+                    font-family: 'Manrope', sans-serif;
+                    font-size: 13px;
+                    font-weight: 500;
+                    transition: background 0.15s ease;
+
+                    &:hover {
+                        background: #F3F4F6;
+                        color: #171717;
+                    }
+
+                    &.active {
+                        background: #EFF9FF;
+                        color: #0000EE;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+
+    .chartArea {
+        flex: 1;
+        width: 100%;
+        height: 240px;
+    }
+}

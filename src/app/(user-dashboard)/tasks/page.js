@@ -243,7 +243,7 @@ export default function TasksPage() {
                         {isCashbackPoint ? (
                             <span className={styles.coinText}>{amount} CB</span>
                         ) : (
-                            <span className={styles.rupeeText}>₹ {amount}</span>
+                            <span className={styles.rupeeText}>$ {amount}</span>
                         )}
                     </div>
                 );
@@ -370,7 +370,7 @@ export default function TasksPage() {
                                                     <span>{task.reward} CB</span>
                                                 </>
                                             ) : (
-                                                <span>₹ {task.reward}</span>
+                                                <span>$ {task.reward}</span>
                                             )}
                                         </div>
                                         <button

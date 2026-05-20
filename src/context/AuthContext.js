@@ -65,12 +65,18 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
     }
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('country_modal_dismissed');
+    }
     await fetchAndSetProfile();
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('country_modal_dismissed');
+    }
 
     document.cookie.split(";").forEach((c) => {
       document.cookie = c

@@ -16,7 +16,7 @@ export default function SuccessfulWithdrawal() {
                 <div className={styles.detailsAlignment}>
                     <div className={styles.row}>
                         <span className={styles.label}>Requested Amount</span>
-                        <span className={styles.amount}>₹ 10,000</span>
+                        <span className={styles.amount}>$ 10,000</span>
                     </div>
                     <div className={styles.grid}>
                         <div className={styles.item}>
