@@ -251,16 +251,21 @@
         border-radius: 12px;
     }
 
+    .badgesWrapper {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+
         .proBadge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             display: flex;
             flex-direction: row;
             align-items: center;
             padding: 6px 12px;
             gap: 4.27px;
-            width: 87.27px;
             height: 28px;
             background: linear-gradient(90deg, #A47A1E 0%, #D3A84C 20%, #D3A84C 36.01%, #EBBE6B 55%, #FFD87C 70%, #B58F3E 85%, #956D13 100%, #A47A1E 200%);
             background-size: 200% auto;
@@ -280,7 +285,61 @@
                 height: 8px;
                 flex-shrink: 0;
             }
+            
+            span {
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 16px;
+                text-align: center;
+                color: #FFFFFF;
+            }
         }
+
+        .cbBadge {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 4.27px;
+            height: 28px;
+            background: linear-gradient(
+                90deg,
+                #DE8806 0%,
+                #F59E0B 50%,
+                #DE8806 100%
+            );
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+            border-radius: 21.33px;
+            color: #FFFFFF;
+            font-family: 'Manrope', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: center;
+            box-sizing: border-box;
+
+            img {
+                width: 10px;
+                height: 10px;
+                flex-shrink: 0;
+                border-radius: 0; /* overrides any media img border-radius */
+            }
+
+            span {
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 16px;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        }
+    }
 }
 
 .guidelines {
@@ -454,6 +513,15 @@
                 word-wrap: break-word;
             }
         }
+    }
+
+    .htmlIframe {
+        width: 100%;
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        min-height: 160px;
+        background: transparent;
     }
 }
 

@@ -330,6 +330,50 @@
             flex-shrink: 0;
         }
 
+        /* Wrapper for multiple badges */
+        .badgesWrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CB Task orange badge */
+        .cbBadge {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 4.27px;
+            height: 28px;
+            background: linear-gradient(
+                90deg,
+                #DE8806 0%,
+                #F59E0B 50%,
+                #DE8806 100%
+            );
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+            border-radius: 21.3333px;
+            box-sizing: border-box;
+
+            img {
+                width: 10px;
+                height: 10px;
+                flex-shrink: 0;
+            }
+
+            span {
+                font-family: 'Manrope', sans-serif;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 16px;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        }
+
         /* Pro Task gold badge */
         .proBadge {
             display: flex;

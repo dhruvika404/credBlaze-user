@@ -3,8 +3,8 @@ import ReferralInvitation from '@/rendering/referralInvitation'
 
 export default function page() {
   return (
-     <Suspense>
-            <ReferralInvitation />
-        </Suspense>
+    <Suspense>
+      <ReferralInvitation />
+    </Suspense>
   )
 }

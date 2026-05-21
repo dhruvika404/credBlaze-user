@@ -15,34 +15,41 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const router = useRouter();
+    const fileInputRef = useRef(null);
     const [view, setView] = useState('details'); // 'details' or 'perform'
-    const [agreed, setAgreed] = useState(false);
-    const [proofImage, setProofImage] = useState(null);
-    const [proofFile, setProofFile] = useState(null);
-    const [performanceUrl, setPerformanceUrl] = useState('');
-    const [submissionLink, setSubmissionLink] = useState('');
+    const [form, setForm] = useState({
+        agreed: false,
+        proofImage: null,
+        proofFile: null,
+        submissionLink: ''
+    });
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [shareCopied, setShareCopied] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [proofSubmitted, setProofSubmitted] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const [submittedData, setSubmittedData] = useState(null);
     const { user, fetchAndSetProfile } = useAuth();
     const isUserPro = user?.is_prime;
     const isPrimeTask = task?.isPrime;
-    const [copied, setCopied] = useState(false);
-    const [shareCopied, setShareCopied] = useState(false);
-    const fileInputRef = useRef(null);
-    
     const isSubmission = task?.isSubmission || false;
     const submissionStatus = task?.status || task?.task_status;
+    const finalStatusRaw = submittedData?.task_status || submissionStatus;
+    const computedStatus = finalStatusRaw ? (finalStatusRaw === 'pending' ? 'review' : finalStatusRaw) : 'review';
+    const isCashbackPoint = task?.rewardType === 'coin' || task?.earning_type === 'CASHBACKPOINT';
 
-    const computedStatus = isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : 'review';
-    const computedReward = isSubmission
-        ? (task?.earning_type === 'CASHBACKPOINT'
+    let computedReward = task?.reward || '0';
+    if (submittedData) {
+        computedReward = isCashbackPoint
+            ? submittedData.task_performance_cashpoints_amount_earned
+            : submittedData.task_performance_real_amount_earned;
+    } else if (isSubmission) {
+        computedReward = isCashbackPoint
             ? (task?.task_performance_cashpoints_amount_earned || task?.earnedPoints || '0')
-            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0'))
-        : (task?.reward || '0');
-    const computedRewardType = isSubmission
-        ? (task?.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee')
-        : (task?.rewardType || 'rupee');
+            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0');
+    }
+
+    const computedRewardType = isCashbackPoint ? 'coin' : 'rupee';
+    const computedRejectionReason = submittedData?.rejection_reason || task?.rejection_reason;
 
     React.useEffect(() => {
         if (isOpen) {
@@ -50,14 +57,15 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                 setIsStatusModalOpen(true);
             } else {
                 setView('details');
-                setAgreed(false);
-                setProofImage(null);
-                setProofFile(null);
-                setPerformanceUrl('');
-                setSubmissionLink('');
+                setForm({
+                    agreed: false,
+                    proofImage: null,
+                    proofFile: null,
+                    submissionLink: ''
+                });
                 setIsStatusModalOpen(false);
                 setIsSubmitting(false);
-                setProofSubmitted(false);
+                setSubmittedData(null);
             }
         }
     }, [isOpen, isSubmission]);
@@ -65,7 +73,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     if (!isOpen || !task) return null;
 
     const handlePerformTask = () => {
-        if (agreed) {
+        if (form.agreed) {
             setView('perform');
         }
     }
@@ -76,12 +84,12 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
             return;
         }
 
-        if (task.screenshotRequired && !proofFile) {
+        if (task.screenshotRequired && !form.proofFile) {
             toast.error('Please upload a screenshot');
             return;
         }
 
-        if (task.performanceLinkRequired && !submissionLink.trim()) {
+        if (task.performanceLinkRequired && !form.submissionLink.trim()) {
             toast.error('Please enter the submission link');
             return;
         }
@@ -92,19 +100,21 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
             const formData = new FormData();
             formData.append('task_campaign_id', task.rawData.id);
 
-            if (proofFile) {
-                formData.append('media_files', proofFile);
+            if (form.proofFile) {
+                formData.append('media_files', form.proofFile);
             }
 
-            if (submissionLink.trim()) {
-                formData.append('task_performance_url', submissionLink.trim());
+            if (form.submissionLink.trim()) {
+                formData.append('task_performance_url', form.submissionLink.trim());
             }
 
             const response = await submitTask(formData);
 
             if (response.success) {
                 toast.success('Task submitted successfully!');
-                setProofSubmitted(true);
+                if (response.data) {
+                    setSubmittedData(response.data);
+                }
                 setIsStatusModalOpen(true);
                 await fetchAndSetProfile();
                 if (onTaskSubmitted) {
@@ -122,9 +132,9 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
         if (!file) return;
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = (e) => setProofImage(e.target.result);
+            reader.onload = (e) => setForm(prev => ({ ...prev, proofImage: e.target.result }));
             reader.readAsDataURL(file);
-            setProofFile(file);
+            setForm(prev => ({ ...prev, proofFile: file }));
         }
     }
 
@@ -141,8 +151,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
 
     const handleClearImage = (e) => {
         e.stopPropagation();
-        setProofImage(null);
-        setProofFile(null);
+        setForm(prev => ({ ...prev, proofImage: null, proofFile: null }));
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
@@ -170,9 +179,17 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
         }
     };
 
-    const standardConditions = task?.termsAndConditions
-        ? task.termsAndConditions.split('\n').filter(c => c.trim()).map(c => c.trim())
+    const termsAndConditions = task?.termsAndConditions || '';
+    const isHtmlTerms = /<\/?[a-z][\s\S]*>/i.test(termsAndConditions);
+    const standardConditions = !isHtmlTerms && termsAndConditions
+        ? termsAndConditions.split('\n').filter(c => c.trim()).map(c => c.trim())
         : [];
+
+    const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS' || w.wallet_type === 'CASHBACKPOINTS' || w.wallet_type === 'CASHBACKPOINT');
+    const userCbPoints = Number(pointsWallet?.balance || 0);
+    const requiresPoints = task?.taskAllowOnCbPointDeduction;
+    const requiredPointsAmount = Number(task?.deductCbPointAmount || 0);
+    const hasEnoughPoints = userCbPoints >= requiredPointsAmount;
 
     return (
         <>
@@ -221,12 +238,20 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                 {/* Media */}
                                 <div className={styles.mediaSection}>
                                     <img src={task?.taskBanner} alt="task" />
-                                    {isPrimeTask && (
-                                        <div className={styles.proBadge}>
-                                            <ProIcon />
-                                            <span>Pro Task</span>
-                                        </div>
-                                    )}
+                                    <div className={styles.badgesWrapper}>
+                                        {requiresPoints && (
+                                            <div className={styles.cbBadge}>
+                                                <img src="/assets/icons/star.svg" alt="star" />
+                                                <span>CB Task</span>
+                                            </div>
+                                        )}
+                                        {isPrimeTask && (
+                                            <div className={styles.proBadge}>
+                                                <ProIcon />
+                                                <span>Pro Task</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Guidelines */}
@@ -243,14 +268,23 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                         </div>
                                     </div>
                                     <div className={styles.divider} />
-                                    <div className={styles.list}>
-                                        {standardConditions.map((text, index) => (
-                                            <div key={index + 1} className={styles.item}>
-                                                <div className={styles.number}>{index + 1}</div>
-                                                <span>{text}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {isHtmlTerms ? (
+                                        <iframe
+                                            className={styles.htmlIframe}
+                                            srcDoc={termsAndConditions}
+                                            sandbox="allow-same-origin"
+                                            title="Terms & Conditions"
+                                        />
+                                    ) : (
+                                        <div className={styles.list}>
+                                            {standardConditions.map((text, index) => (
+                                                <div key={index + 1} className={styles.item}>
+                                                    <div className={styles.number}>{index + 1}</div>
+                                                    <span>{text}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Info Alert - Only for non-pro users on pro tasks */}
@@ -260,6 +294,24 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                             <InfoIcon />
                                         </div>
                                         <p>We'll review your submission within 24 hours and notify you once approved.</p>
+                                    </div>
+                                )}
+
+                                {requiresPoints && (
+                                    <div className={styles.infoAlert}>
+                                        <div className={styles.icon}>
+                                            <InfoIcon />
+                                        </div>
+                                        {!hasEnoughPoints ? (
+                                            <p>
+                                                You need at least {requiredPointsAmount} CB points to perform this task.
+                                                You currently have {userCbPoints} CB points.
+                                            </p>
+                                        ) : (
+                                            <p>
+                                                Performing this task will deduct {requiredPointsAmount} CB points from your wallet.
+                                            </p>
+                                        )}
                                     </div>
                                 )}
                             </>
@@ -330,14 +382,23 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                         </div>
                                     </div>
                                     <div className={styles.divider} />
-                                    <div className={styles.list}>
-                                        {standardConditions.map((text, index) => (
-                                            <div key={index + 1} className={styles.item}>
-                                                <div className={styles.number}>{index + 1}</div>
-                                                <span>{text}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {isHtmlTerms ? (
+                                        <iframe
+                                            className={styles.htmlIframe}
+                                            srcDoc={termsAndConditions}
+                                            sandbox="allow-same-origin"
+                                            title="Conditions To Upload Proof"
+                                        />
+                                    ) : (
+                                        <div className={styles.list}>
+                                            {standardConditions.map((text, index) => (
+                                                <div key={index + 1} className={styles.item}>
+                                                    <div className={styles.number}>{index + 1}</div>
+                                                    <span>{text}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {task?.screenshotRequired && (
@@ -359,7 +420,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
 
                                         <div className={styles.uploadSection}>
                                             <div
-                                                className={`${styles.dragUpload} ${proofImage ? styles.hasPreview : ''}`}
+                                                className={`${styles.dragUpload} ${form.proofImage ? styles.hasPreview : ''}`}
                                                 onClick={() => fileInputRef.current?.click()}
                                                 onDragOver={(e) => e.preventDefault()}
                                                 onDrop={handleDrop}
@@ -371,9 +432,9 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                                     accept="image/*"
                                                     onChange={handleChange}
                                                 />
-                                                {proofImage ? (
+                                                {form.proofImage ? (
                                                     <div className={styles.previewContainer}>
-                                                        <img src={proofImage} alt="proof" className={styles.previewImg} />
+                                                        <img src={form.proofImage} alt="proof" className={styles.previewImg} />
                                                         <button className={styles.clearBtn} onClick={handleClearImage}>✕</button>
                                                     </div>
                                                 ) : (
@@ -402,8 +463,8 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                         <input
                                             type="url"
                                             placeholder="Enter your submission link"
-                                            value={submissionLink}
-                                            onChange={(e) => setSubmissionLink(e.target.value)}
+                                            value={form.submissionLink}
+                                            onChange={(e) => setForm(prev => ({ ...prev, submissionLink: e.target.value }))}
                                         />
                                     </div>
                                 )}
@@ -418,11 +479,11 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                 <label className={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
-                                        checked={agreed}
-                                        onChange={(e) => setAgreed(e.target.checked)}
+                                        checked={form.agreed}
+                                        onChange={(e) => setForm(prev => ({ ...prev, agreed: e.target.checked }))}
                                     />
                                     <div className={styles.customCheckbox}>
-                                        {agreed && (
+                                        {form.agreed && (
                                             <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M1 5L4.5 8.5L11 1" stroke="#0000EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
@@ -441,11 +502,19 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                                 >
                                     Upgrade to Pro
                                 </button>
+                            ) : requiresPoints && !hasEnoughPoints ? (
+                                <button
+                                    className={`${styles.mainBtn} ${styles.pro}`}
+                                    disabled
+                                    style={{ background: '#ccc', borderColor: '#ccc', cursor: 'not-allowed', color: '#666' }}
+                                >
+                                    Not enough CB Points
+                                </button>
                             ) : (
                                 <button
                                     className={styles.mainBtn}
                                     onClick={handlePerformTask}
-                                    disabled={!agreed}
+                                    disabled={!form.agreed}
                                 >
                                     Perform Task
                                     <PerformIcon />
@@ -461,7 +530,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                             <button
                                 className={`${styles.mainBtn} ${styles.back}`}
                                 onClick={handleCompleteTask}
-                                disabled={(task?.screenshotRequired && !proofImage) || isSubmitting || (task?.performanceLinkRequired && !submissionLink.trim())}
+                                disabled={(task?.screenshotRequired && !form.proofImage) || isSubmitting || (task?.performanceLinkRequired && !form.submissionLink.trim())}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Complete Task'}
                             </button>
@@ -479,7 +548,7 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
                 status={computedStatus}
                 reward={computedReward}
                 rewardType={computedRewardType}
-                rejectionReason={task?.rejection_reason}
+                rejectionReason={computedRejectionReason}
             />
         </>
     )

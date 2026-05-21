@@ -3,8 +3,8 @@ import SpinEarn from '@/rendering/spinEarn'
 
 export default function page() {
   return (
-     <Suspense>
-            <SpinEarn />
-        </Suspense>
+    <Suspense>
+      <SpinEarn />
+    </Suspense>
   )
 }

@@ -141,6 +141,8 @@ export default function TasksPage() {
         manualApprovalRequired: task.task_manual_apprval_required,
         platformName: task.platform?.platform_name,
         categoryName: task.category?.category_name,
+        taskAllowOnCbPointDeduction: task.task_allow_on_cb_point_deduction,
+        deductCbPointAmount: task.deduct_cb_point_amount,
         surveys: task.surveys || [],
         rawData: task
     });
@@ -348,12 +350,20 @@ export default function TasksPage() {
                                 <div key={task.id} className={styles.taskCard}>
                                     <div className={styles.cardHeader}>
                                         <img src={task.image} alt={task.title} className={styles.taskImage} />
-                                        {task.isPrime && (
-                                            <div className={styles.proBadge}>
-                                                <ProIcon />
-                                                <span>Pro Task</span>
-                                            </div>
-                                        )}
+                                        <div className={styles.badgesWrapper}>
+                                            {task.taskAllowOnCbPointDeduction && (
+                                                <div className={styles.cbBadge}>
+                                                    <img src="/assets/icons/star.svg" alt="star" />
+                                                    <span>CB Task</span>
+                                                </div>
+                                            )}
+                                            {task.isPrime && (
+                                                <div className={styles.proBadge}>
+                                                    <ProIcon />
+                                                    <span>Pro Task</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className={styles.cardBody}>
                                         <h3>{task.title || '-'}</h3>

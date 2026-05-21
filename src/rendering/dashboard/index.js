@@ -6,12 +6,10 @@ import CardList from './cardList';
 import TutorialVideoModal from '@/components/modal/tutorialVideoModal';
 import { getPopupAd } from '@/services/ads';
 import { getDashboardOverview } from '@/services/dashboard';
-import { useAuth } from '@/context/AuthContext';
 
 let hasShownPopUp = false;
 
 export default function Dashboard() {
-    const { user } = useAuth();
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState(null);
     const [overviewData, setOverviewData] = useState(null);
@@ -52,12 +50,6 @@ export default function Dashboard() {
 
     return (
         <div className={styles.dashboardPage}>
-            <div className={styles.titleInfo}>
-                <h1>Dashboard</h1>
-                {!user?.is_prime && (
-                    <p>Get early access & high-paying tasks with Pro Membership</p>
-                )}
-            </div>
             <UserStories />
             <CardList overviewData={overviewData} loading={loading} />
             <TutorialVideoModal

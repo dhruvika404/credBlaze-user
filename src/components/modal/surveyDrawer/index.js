@@ -6,26 +6,34 @@ import { submitTask } from '@/services/task'
 import toast from 'react-hot-toast'
 import { useAuth } from '@/context/AuthContext'
 import TaskStatusModal from '@/components/modal/taskStatusModal'
+import InfoIcon from '@/icons/infoIcon'
 
 export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const [answers, setAnswers] = useState({})
     const [errors, setErrors] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
-    const { fetchAndSetProfile } = useAuth()
-
+    const [submittedData, setSubmittedData] = useState(null)
+    const { fetchAndSetProfile, user } = useAuth()
     const isSubmission = task?.isSubmission || false;
     const submissionStatus = task?.status || task?.task_status;
+    const finalStatusRaw = submittedData?.task_status || submissionStatus;
+    const computedStatus = finalStatusRaw ? (finalStatusRaw === 'pending' ? 'review' : finalStatusRaw) : 'review';
+    const isCashbackPoint = task?.rewardType === 'coin' || task?.earning_type === 'CASHBACKPOINT';
 
-    const computedStatus = isSubmission ? (submissionStatus === 'pending' ? 'review' : submissionStatus) : 'review';
-    const computedReward = isSubmission
-        ? (task?.earning_type === 'CASHBACKPOINT'
+    let computedReward = task?.reward || '0';
+    if (submittedData) {
+        computedReward = isCashbackPoint
+            ? submittedData.task_performance_cashpoints_amount_earned
+            : submittedData.task_performance_real_amount_earned;
+    } else if (isSubmission) {
+        computedReward = isCashbackPoint
             ? (task?.task_performance_cashpoints_amount_earned || task?.earnedPoints || '0')
-            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0'))
-        : (task?.reward || '0');
-    const computedRewardType = isSubmission
-        ? (task?.earning_type === 'CASHBACKPOINT' ? 'coin' : 'rupee')
-        : (task?.rewardType || 'rupee');
+            : (task?.task_performance_real_amount_earned || task?.earnedAmount || '0');
+    }
+
+    const computedRewardType = isCashbackPoint ? 'coin' : 'rupee';
+    const computedRejectionReason = submittedData?.rejection_reason || task?.rejection_reason;
 
     React.useEffect(() => {
         if (isOpen) {
@@ -36,6 +44,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                 setErrors({})
                 setIsSubmitting(false)
                 setIsStatusModalOpen(false)
+                setSubmittedData(null)
             }
         }
     }, [isOpen, isSubmission])
@@ -46,6 +55,11 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
     const questions = survey.questions || []
     const surveyTitle = survey.survey_title || task.title || 'Survey'
     const surveyDescription = survey.survey_short_description || task.description || ''
+    const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS' || w.wallet_type === 'CASHBACKPOINTS' || w.wallet_type === 'CASHBACKPOINT');
+    const userCbPoints = Number(pointsWallet?.balance || 0);
+    const requiresPoints = task?.taskAllowOnCbPointDeduction;
+    const requiredPointsAmount = Number(task?.deductCbPointAmount || 0);
+    const hasEnoughPoints = userCbPoints >= requiredPointsAmount;
 
     const handleChange = (id, value) => {
         const currentAnswer = answers[id] || '';
@@ -146,6 +160,9 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
             const response = await submitTask(formData)
             if (response.success) {
                 toast.success('Survey submitted successfully!')
+                if (response.data) {
+                    setSubmittedData(response.data)
+                }
                 setIsStatusModalOpen(true)
                 await fetchAndSetProfile()
                 if (onTaskSubmitted) onTaskSubmitted()
@@ -361,13 +378,34 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                                 )}
                             </div>
                         ))}
+
+                        {/* Info Alert - CB Points Deduction */}
+                        {requiresPoints && (
+                            <div className={styles.infoAlert}>
+                                <div className={styles.icon}>
+                                    <InfoIcon />
+                                </div>
+                                {!hasEnoughPoints ? (
+                                    <p>
+                                        You need at least {requiredPointsAmount} CB points to perform this survey.
+                                        You currently have {userCbPoints} CB points.
+                                    </p>
+                                ) : (
+                                    <p>
+                                        Performing this survey will deduct {requiredPointsAmount} CB points from your wallet.
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles?.stickyFooter}>
                         <div className={styles.footerActions}>
                             <button className={styles.submitBtn}
                                 onClick={handleSubmit}
-                                disabled={isSubmitting}>
+                                disabled={isSubmitting || (requiresPoints && !hasEnoughPoints)}
+                                style={requiresPoints && !hasEnoughPoints ? { background: '#ccc', borderColor: '#ccc', cursor: 'not-allowed', color: '#666' } : {}}
+                            >
                                 {isSubmitting ? 'Submitting...' : 'Submit'}
                             </button>
                             <button className={styles.clearBtn} onClick={handleClear}>
@@ -395,7 +433,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
                 status={computedStatus}
                 reward={computedReward}
                 rewardType={computedRewardType}
-                rejectionReason={task?.rejection_reason}
+                rejectionReason={computedRejectionReason}
             />
         </>
     )

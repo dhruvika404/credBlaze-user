@@ -33,12 +33,11 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
     const [spinning, setSpinning] = useState(false);
     const [stopping, setStopping] = useState(false);
     const [lightsOn, setLightsOn] = useState(true);
-    const [spinDuration, setSpinDuration] = useState(15);
     const wheelRef = useRef(null);
     const requestRef = useRef(null);
 
     const animate = useCallback(() => {
-        setRotation(prev => prev + 10); // Adjust speed here (degrees per frame)
+        setRotation(prev => prev + 15);
         requestRef.current = requestAnimationFrame(animate);
     }, []);
 
@@ -47,7 +46,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
         setSpinning(true);
         setStopping(false);
         setLightsOn(true);
-        // Start indefinite rotation using requestAnimationFrame to keep 'rotation' accurate
+        if (requestRef.current) cancelAnimationFrame(requestRef.current);
         requestRef.current = requestAnimationFrame(animate);
     }, [spinning, animate]);
 
@@ -57,29 +56,30 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
             requestRef.current = null;
         }
 
+        if (isError) {
+            setSpinning(false);
+            setStopping(false);
+            setLightsOn(false);
+            if (onFinished) onFinished();
+            return;
+        }
+
         setStopping(true);
-        const duration = isError ? 2 : 15;
-        setSpinDuration(duration);
         const segAngle = 360 / (segments.length || 1);
+        const targetAngle = (360 - (targetIndex * segAngle)) % 360;
+        const spins = 23 + Math.floor(Math.random() * 5);
+        const currentMod = rotation % 360;
+        const diff = (targetAngle - currentMod + 360) % 360;
+        const totalRotation = rotation + (spins * 360) + diff;
 
-        // At this point, 'rotation' is the actual visual angle.
-        // We want (finalRotation % 360) = 360 - (targetIndex + 0.5) * segAngle
-        const currentAngle = rotation % 360;
-        const targetPos = (360 - (targetIndex * segAngle)) % 360;
-
-        // Calculate how many more degrees to reach targetPos, adding some full spins for duration
-        const extraSpins = isError ? 1 : 10;
-        const diff = (targetPos - currentAngle + 360) % 360;
-        const finalRotation = rotation + diff + (extraSpins * 360);
-
-        setRotation(finalRotation);
+        setRotation(totalRotation);
 
         setTimeout(() => {
             setSpinning(false);
             setStopping(false);
             if (onFinished) onFinished();
             setTimeout(() => setLightsOn(false), 2000);
-        }, duration * 1000);
+        }, 15000);
     }, [rotation, segments]);
 
     useEffect(() => {
@@ -148,7 +148,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                 viewBox="0 0 400 400"
                 style={{
                     transform: `rotate(${rotation}deg)`,
-                    transition: stopping ? `transform ${spinDuration}s cubic-bezier(0.15, 0, 0.15, 1)` : 'none',
+                    transition: stopping ? 'transform 15s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
                 }}
             >
                 <defs>
@@ -171,9 +171,9 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                     const endAngle = startAngle + segAngle;
                     const path = describeArc(cx, cy, radius, startAngle, endAngle);
                     const midAngle = i * segAngle;
-                    const textR = radius * 0.68;
+                    const textR = radius * 0.62;
                     const textPos = polarToCartesian(cx, cy, textR, midAngle);
-                    const isBlue = i % 2 !== 0;
+                    const isBlue = seg.color ? seg.color === 'blue' : i % 2 !== 0;
                     const lines = splitLabel(seg);
 
                     return (
@@ -182,7 +182,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                                 d={path}
                                 fill={isBlue ? 'url(#blueGrad)' : 'url(#silverGrad)'}
                                 stroke="#2a2a4a"
-                                strokeWidth="0.5"
+                                strokeWidth="1.5"
                                 filter="url(#segShadow)"
                             />
                             <text
