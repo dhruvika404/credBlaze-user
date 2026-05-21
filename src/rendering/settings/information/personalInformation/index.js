@@ -152,17 +152,17 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
           <p>Modify Your Personal Information</p>
         </div>
         <div className={styles.twocol}>
-          <Input label="First Name" labelChange value={form.first_name} placeholder="Naitik" disabled />
-          <Input label="Last Name" labelChange value={form.last_name} placeholder="Kumar" disabled />
-          <Input label="Email" labelChange value={form.email} placeholder="hiNaitik@gmail.com" disabled />
+          <Input label="First Name" labelChange value={form.first_name} placeholder="Enter first name" disabled />
+          <Input label="Last Name" labelChange value={form.last_name} placeholder="Enter last name" disabled />
+          <Input label="Email" labelChange value={form.email} placeholder="Enter email address" disabled />
           <div className={styles.phoneReadonly}>
             <label>Phone Number</label>
             <PhoneInput international disabled value={form.phone || '+1'} className={styles.phoneInputDisabled} />
           </div>
-          <Input label="Date of Birth" labelChange value={form.dob ? (() => { const [y, m, d] = form.dob.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })() : ''} placeholder="July 12, 1998" disabled />
-          <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Select Gender" disabled />
+          <Input label="Date of Birth" labelChange value={form.dob ? (() => { const [y, m, d] = form.dob.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })() : ''} placeholder="Date of birth" disabled />
+          <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Not specified" disabled />
           <Input label="Country" labelChange value={selectedCountry?.label || form.country}
-            placeholder="Select Country" disabled />
+            placeholder="Not specified" disabled />
         </div>
       </div>
     );
@@ -175,11 +175,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
         <p>Modify Your Personal Information</p>
       </div>
       <div className={styles.twocol}>
-        <Input label="First Name" labelChange placeholder="Naitik" name="first_name"
+        <Input label="First Name" labelChange placeholder="Enter first name" name="first_name"
           value={form.first_name} onChange={setName('first_name')}
           error={errors.first_name} maxLength={50} required sanitize={sanitizeName} />
 
-        <Input label="Last Name" labelChange placeholder="Kumar" name="last_name"
+        <Input label="Last Name" labelChange placeholder="Enter last name" name="last_name"
           value={form.last_name} onChange={setName('last_name')}
           error={errors.last_name} maxLength={50} required sanitize={sanitizeName} />
 
@@ -214,11 +214,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
 
         <Dropdown label="Gender" labelChange options={GENDER_OPTIONS}
           value={selectedGender} onChange={(opt) => set('gender')(opt?.value || '')}
-          placeholder="Male" />
+          placeholder="Select Gender" />
 
         <Dropdown label="Country" labelChange options={countryOptions} searchable
           value={selectedCountry} onChange={(opt) => set('country')(opt?.value || '')}
-          placeholder="United States of America" />
+          placeholder="Select Country" />
       </div>
 
       <div className={styles.actions}>
