@@ -58,14 +58,31 @@
         color: #3DB042;
         font-weight: 600;
         font-size: 14px;
+
+        .suffix {
+            font-weight: 500;
+            margin-left: 2px;
+        }
     }
 
-    .statusBadge {
-        display: inline-flex;
+    .amountRed {
+        color: #EF4444;
+        font-weight: 600;
+        font-size: 14px;
+
+        .suffix {
+            font-weight: 500;
+            margin-left: 2px;
+        }
+    }
+
+    .statusActive {
+        display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 14px;
+        color: #6B7280;
         font-weight: 500;
+        font-size: 14px;
 
         .dot {
             width: 6px;
@@ -73,28 +90,79 @@
             border-radius: 50%;
         }
 
-        &.statusActive {
-            color: #4B5563;
+        .greenDot {
+            background: #3DB042;
+        }
 
-            .dot {
-                background-color: #10B981;
+        .yellowDot {
+            background: #DE8806;
+        }
+
+        .redDot {
+            background: #EF4444;
+        }
+    }
+
+    .categoryBadge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        width: fit-content;
+
+        &.cbPoints {
+            background: #FFF7EA;
+            color: #DE8806;
+        }
+
+        &.money {
+            background: #E6F7E7;
+            color: #3DB042;
+        }
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    .typeCell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .typeIcon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+
+            &.deposit {
+                background: #DCFCE7;
+                color: #00A63E;
+            }
+
+            &.withdraw {
+                background: #FFE2E2;
+                color: #E7000B;
+            }
+
+            svg {
+                width: 16px;
+                height: 16px;
             }
         }
 
-        &.statusPending {
-            color: #4B5563;
-
-            .dot {
-                background-color: #F59E0B;
-            }
-        }
-
-        &.statusFailed {
-            color: #4B5563;
-
-            .dot {
-                background-color: #EF4444;
-            }
+        .typeName {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6B7280;
+            text-transform: capitalize;
         }
     }
 }
