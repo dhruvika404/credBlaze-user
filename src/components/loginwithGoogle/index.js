@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -11,6 +11,20 @@ import { getFcmToken } from '@/utils/firebase';
 export default function LoginwithGoogle() {
     const router = useRouter();
     const { deviceId, login: authLogin } = useAuth();
+    const containerRef = useRef(null);
+    const [width, setWidth] = useState(0);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            if (containerRef.current) {
+                setWidth(containerRef.current.offsetWidth);
+            }
+        };
+
+        updateWidth();
+        window.addEventListener('resize', updateWidth);
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []);
 
     const handleSuccess = async ({ credential }) => {
         try {
@@ -33,17 +47,19 @@ export default function LoginwithGoogle() {
     };
 
     return (
-        <div className={styles.loginwithGoogle}>
-            <GoogleLogin
-                onSuccess={handleSuccess}
-                onError={() => toast.error('Google sign-in failed')}
-                useOneTap={false}
-                text="signin_with"
-                shape="rectangular"
-                logo_alignment="left"
-                width="100%"
-                itp_support={true}
-            />
+        <div className={styles.loginwithGoogle} ref={containerRef}>
+            {width > 0 && (
+                <GoogleLogin
+                    onSuccess={handleSuccess}
+                    onError={() => toast.error('Google sign-in failed')}
+                    useOneTap={false}
+                    text="signin_with"
+                    shape="rectangular"
+                    logo_alignment="left"
+                    width={String(Math.min(width, 400))}
+                    itp_support={true}
+                />
+            )}
         </div>
     );
 }
