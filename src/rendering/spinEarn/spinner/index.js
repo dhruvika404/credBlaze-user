@@ -65,7 +65,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
         // At this point, 'rotation' is the actual visual angle.
         // We want (finalRotation % 360) = 360 - (targetIndex + 0.5) * segAngle
         const currentAngle = rotation % 360;
-        const targetPos = (360 - (targetIndex * segAngle) - (segAngle / 2)) % 360;
+        const targetPos = (360 - (targetIndex * segAngle)) % 360;
 
         // Calculate how many more degrees to reach targetPos, adding some full spins for duration
         const extraSpins = isError ? 1 : 10;
@@ -114,7 +114,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
         }
 
         if (seg.reward_value !== undefined && seg.reward_value !== null && seg.reward_value > 0) {
-            const valStr = seg.reward_type === 'POINT' ? `${seg.reward_value} CB` : `$${seg.reward_value}`;
+            const valStr = seg.reward_type === 'POINT' ? `CB ${seg.reward_value}` : `$${seg.reward_value}`;
             lines.push(valStr);
         }
 
@@ -167,10 +167,10 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
 
                 {/* Segments */}
                 {segments.map((seg, i) => {
-                    const startAngle = i * segAngle;
+                    const startAngle = i * segAngle - segAngle / 2;
                     const endAngle = startAngle + segAngle;
                     const path = describeArc(cx, cy, radius, startAngle, endAngle);
-                    const midAngle = startAngle + segAngle / 2;
+                    const midAngle = i * segAngle;
                     const textR = radius * 0.68;
                     const textPos = polarToCartesian(cx, cy, textR, midAngle);
                     const isBlue = i % 2 !== 0;
@@ -194,7 +194,7 @@ const Spinner = React.forwardRef(({ segments = DEFAULT_SEGMENTS }, ref) => {
                                 fontFamily="var(--font-manrope), sans-serif"
                                 textAnchor="middle"
                                 dominantBaseline="central"
-                                transform={`rotate(${midAngle + 90}, ${textPos.x}, ${textPos.y})`}
+                                transform={`rotate(${midAngle}, ${textPos.x}, ${textPos.y})`}
                             >
                                 {lines.map((line, idx) => (
                                     <tspan
