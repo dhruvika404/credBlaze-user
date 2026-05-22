@@ -58,13 +58,31 @@ export default function TasksPage() {
         }
     };
 
+    const isSearching = !!debouncedSearch.trim();
+    const isFiltering = !!(
+        categoryTab !== 'all' ||
+        appliedFilters.platforms?.length ||
+        appliedFilters.taskTypes?.length ||
+        appliedFilters.minPrice ||
+        appliedFilters.maxPrice ||
+        appliedFilters.pro ||
+        appliedFilters.nonPro
+    );
+    const isSearchingOrFiltering = isSearching || isFiltering;
+
+    const displaySubmissions = isSearchingOrFiltering
+        ? submissions.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        : submissions;
+
     const fetchTasks = async (newOffset = 0, isInitial = false) => {
         try {
             setLoading(true);
-            const payload = {
-                limit: activeTab === 'available' ? LIMIT : pageSize,
-                offset: activeTab === 'available' ? newOffset : (currentPage - 1) * pageSize,
-            };
+            const payload = {};
+            if (!isSearchingOrFiltering) {
+                payload.limit = activeTab === 'available' ? LIMIT : pageSize;
+                payload.offset = activeTab === 'available' ? newOffset : (currentPage - 1) * pageSize;
+            }
+
             if (categoryTab === 'social') payload.is_survey_task = false;
             if (categoryTab === 'surveys') payload.is_survey_task = true;
             if (appliedFilters.platforms?.length) payload.platform_ids = appliedFilters.platforms;
@@ -73,7 +91,7 @@ export default function TasksPage() {
             if (appliedFilters.maxPrice) payload.max_task_cost = Number(appliedFilters.maxPrice);
             if (appliedFilters.pro && !appliedFilters.nonPro) payload.is_prime = true;
             if (appliedFilters.nonPro && !appliedFilters.pro) payload.is_prime = false;
-            if (debouncedSearch.trim()) payload.task_title = debouncedSearch.trim();
+            if (debouncedSearch.trim()) payload.search = debouncedSearch.trim();
 
             const response = activeTab === 'available'
                 ? await getAvailableTasks(payload)
@@ -87,11 +105,11 @@ export default function TasksPage() {
                     } else {
                         setTasks(prev => [...prev, ...newItems]);
                     }
-                    setHasMore(newItems.length === LIMIT);
+                    setHasMore(isSearchingOrFiltering ? false : newItems.length === LIMIT);
                 } else {
                     const subData = response.data?.submissions || [];
                     setSubmissions(subData);
-                    setTotalCount(response.data?.total_count || 0);
+                    setTotalCount(isSearchingOrFiltering ? subData.length : (response.data?.total_count || 0));
                 }
             }
         } catch (error) {
@@ -107,12 +125,19 @@ export default function TasksPage() {
             setHasMore(true);
             fetchTasks(0, true);
         } else {
+            setCurrentPage(1);
             fetchTasks(0, true);
         }
         if (gridRef.current) {
             gridRef.current.scrollTop = 0;
         }
-    }, [activeTab, categoryTab, appliedFilters, debouncedSearch, currentPage, pageSize]);
+    }, [activeTab, categoryTab, appliedFilters, debouncedSearch]);
+
+    useEffect(() => {
+        if (activeTab === 'my' && !isSearchingOrFiltering) {
+            fetchTasks(0, false);
+        }
+    }, [currentPage, pageSize]);
 
     const handleScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -403,7 +428,7 @@ export default function TasksPage() {
                     ) : (
                         <DataTable
                             columns={submissionColumns}
-                            data={submissions}
+                            data={displaySubmissions}
                             loading={loading}
                             totalItems={totalCount}
                             totalPages={Math.ceil(totalCount / pageSize)}

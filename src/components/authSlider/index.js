@@ -3,24 +3,8 @@ import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './authSlider.module.scss';
+import { getDynamicImages } from '@/services/dynamicImages';
 
-const slides = [
-    {
-        id: 1,
-        image: '/assets/images/slider1.png',
-        text: 'Refer your friends & earn rewards with our Referral Program'
-    },
-    {
-        id: 2,
-        image: '/assets/images/slider2.png',
-        text: 'Get paid to provide feedback & quality checks an reviews for service'
-    },
-    {
-        id: 3,
-        image: '/assets/images/slider3.png',
-        text: 'Shop products & redeem your earnings easily in the Shop'
-    }
-];
 
 const variants = {
     enter: (direction) => {
@@ -44,9 +28,43 @@ const variants = {
 };
 
 export default function AuthSlider() {
+    const [slides, setSlides] = useState([]);
     const [[page, direction], setPage] = useState([0, 0]);
 
-    // Handle circular indices gracefully
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const res = await getDynamicImages('ONBOARDING');
+                if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+                    const sortedData = [...res.data].sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
+                    const mappedSlides = sortedData.map(item => ({
+                        id: item.id,
+                        image: item.image_url,
+                        title: item.title || '',
+                    }));
+                    setSlides(mappedSlides);
+                }
+            } catch (error) {
+                console.error('Error fetching onboarding images:', error);
+            }
+        };
+        fetchImages();
+    }, []);
+
+    useEffect(() => {
+        if (slides.length === 0) return;
+
+        const timer = setInterval(() => {
+            setPage((prev) => [prev[0] + 1, 1]);
+        }, 3000);
+
+        return () => clearInterval(timer);
+    }, [page, slides.length]);
+
+    if (!slides || slides.length === 0) {
+        return null;
+    }
+
     const wrappedIndex = ((page % slides.length) + slides.length) % slides.length;
 
     const handleDotClick = (idx) => {
@@ -55,15 +73,6 @@ export default function AuthSlider() {
         const dir = diff > 0 ? 1 : -1;
         setPage([page + diff, dir]);
     };
-
-    // Autoplay functionality: resets if the user manually changes the slide
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setPage((prev) => [prev[0] + 1, 1]); // Always slide forward on autoplay
-        }, 3000);
-
-        return () => clearInterval(timer);
-    }, [page]);
 
     const slide = slides[wrappedIndex];
 
@@ -84,8 +93,8 @@ export default function AuthSlider() {
                     className={styles.slide}
                 >
                     <div className={styles.imageWrapper}>
-                        {slide.image ? (
-                            <img src={slide.image} alt={`Slide ${slide.id}`} className={styles.image} />
+                        {slide?.image ? (
+                            <img src={slide?.image} alt={slide?.title || 'Slide'} className={styles.image} />
                         ) : (
                             <div className={styles.placeholderImg}>
                                 <div className={styles.coupon}>%</div>
@@ -94,7 +103,7 @@ export default function AuthSlider() {
                         )}
                     </div>
                     <div className={styles.bottomContent}>
-                        <p className={styles.textContent}>{slide.text}</p>
+                        <p className={styles.textContent}>{slide?.title}</p>
                     </div>
                 </motion.div>
             </AnimatePresence>

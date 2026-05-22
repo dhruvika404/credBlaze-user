@@ -5,9 +5,15 @@ import CheckIcon from '@/icons/checkIcon';
 import { getPrimePlans } from '@/services/plan';
 import WithdrawMoney from '../wallet/withdrawMoney';
 import { useAuth } from '@/context/AuthContext';
+import moment from 'moment';
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  return moment(dateString).format('DD MMM YYYY');
+};
 
 export default function PlanPricing() {
-  const { user } = useAuth();
+  const { user, fetchAndSetProfile } = useAuth();
   const isPrime = user?.is_prime;
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +21,7 @@ export default function PlanPricing() {
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchPlansAndProfile = async () => {
       try {
         const res = await getPrimePlans();
         if (res.success) {
@@ -26,11 +32,19 @@ export default function PlanPricing() {
       } finally {
         setLoading(false);
       }
-    };
-    fetchPlans();
-  }, []);
 
-  const allPlans = [
+      try {
+        if (fetchAndSetProfile) {
+          await fetchAndSetProfile();
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+    fetchPlansAndProfile();
+  }, [fetchAndSetProfile]);
+
+  const basePlans = [
     {
       id: 'free',
       name: 'Free',
@@ -41,9 +55,24 @@ export default function PlanPricing() {
         'Standard Support',
         'No Hidden Fees'
       ]
-    },
-    ...plans
+    }
   ];
+
+  let allPlans = [];
+  if (isPrime && user?.prime_details?.plan) {
+    const activePlan = {
+      id: user.prime_details.plan_id || user.prime_details.plan.id,
+      name: user.prime_details.plan.name,
+      price: user.prime_details.plan.price,
+      plan_type: user.prime_details.plan.plan_type,
+      duration_days: user.prime_details.plan.duration_days,
+      benefits: user.prime_details.plan.benefits || [],
+      is_active: user.prime_details.is_active
+    };
+    allPlans = [...basePlans, activePlan];
+  } else {
+    allPlans = [...basePlans, ...plans];
+  }
 
   if (loading) {
     return <div className={styles.planPricing}>Loading plans...</div>;
@@ -53,7 +82,9 @@ export default function PlanPricing() {
     <div className={styles.planPricing}>
       {allPlans.map((plan, index) => {
         const isFreePlan = plan.id === 'free';
-        const isCurrentPlan = isFreePlan ? !isPrime : (isPrime && plan.is_active);
+        const isCurrentPlan = isFreePlan
+          ? !isPrime
+          : (isPrime && (plan.id === user?.prime_details?.plan_id || plan.id === user?.prime_details?.plan?.id));
         const currentFeatures = plan.benefits || [];
 
         return (
@@ -94,6 +125,12 @@ export default function PlanPricing() {
                   </span>
                 </div>
               </div>
+              {isCurrentPlan && !isFreePlan && user?.prime_details && (
+                <div className={styles.simpleDates}>
+                  <span>Start Date: {formatDate(user.prime_details.start_date)}</span>
+                  <span>End Date: {formatDate(user.prime_details.end_date)}</span>
+                </div>
+              )}
               <div className={styles.divider} />
               <div className={styles.features}>
                 <div className={styles.column}>
