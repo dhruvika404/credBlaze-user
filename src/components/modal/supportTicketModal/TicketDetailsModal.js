@@ -146,8 +146,17 @@ export default function TicketDetailsModal({ isOpen, onClose, selectedTicket, on
                                                 className={`${styles.msgWrapper} ${isSenderAdmin ? styles.adminMsg : styles.userMsg}`}
                                             >
                                                 <div className={styles.msgInfo}>
-                                                    <span className={styles.senderName}>{msg.sender_name}</span>
-                                                    <span className={styles.msgTime}>{moment.utc(msg.created_at).local().format('YYYY-MM-DD hh:mm A')}</span>
+                                                    {isSenderAdmin ? (
+                                                        <>
+                                                            <span className={styles.senderName}>{msg.sender_name || "Admin"}</span>
+                                                            <span className={styles.msgTime}>{moment.utc(msg.created_at).local().format('YYYY-MM-DD hh:mm A')}</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className={styles.msgTime}>{moment.utc(msg.created_at).local().format('YYYY-MM-DD hh:mm A')}</span>
+                                                            <span className={styles.senderName}>You</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                                 <div className={styles.msgBubble}>
                                                     <p>{msg.query}</p>
