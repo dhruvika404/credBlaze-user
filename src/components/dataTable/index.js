@@ -21,6 +21,8 @@ export default function DataTable({
     onPageChange,
     onPageSizeChange,
     onSort,
+    sortKey,
+    sortDirection,
 }) {
     const hasPagination = typeof totalPages === 'number';
 
@@ -45,7 +47,12 @@ export default function DataTable({
                                 >
                                     <div className={styles.headerContent}>
                                         {col.label}
-                                        {col.isSorting && <SortingIcon />}
+                                        {col.isSorting && (
+                                            <SortingIcon
+                                                active={sortKey === col.key}
+                                                direction={sortKey === col.key ? sortDirection : null}
+                                            />
+                                        )}
                                     </div>
                                 </th>
                             ))}

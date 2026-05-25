@@ -1,0 +1,134 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
+.supportTicketPage {
+    padding: 14px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Manrope', sans-serif;
+}
+
+.supportTicketContent {
+    border-radius: 12px;
+    border: 1px solid var(--Black-500, #F5F5F5);
+    background: #FFF;
+    padding: 16px;
+    box-sizing: border-box;
+
+    .tableHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+
+        .titleInfo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .icon {
+                border-radius: 8px;
+                border: 1px solid var(--Stroke-Primary, #E6E8EA);
+                background: var(--Background-Surface-Default, #FFF);
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            span {
+                display: block;
+                color: #020204;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 24px;
+            }
+        }
+
+        .rightControls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .createBtnWrapper {
+                min-width: 150px;
+
+                button {
+                    padding: 10px 16px !important;
+                    font-size: 14px !important;
+                }
+            }
+        }
+    }
+
+    .tableWrapper {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        position: relative;
+        overflow: hidden;
+    }
+}
+
+/* Status Active with Dot (Matches transaction history exactly) */
+.statusActive {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6B7280;
+    font-weight: 500;
+    font-size: 14px;
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .greenDot {
+        background: #3DB042;
+    }
+
+    .yellowDot {
+        background: #DE8806;
+    }
+
+    .redDot {
+        background: #EF4444;
+    }
+}
+
+.actionBtn {
+    border: none;
+    background: none;
+    color: #0040C1;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 0px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #EFF4FF;
+    }
+}
+
+.deleteBtn {
+    border: none;
+    background: none;
+    color: #EF4444;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #FEE2E2;
+    }
+}

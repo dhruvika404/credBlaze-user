@@ -184,10 +184,9 @@ export default function TaskDrawer({ isOpen, onClose, task, onTaskSubmitted }) {
     const standardConditions = !isHtmlTerms && termsAndConditions
         ? termsAndConditions.split('\n').filter(c => c.trim()).map(c => c.trim())
         : [];
-
     const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS' || w.wallet_type === 'CASHBACKPOINTS' || w.wallet_type === 'CASHBACKPOINT');
     const userCbPoints = Number(pointsWallet?.balance || 0);
-    const requiresPoints = task?.taskAllowOnCbPointDeduction;
+    const requiresPoints = task?.taskAllowOnCbPointDeduction && !isUserPro;
     const requiredPointsAmount = Number(task?.deductCbPointAmount || 0);
     const hasEnoughPoints = userCbPoints >= requiredPointsAmount;
 

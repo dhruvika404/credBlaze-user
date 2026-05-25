@@ -10,18 +10,13 @@ import ProIcon from '@/icons/proIcon';
 import { getAvailableTasks, getMySubmissions } from '@/services/task';
 import DataTable from '@/components/dataTable';
 import moment from 'moment'
+import { useAuth } from '@/context/AuthContext';
 
 
 export default function TasksPage() {
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('available');
     const [categoryTab, setCategoryTab] = useState('all');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-
-    useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
     const [selectedTask, setSelectedTask] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isSurveyDrawerOpen, setIsSurveyDrawerOpen] = useState(false);
@@ -35,7 +30,14 @@ export default function TasksPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+    
     const gridRef = useRef(null);
     const LIMIT = 30;
 
@@ -376,7 +378,7 @@ export default function TasksPage() {
                                     <div className={styles.cardHeader}>
                                         <img src={task.image} alt={task.title} className={styles.taskImage} />
                                         <div className={styles.badgesWrapper}>
-                                            {task.taskAllowOnCbPointDeduction && (
+                                            {task.taskAllowOnCbPointDeduction && !user?.is_prime && (
                                                 <div className={styles.cbBadge}>
                                                     <img src="/assets/icons/star.svg" alt="star" />
                                                     <span>CB Task</span>

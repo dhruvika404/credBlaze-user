@@ -57,7 +57,7 @@ export default function SurveyDrawer({ isOpen, onClose, task, onTaskSubmitted })
     const surveyDescription = survey.survey_short_description || task.description || ''
     const pointsWallet = user?.wallets?.find(w => w.wallet_type === 'CASEBACKPOINTS' || w.wallet_type === 'CASHBACKPOINTS' || w.wallet_type === 'CASHBACKPOINT');
     const userCbPoints = Number(pointsWallet?.balance || 0);
-    const requiresPoints = task?.taskAllowOnCbPointDeduction;
+    const requiresPoints = task?.taskAllowOnCbPointDeduction && !user?.is_prime;
     const requiredPointsAmount = Number(task?.deductCbPointAmount || 0);
     const hasEnoughPoints = userCbPoints >= requiredPointsAmount;
 

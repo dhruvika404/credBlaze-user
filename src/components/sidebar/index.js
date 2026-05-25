@@ -13,7 +13,7 @@ import CardIcon from '@/icons/cardIcon';
 import WalletIcon from '@/icons/walletIcon';
 import SettingIcon from '@/icons/settingIcon';
 import StarGroupIcon from '@/icons/starGroupIcon';
-import HelpIcon from '@/icons/helpIcon';
+import SupportIcon from '@/icons/supportIcon';
 import LogoutIcon from '@/icons/logoutIcon';
 import LogoutModal from '@/components/modal/logoutModal';
 import { useState } from 'react';
@@ -96,9 +96,12 @@ export default function Sidebar() {
                             </div>
                         )}
                         <div className={styles.asideFooter}>
-                            <Link href='/help' className={styles.menu}>
-                                <HelpIcon />
-                                <span>Help & information</span>
+                            <Link
+                                href='/support-tickets'
+                                className={`${styles.menu} ${pathname === '/support-tickets' || pathname.startsWith('/support-tickets') ? styles.active : ''}`}
+                            >
+                                <SupportIcon />
+                                <span>Support Ticket</span>
                             </Link>
                             <div className={styles.menu} onClick={() => setIsLogoutModalOpen(true)}>
                                 <LogoutIcon />

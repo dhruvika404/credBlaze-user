@@ -36,7 +36,8 @@ export default function AuthSlider() {
             try {
                 const res = await getDynamicImages('ONBOARDING');
                 if (res.success && Array.isArray(res.data) && res.data.length > 0) {
-                    const sortedData = [...res.data].sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
+                    const activeImages = res.data.filter(item => item.is_active === true);
+                    const sortedData = [...activeImages].sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
                     const mappedSlides = sortedData.map(item => ({
                         id: item.id,
                         image: item.image_url,
