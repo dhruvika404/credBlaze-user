@@ -1,20 +1,43 @@
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+
 .historySection {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
     border-radius: 12px;
     padding: 24px;
     margin-top: 24px;
+    min-width: 0;
+    // Do NOT set overflow:hidden here — it would clip the position:absolute filter dropdown
+
+    @include respond-to("tab") {
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    @include respond-to("sm") {
+        padding: 12px;
+        margin-top: 12px;
+        border-radius: 10px;
+    }
 
     .historyHeader {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+        min-width: 0;
+
+        @include respond-to("sm") {
+            margin-bottom: 16px;
+        }
 
         .historyTitleInfo {
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0;
 
             .historyIcon {
                 display: flex;
@@ -24,6 +47,7 @@
                 height: 32px;
                 background: #F3F4F6;
                 border-radius: 8px;
+                flex-shrink: 0;
 
                 svg {
                     width: 16px;
@@ -35,6 +59,10 @@
                 font-size: 18px;
                 font-weight: 600;
                 color: #111827;
+
+                @include respond-to("sm") {
+                    font-size: 15px;
+                }
             }
         }
 
@@ -42,22 +70,32 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
     }
 
+    // Table wrapper — allows horizontal scroll within the card, not on body
     .tableWrapper {
         width: 100%;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         height: auto;
         max-height: 360px;
         overflow: hidden;
+
+        // Allow the inner DataTable's tableResponsive to scroll horizontally
+        @include respond-to("sm") {
+            max-height: 300px;
+        }
     }
 
+    // ── Amount colors ────────────────────────────────────────────────────────
     .amountGreen {
         color: #3DB042;
         font-weight: 600;
         font-size: 14px;
+        white-space: nowrap;
 
         .suffix {
             font-weight: 500;
@@ -69,6 +107,7 @@
         color: #EF4444;
         font-weight: 600;
         font-size: 14px;
+        white-space: nowrap;
 
         .suffix {
             font-weight: 500;
@@ -76,6 +115,7 @@
         }
     }
 
+    // ── Status badge ─────────────────────────────────────────────────────────
     .statusActive {
         display: flex;
         align-items: center;
@@ -88,21 +128,15 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
+            flex-shrink: 0;
         }
 
-        .greenDot {
-            background: #3DB042;
-        }
-
-        .yellowDot {
-            background: #DE8806;
-        }
-
-        .redDot {
-            background: #EF4444;
-        }
+        .greenDot  { background: #3DB042; }
+        .yellowDot { background: #DE8806; }
+        .redDot    { background: #EF4444; }
     }
 
+    // ── Category badge ───────────────────────────────────────────────────────
     .categoryBadge {
         display: flex;
         align-items: center;
@@ -112,6 +146,7 @@
         font-size: 12px;
         font-weight: 600;
         width: fit-content;
+        white-space: nowrap;
 
         &.cbPoints {
             background: #FFF7EA;
@@ -126,9 +161,11 @@
         svg {
             width: 14px;
             height: 14px;
+            flex-shrink: 0;
         }
     }
 
+    // ── Type cell ────────────────────────────────────────────────────────────
     .typeCell {
         display: flex;
         align-items: center;
@@ -141,6 +178,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 10px;
+            flex-shrink: 0;
 
             &.deposit {
                 background: #DCFCE7;
@@ -163,6 +201,10 @@
             font-weight: 600;
             color: #6B7280;
             text-transform: capitalize;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+            min-width: 90px;
         }
     }
 }

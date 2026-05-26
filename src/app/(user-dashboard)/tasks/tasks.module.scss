@@ -9,6 +9,13 @@
     flex-direction: column;
     gap: 20px;
     box-sizing: border-box;
+
+    @media (max-width: 768px) {
+        padding: 16px;
+        height: auto;
+        min-height: calc(100dvh - 60px);
+        gap: 16px;
+    }
 }
 
 /* ── Top header row (title + main tabs) ── */
@@ -65,6 +72,10 @@
     box-sizing: border-box;
     flex-shrink: 0;
 
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+
     button {
         display: flex;
         flex-direction: row;
@@ -87,6 +98,11 @@
         cursor: pointer;
         transition: background 0.2s ease;
         box-sizing: border-box;
+
+        @media (max-width: 768px) {
+            width: 50%;
+            flex-grow: 1;
+        }
 
         &.active {
             background: #FFFFFF;
@@ -120,6 +136,14 @@
     box-sizing: border-box;
     flex-shrink: 0;
 
+    @media (max-width: 768px) {
+        flex-direction: column;
+        height: auto;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+    }
+
     /* Search box – 232 × 40 */
     .searchBox {
         display: flex;
@@ -133,6 +157,10 @@
         border: 1px solid #F5F5F5;
         border-radius: 8px;
         box-sizing: border-box;
+
+        @media (max-width: 768px) {
+            width: 100%;
+        }
 
         input {
             border: none;
@@ -168,6 +196,12 @@
         align-items: center;
         gap: 10px;
         height: 43px;
+
+        @media (max-width: 768px) {
+            width: 100%;
+            justify-content: space-between;
+            height: auto;
+        }
     }
 
     /* Social Tasks / Reviews / Surveys pill – 356 × 43 */
@@ -182,6 +216,17 @@
         border: 1px solid #F5F5F5;
         border-radius: 8px;
         box-sizing: border-box;
+
+        @media (max-width: 600px) {
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
 
         button {
             display: flex;
@@ -205,6 +250,12 @@
             white-space: nowrap;
             transition: background 0.2s ease;
             box-sizing: border-box;
+
+            @media (max-width: 600px) {
+                flex-shrink: 0;
+                padding: 6px 10px;
+                font-size: 13px;
+            }
 
             &.active {
                 background: #FFFFFF;
@@ -237,6 +288,15 @@
         color: #6B7280;
         transition: all 0.3s ease;
 
+        @media (max-width: 600px) {
+            width: 82px;
+            height: 35px;
+            padding: 6px 10px;
+            font-size: 13px;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
         &:hover {
             border-color: #6475F6;
             color: #6475F6;
@@ -254,6 +314,7 @@
             width: 18px;
             height: 18px;
             flex-shrink: 0;
+
             path {
                 transition: stroke 0.3s ease;
             }
@@ -272,7 +333,10 @@
     flex: 1;
 
     /* hide scrollbar */
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
     -ms-overflow-style: none;
     scrollbar-width: none;
 
@@ -346,12 +410,10 @@
             padding: 6px 12px;
             gap: 4.27px;
             height: 28px;
-            background: linear-gradient(
-                90deg,
-                #DE8806 0%,
-                #F59E0B 50%,
-                #DE8806 100%
-            );
+            background: linear-gradient(90deg,
+                    #DE8806 0%,
+                    #F59E0B 50%,
+                    #DE8806 100%);
             background-size: 200% auto;
             animation: shine 5s linear infinite;
             border-radius: 21.3333px;
@@ -382,17 +444,15 @@
             padding: 6px 12px;
             gap: 4.27px;
             height: 28px;
-            background: linear-gradient(
-                90deg,
-                #A47A1E 0%,
-                #D3A84C 20%,
-                #D3A84C 36.01%,
-                #EBBE6B 55%,
-                #FFD87C 70%,
-                #B58F3E 85%,
-                #956D13 100%,
-                #A47A1E 200%
-            );
+            background: linear-gradient(90deg,
+                    #A47A1E 0%,
+                    #D3A84C 20%,
+                    #D3A84C 36.01%,
+                    #EBBE6B 55%,
+                    #FFD87C 70%,
+                    #B58F3E 85%,
+                    #956D13 100%,
+                    #A47A1E 200%);
             background-size: 200% auto;
             animation: shine 5s linear infinite;
             border-radius: 21.3333px;
@@ -543,6 +603,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -550,9 +611,17 @@
 }
 
 @keyframes shine {
-    0% { background-position: 0% center; }
-    30% { background-position: 200% center; }
-    100% { background-position: 200% center; }
+    0% {
+        background-position: 0% center;
+    }
+
+    30% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
 }
 
 /* ── Responsive ── */
@@ -565,29 +634,46 @@
 @media (max-width: 768px) {
     .taskGrid {
         grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 16px;
     }
 
     .headerSection {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         height: auto;
-        gap: 16px;
+        gap: 12px;
+
+        .titleInfo {
+            align-items: center;
+            text-align: center;
+            width: 100%;
+
+            h1 {
+                font-size: 20px;
+                line-height: 28px;
+            }
+
+            p {
+                font-size: 14px;
+                line-height: 20px;
+            }
+        }
     }
 
-    .filterBar {
-        flex-direction: column;
-        height: auto;
-        align-items: stretch;
-
-        .searchBox {
-            width: 100%;
-        }
-
-        .rightControls {
-            flex-wrap: wrap;
-        }
+    .contentWrapper {
+        max-height: none;
     }
 }
+
+@media (max-width: 600px) {
+    .taskCard {
+        padding: 12px 16px;
+        height: auto;
+        min-height: 160px;
+    }
+}
+
 /* ── Table View for My Task ── */
 .tableView {
     flex: 1;
@@ -599,13 +685,16 @@
     &::-webkit-scrollbar {
         width: 4px;
     }
+
     &::-webkit-scrollbar-track {
         background: transparent;
     }
+
     &::-webkit-scrollbar-thumb {
         background: #E5E7EB;
         border-radius: 10px;
     }
+
     &::-webkit-scrollbar-thumb:hover {
         background: #D1D5DB;
     }
@@ -677,17 +766,15 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: linear-gradient(
-        90deg,
-        #A47A1E 0%,
-        #D3A84C 20%,
-        #D3A84C 36.01%,
-        #EBBE6B 55%,
-        #FFD87C 70%,
-        #B58F3E 85%,
-        #956D13 100%,
-        #A47A1E 200%
-    );
+    background: linear-gradient(90deg,
+            #A47A1E 0%,
+            #D3A84C 20%,
+            #D3A84C 36.01%,
+            #EBBE6B 55%,
+            #FFD87C 70%,
+            #B58F3E 85%,
+            #956D13 100%,
+            #A47A1E 200%);
     background-size: 200% auto;
     animation: shine 5s linear infinite;
     flex-shrink: 0;

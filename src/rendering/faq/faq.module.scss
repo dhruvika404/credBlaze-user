@@ -33,7 +33,19 @@
     display: flex;
     gap: 14px;
     margin-bottom: 28px;
-    flex-wrap: wrap;
+    
+    @include respond-to("sm") {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
 
     .tab {
         padding: 12px 30px;
@@ -45,6 +57,12 @@
         transition: all 0.2s;
         border: none;
         background: transparent;
+        white-space: nowrap;
+
+        @include respond-to("sm") {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
 
         &:hover {
             color: #4B5563;

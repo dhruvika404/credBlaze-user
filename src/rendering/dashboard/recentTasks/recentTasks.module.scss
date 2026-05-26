@@ -9,6 +9,8 @@
     padding: 16px;
     gap: 16px;
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
     min-height: 225px;
     background: #FFFFFF;
     border: 1px solid #F5F5F5;
@@ -17,6 +19,12 @@
 
     @media (max-width: 1200px) {
         height: auto;
+    }
+
+    @include respond-to("sm") {
+        padding: 12px;
+        gap: 12px;
+        border-radius: 8px;
     }
 
     .header {
@@ -136,6 +144,11 @@
                 width: 100%;
                 height: auto;
                 min-height: 160px;
+            }
+
+            @include respond-to("sm") {
+                padding: 12px 16px;
+                gap: 8px;
             }
 
             .cardHeader {

@@ -12,14 +12,20 @@
     display: flex;
     justify-content: flex-end;
     padding: 20px;
+    box-sizing: border-box;
 
+    @include respond-to("sm") {
+        justify-content: center;
+        align-items: flex-start;
+        padding: 16px;
+    }
 }
 
 .popupContent {
     background: #fff;
     width: 440px;
-    height: fit-content;
-    max-height: 80vh;
+    height: 600px;
+    max-height: 85vh;
     border-radius: 16px;
     box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.12);
     display: flex;
@@ -28,21 +34,39 @@
     position: relative;
     margin-top: 60px;
     margin-right: 20px;
+    box-sizing: border-box;
 
+    @include respond-to("sm") {
+        width: 100%;
+        max-width: 420px;
+        margin-top: 60px;
+        margin-right: 0;
+        height: 550px;
+        max-height: 75vh;
+        border-radius: 16px;
+    }
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 16px 16px;
+    padding: 16px 20px;
     border-bottom: 1px solid #F0F0F0;
+
+    @include respond-to("sm") {
+        padding: 12px 16px;
+    }
 
     h2 {
         color: #020204;
         font-size: 20px;
         font-weight: 600;
         margin: 0;
+
+        @include respond-to("sm") {
+            font-size: 18px;
+        }
     }
 
     .closeButton {
@@ -75,6 +99,11 @@
     scrollbar-width: thin;
     scrollbar-color: #E6E8EA transparent;
 
+    @include respond-to("sm") {
+        padding: 10px 16px;
+        gap: 8px;
+    }
+
     &::-webkit-scrollbar {
         height: 4px;
     }
@@ -85,7 +114,7 @@
     }
 
     .tab {
-        padding: 10px 20px;
+        padding: 8px 18px;
         border-radius: 100px;
         font-size: 14px;
         font-weight: 500;
@@ -95,6 +124,11 @@
         background: #F5F5F7;
         color: #625F6E;
         transition: all 0.3s ease;
+
+        @include respond-to("sm") {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
 
         &.active {
             background: #001AFF;
@@ -107,7 +141,17 @@
     flex: 1;
     overflow-y: auto;
     padding: 0 24px 24px;
-    height: 500px;
+    max-height: 500px;
+    box-sizing: border-box;
+
+    @include respond-to("sm") {
+        padding: 0 16px 16px;
+        max-height: calc(85vh - 130px);
+    }
+
+    @media (max-width: 480px) {
+        max-height: calc(90vh - 120px);
+    }
 
     &::-webkit-scrollbar {
         width: 4px;
@@ -122,12 +166,21 @@
 .dateGroup {
     margin-top: 24px;
 
+    @include respond-to("sm") {
+        margin-top: 16px;
+    }
+
     .dateLabel {
         color: #625F6E;
         font-size: 14px;
         font-weight: 400;
         margin-bottom: 16px;
         display: block;
+
+        @include respond-to("sm") {
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
     }
 }
 
@@ -135,6 +188,10 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    @include respond-to("sm") {
+        gap: 12px;
+    }
 }
 
 .notificationItem {
@@ -143,11 +200,25 @@
     padding: 12px;
     margin: 0 -12px;
     border-radius: 12px;
-    // cursor: pointer;
     transition: background 0.2s;
+    box-sizing: border-box;
+
+    @include respond-to("sm") {
+        gap: 12px;
+        padding: 10px;
+        margin: 0 -10px;
+    }
 
     &:hover {
         background: #F8F9FA;
+    }
+
+    &.unseen {
+        background: #F3F5FF;
+
+        &:hover {
+            background: #EBEEFF;
+        }
     }
 
     .iconBox {
@@ -160,30 +231,73 @@
         justify-content: center;
         flex-shrink: 0;
 
+        @include respond-to("sm") {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
         svg {
             color: #001AFF;
+
+            @include respond-to("sm") {
+                width: 20px;
+                height: 20px;
+            }
         }
     }
 
     .content {
         flex: 1;
+        min-width: 0;
 
         .topRow {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 4px;
+            gap: 10px;
+
+            @media (max-width: 480px) {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
 
             h3 {
                 font-size: 16px;
                 font-weight: 600;
                 color: #020204;
                 margin: 0;
+
+                @include respond-to("sm") {
+                    font-size: 14px;
+                }
+            }
+
+            .timeContainer {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-shrink: 0;
+
+                @media (max-width: 480px) {
+                    margin-top: 2px;
+                }
             }
 
             .time {
                 font-size: 12px;
                 color: #625F6E;
+            }
+
+            .unseenDot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #001AFF;
+                display: inline-block;
+                flex-shrink: 0;
             }
         }
 
@@ -192,6 +306,10 @@
             color: #625F6E;
             line-height: 1.4;
             margin: 0;
+
+            @include respond-to("sm") {
+                font-size: 13px;
+            }
         }
     }
 }

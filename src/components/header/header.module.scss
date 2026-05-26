@@ -8,15 +8,72 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 500;
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 500 !important;
+
+    @include respond-to("md") {
+        padding: 12px 16px;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 500 !important;
+    }
+
+    .mobileNavLeft {
+        display: none;
+        align-items: center;
+        gap: 12px;
+
+        @include respond-to("md") {
+            display: flex;
+        }
+
+        .burgerBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1F2937;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #F3F4F6;
+            }
+
+            svg {
+                display: block;
+            }
+        }
+
+        .mobileLogo {
+            display: flex;
+            align-items: center;
+
+            img {
+                height: 22px;
+                width: auto;
+                display: block;
+            }
+        }
+    }
 
     .leftsearch {
         max-width: 240px;
         width: 100%;
         position: relative;
+
+        @include respond-to("tab") {
+            max-width: 180px;
+        }
+
+        @include respond-to("sm") {
+            display: none;
+        }
 
         input {
             width: 100%;
@@ -78,6 +135,10 @@
         align-items: center;
         gap: 12px;
 
+        @include respond-to("md") {
+            gap: 8px;
+        }
+
         .walletItem {
             display: flex;
             align-items: center;
@@ -89,6 +150,10 @@
             height: 48px;
             position: relative;
             min-width: 156px;
+
+            @include respond-to("md") {
+                display: none;
+            }
 
             .textInfo {
                 display: flex;
@@ -173,6 +238,10 @@
             height: 32px;
             background: #E6E8EA;
             margin: 0 4px;
+
+            @include respond-to("md") {
+                display: none;
+            }
         }
 
         .notificationWrapper {

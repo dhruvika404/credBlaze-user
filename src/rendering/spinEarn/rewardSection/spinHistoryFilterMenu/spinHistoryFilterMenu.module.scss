@@ -20,6 +20,13 @@
         gap: 8px;
         cursor: pointer;
         transition: all 0.2s ease;
+        white-space: nowrap;
+
+        @include respond-to("sm") {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+        }
 
         &:hover,
         &.active {
@@ -36,18 +43,28 @@
 
     .dropdown {
         position: absolute;
-        bottom: calc(100% + 8px);
+        top: calc(100% + 8px);
+        bottom: auto;
         right: 0;
         width: 340px;
         max-height: calc(100vh - 120px);
         border-radius: 16px;
         background: #FFF;
         padding: 24px;
-        box-shadow: 0 -2px 20px 0 rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
         z-index: 1000;
-        transform-origin: bottom right;
+        transform-origin: top right;
         display: flex;
         flex-direction: column;
+
+        @include respond-to("sm") {
+            width: 288px;
+            left: 0;
+            right: auto;
+            padding: 16px;
+            border-radius: 12px;
+            transform-origin: top left;
+        }
 
         .header {
             display: flex;
@@ -175,6 +192,11 @@
             cursor: pointer;
             transition: all 0.2s;
 
+            @include respond-to("sm") {
+                padding: 6px 8px;
+                gap: 4px;
+            }
+
             &:hover {
                 border-color: #D1D5DB;
                 background: #FAFAFA;
@@ -188,6 +210,10 @@
                 font-size: 12px;
                 font-weight: 400;
                 color: #6B7280;
+
+                @include respond-to("sm") {
+                    font-size: 11px;
+                }
             }
         }
 

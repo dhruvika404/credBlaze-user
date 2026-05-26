@@ -12,6 +12,10 @@
         background: #FFF;
         padding: 22px;
 
+        @include respond-to("sm") {
+            padding: 16px;
+        }
+
         .spacingGrid {
             display: grid;
             grid-template-columns: 1fr;
@@ -24,11 +28,23 @@
             align-items: center;
             justify-content: space-between;
 
+            @include respond-to("sm") {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
             .leftAlignment {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
                 gap: 16px;
+
+                @include respond-to("sm") {
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    width: 100%;
+                }
 
                 .profileImageWrap {
                     position: relative;
@@ -115,6 +131,10 @@
             }
 
             .edit {
+                @include respond-to("sm") {
+                    width: 100%;
+                }
+
                 button {
                     cursor: pointer;
                     padding: 12px 16px;
@@ -130,6 +150,11 @@
                     line-height: 20px;
                     gap: 8px;
                     box-shadow: 0 0 0 2px #FAFAFA;
+
+                    @include respond-to("sm") {
+                        width: 100%;
+                        justify-content: center;
+                    }
                 }
             }
 
@@ -137,6 +162,10 @@
                 display: flex;
                 align-items: center;
                 margin-left: auto;
+
+                @include respond-to("sm") {
+                    margin-left: 0;
+                }
 
                 .changeBtn {
                     box-sizing: border-box;

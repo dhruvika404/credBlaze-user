@@ -7,19 +7,34 @@
     background: var(--Background-Surface-Default, #FFF);
     padding: 20px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+
+    @include respond-to("sm") {
+        padding: 14px;
+    }
 
     .section {
         border-radius: 12px;
         border: 1px solid #E9E9E9;
         background: #FFF;
         padding: 16px;
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+
+            @include respond-to("sm") {
+                flex-direction: column;
+                gap: 12px;
+            }
 
             .titleInfo {
                 h2 {
@@ -53,6 +68,11 @@
         cursor: pointer;
         transition: background 0.2s;
 
+        @include respond-to("sm") {
+            width: 100%;
+            text-align: center;
+        }
+
         &:hover {
             background: #EC221F;
         }
@@ -68,12 +88,16 @@
     .tableContainer {
         border: 1px solid #E9E9E9;
         border-radius: 12px;
-        overflow: auto;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         margin: 16px 0 0 0;
+        width: 100%;
+        display: block;
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
 
             thead {
                 background-color: #F8F8F8;

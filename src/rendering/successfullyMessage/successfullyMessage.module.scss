@@ -9,6 +9,12 @@
         width: 50%;
         height: 100dvh;
 
+        &:last-child {
+            @include respond-to("md") {
+                display: none;
+            }
+        }
+
         &:first-child {
             display: flex;
             align-items: center;
@@ -16,10 +22,44 @@
             padding: 40px;
             position: relative;
 
+            @media (max-width: 1440px) {
+                flex-direction: column;
+                justify-content: center;
+                overflow-y: auto;
+            }
+
+            @include respond-to("md") {
+                width: 100%;
+                padding: 48px 24px;
+                justify-content: center;
+                flex-direction: column;
+                height: auto;
+                min-height: 100dvh;
+                overflow-y: visible;
+            }
+
+            @include respond-to("sm") {
+                padding: 32px 16px;
+            }
+
             .logo {
                 position: absolute;
                 top: 40px;
                 left: 40px;
+
+                @media (max-width: 1440px) {
+                    position: static;
+                    margin-bottom: 32px;
+                }
+
+                @include respond-to("md") {
+                    position: static;
+                    margin-bottom: 32px;
+                }
+
+                @include respond-to("sm") {
+                    margin-bottom: 24px;
+                }
 
                 img {
                     display: block;
@@ -37,6 +77,18 @@
             background: #FFFFFF;
             box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(20, 21, 26, 0.06);
 
+            @media (max-width: 1440px) {
+                margin: auto;
+            }
+
+            @include respond-to("md") {
+                margin: auto;
+            }
+
+            @include respond-to("sm") {
+                padding: 24px 16px;
+            }
+
             h2 {
                 color: #020204;
                 text-align: center;
@@ -45,6 +97,12 @@
                 margin: 0 0 20px 0;
                 font-weight: 600;
                 line-height: 32px;
+
+                @include respond-to("sm") {
+                    font-size: 20px;
+                    line-height: 28px;
+                    margin: 0 0 16px 0;
+                }
             }
 
             .centerImage {
@@ -52,9 +110,15 @@
                 justify-content: center;
                 padding: 0 0 24px 0;
 
+                @include respond-to("sm") {
+                    padding: 0 0 16px 0;
+                }
+
                 img {
                     display: block;
                     margin: 0 auto;
+                    max-width: 100%;
+                    height: auto;
                 }
             }
         }

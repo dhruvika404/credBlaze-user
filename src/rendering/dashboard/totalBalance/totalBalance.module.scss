@@ -9,11 +9,19 @@
     padding: 10px;
     gap: 12px;
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
     height: 100%;
     min-height: 414.13px;
     background: #FFFFFF;
     border: 1px solid #F5F5F5;
     border-radius: 12px;
+
+    @include respond-to("sm") {
+        padding: 8px;
+        gap: 8px;
+        border-radius: 8px;
+    }
 
     .taskStatistics {
         box-sizing: border-box;
@@ -25,6 +33,10 @@
         width: 100%;
         background: #FFFFFF;
         border-radius: 15px;
+
+        @include respond-to("sm") {
+            padding: 12px 8px;
+        }
 
         .statsFrame {
             display: flex;
@@ -183,6 +195,11 @@
                 width: 100%;
                 flex-wrap: wrap;
 
+                @include respond-to("sm") {
+                    gap: 8px;
+                    padding-bottom: 6px;
+                }
+
                 .amount {
                     display: flex;
                     align-items: center;
@@ -194,6 +211,10 @@
                         font-style: normal;
                         font-weight: 600;
                         line-height: 150%;
+
+                        @include respond-to("sm") {
+                            font-size: 28px;
+                        }
                     }
 
                     .value {
@@ -202,6 +223,10 @@
                         font-style: normal;
                         font-weight: 600;
                         line-height: 150%;
+
+                        @include respond-to("sm") {
+                            font-size: 28px;
+                        }
                     }
                 }
 
@@ -214,6 +239,10 @@
                         font-size: 16px;
                         color: #6B7280;
                         font-weight: 500;
+
+                        @include respond-to("sm") {
+                            font-size: 13px;
+                        }
                     }
                 }
             }
@@ -319,6 +348,12 @@
         border: 1px solid #F5F5F5;
         border-radius: 12px;
 
+        @include respond-to("sm") {
+            padding: 12px 8px;
+            gap: 12px;
+            border-radius: 8px;
+        }
+
         .activityHeader {
             display: flex;
             flex-direction: row;
@@ -409,6 +444,10 @@
                 background: #FFFFFF;
                 border: 1px solid #F5F5F5;
                 border-radius: 12px;
+
+                @include respond-to("sm") {
+                    padding: 8px 12px;
+                }
 
                 .itemLeft {
                     display: flex;

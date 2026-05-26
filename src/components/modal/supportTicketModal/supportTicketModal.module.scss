@@ -15,6 +15,10 @@
     justify-content: center;
     z-index: 2000;
     padding: 20px;
+
+    @include respond-to("sm") {
+        padding: 10px;
+    }
 }
 
 .popupContent {
@@ -27,6 +31,11 @@
     box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     animation: popupFadeIn 0.3s ease-out;
+
+    @include respond-to("sm") {
+        max-height: calc(100vh - 20px);
+        border-radius: 12px;
+    }
 
     &.w560 {
         max-width: 560px;
@@ -42,6 +51,7 @@
         opacity: 0;
         transform: scale(0.95) translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -56,11 +66,23 @@
     border-bottom: 1px solid #F3F4F6;
     flex-shrink: 0;
 
+    @include respond-to("tab") {
+        padding: 20px 24px 12px;
+    }
+
+    @include respond-to("sm") {
+        padding: 16px 16px 12px;
+    }
+
     .title {
         margin: 0;
         color: #111827;
         font-size: 20px;
         font-weight: 600;
+
+        @include respond-to("sm") {
+            font-size: 16px;
+        }
     }
 
     .closeBtn {
@@ -86,6 +108,14 @@
     padding: 24px 32px;
     overflow-y: auto;
     flex: 1;
+
+    @include respond-to("tab") {
+        padding: 20px 24px;
+    }
+
+    @include respond-to("sm") {
+        padding: 16px 16px;
+    }
 
     &::-webkit-scrollbar {
         width: 6px;
@@ -146,6 +176,12 @@
     border-radius: 8px;
     border: 1px solid #F1F5F9;
 
+    @include respond-to("sm") {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 10px;
+    }
+
     .infoField {
         display: flex;
         flex-direction: column;
@@ -183,6 +219,10 @@
     border-radius: 8px;
     background: #FAFAFA;
 
+    @include respond-to("sm") {
+        max-height: 200px;
+    }
+
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -203,6 +243,10 @@
         display: flex;
         flex-direction: column;
         max-width: 80%;
+
+        @include respond-to("sm") {
+            max-width: 90%;
+        }
 
         &.userMsg {
             align-self: flex-end;
@@ -331,6 +375,20 @@
     align-items: center;
     gap: 12px;
     width: 100%;
+
+    @include respond-to("sm") {
+        flex-direction: column-reverse;
+        gap: 8px;
+
+        &>div {
+            width: 100% !important;
+
+            button {
+                width: 100% !important;
+                justify-content: center;
+            }
+        }
+    }
 }
 
 /* Create Support Ticket Form */
@@ -401,11 +459,7 @@
     }
 }
 
-@media (max-width: 640px) {
-    .ticketSummary {
-        grid-template-columns: 1fr;
-    }
-}
+/* Handled inside ticketSummary component styles */
 
 /* Advanced File Preview Cards Container */
 .selectedFilesContainer {
@@ -414,6 +468,11 @@
     gap: 12px;
     width: 100%;
     margin-top: 12px;
+
+    @include respond-to("sm") {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
 }
 
 .previewFileCard {
@@ -523,6 +582,14 @@
         cursor: pointer;
         transition: border-color 0.2s ease, background-color 0.2s ease;
 
+        @include respond-to("sm") {
+            flex-direction: column;
+            height: auto;
+            padding: 12px 16px;
+            text-align: center;
+            gap: 6px;
+        }
+
         &:hover {
             background-color: #EFF4FF;
         }
@@ -548,6 +615,13 @@
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
+
+            @include respond-to("sm") {
+                flex-direction: column;
+                gap: 2px;
+                align-items: center;
+                flex-shrink: 1;
+            }
 
             .mainText {
                 font-weight: 500;

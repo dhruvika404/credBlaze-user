@@ -2,17 +2,34 @@
 @use '../../../scss/breakpoints/breakpoints.scss' as *;
 
 .rewardSection {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+
     .grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
+        min-width: 0;
+
+        @include respond-to("tab") {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
 
         .items {
+            min-width: 0;
+            box-sizing: border-box;
+
             &:first-child {
                 border-radius: 12px;
                 border: 1px solid var(--Black-500, #F5F5F5);
                 background: var(--Black-600, #FFF);
                 padding: 20px;
+
+                @include respond-to("sm") {
+                    padding: 16px 12px;
+                }
 
                 .icontextAlignment {
                     display: flex;
@@ -21,6 +38,10 @@
                     justify-content: center;
                     padding: 30px 0 20px 0;
 
+                    @include respond-to("sm") {
+                        padding: 20px 0 16px 0;
+                    }
+
                     span {
                         display: block;
                         color: var(--Black-300, #6B7280);
@@ -28,12 +49,17 @@
                         font-style: normal;
                         font-weight: 600;
                         line-height: normal;
+
+                        @include respond-to("sm") {
+                            font-size: 12px;
+                        }
                     }
                 }
 
                 .buttonCenter {
                     max-width: 324px;
                     margin: 0 auto;
+                    width: 100%;
 
                     button {
                         width: 100%;
@@ -56,6 +82,7 @@
 
                         @include respond-to("sm") {
                             height: 300px;
+                            font-size: 15px;
                         }
                     }
                 }
@@ -68,6 +95,10 @@
                         font-style: normal;
                         font-weight: 600;
                         line-height: 100%;
+
+                        @include respond-to("sm") {
+                            font-size: 20px;
+                        }
                     }
                 }
             }
@@ -82,16 +113,36 @@
                 justify-content: space-between;
                 gap: 20px;
 
+                @include respond-to("sm") {
+                    padding: 12px;
+                    gap: 16px;
+                }
+
                 .boxgrid {
                     display: grid;
                     grid-template-columns: repeat(2, 1fr);
                     padding: 0 0 20px 0;
                     gap: 12px;
 
+                    @include respond-to("sm") {
+                        gap: 8px;
+                        padding-bottom: 12px;
+                    }
+
+                    @media (max-width: 360px) {
+                        grid-template-columns: 1fr;
+                    }
+
                     .boxItems {
                         padding: 20px 24px;
                         border-radius: 12px;
                         background: #EFF9FF;
+                        box-sizing: border-box;
+
+                        @include respond-to("sm") {
+                            padding: 12px 14px;
+                            border-radius: 8px;
+                        }
 
                         &:nth-child(2) {
                             background: #F3F7EE;
@@ -111,6 +162,12 @@
                             font-style: normal;
                             font-weight: 600;
                             line-height: 32px;
+                            margin: 0;
+
+                            @include respond-to("sm") {
+                                font-size: 18px;
+                                line-height: 24px;
+                            }
                         }
 
                         .boxheader {
@@ -119,8 +176,15 @@
                             align-items: center;
                             gap: 8px;
 
+                            @include respond-to("sm") {
+                                padding-bottom: 10px;
+                                gap: 6px;
+                            }
+
                             img {
                                 display: block;
+                                width: 20px;
+                                height: 20px;
                             }
 
                             h3 {
@@ -129,6 +193,12 @@
                                 font-style: normal;
                                 font-weight: 600;
                                 line-height: 24px;
+                                margin: 0;
+
+                                @include respond-to("sm") {
+                                    font-size: 13px;
+                                    line-height: 18px;
+                                }
                             }
                         }
                     }
@@ -139,6 +209,11 @@
                     border: 1px solid var(--Black-500, #F5F5F5);
                     background: var(--Black-600, #FFF);
                     padding: 22px 16px;
+                    box-sizing: border-box;
+
+                    @include respond-to("sm") {
+                        padding: 16px 12px;
+                    }
 
                     ul {
                         margin: 0;
@@ -152,6 +227,11 @@
                             line-height: normal;
                             padding: 0 0 12px 0;
 
+                            @include respond-to("sm") {
+                                font-size: 13px;
+                                padding-bottom: 8px;
+                            }
+
                             &:last-child {
                                 padding: 0;
                             }
@@ -164,6 +244,15 @@
                         gap: 8px;
                         padding: 0 0 22px 0;
 
+                        @include respond-to("sm") {
+                            padding-bottom: 14px;
+                        }
+
+                        img {
+                            width: 20px;
+                            height: 20px;
+                        }
+
                         span {
                             color: var(--Black-100, #171717);
                             font-size: 16px;
@@ -171,6 +260,11 @@
                             font-weight: 600;
                             line-height: 24px;
                             display: block;
+
+                            @include respond-to("sm") {
+                                font-size: 14px;
+                                line-height: 20px;
+                            }
                         }
                     }
                 }
@@ -185,17 +279,31 @@
         background: #FFF;
         padding: 16px;
         box-sizing: border-box;
+        min-width: 0;
+
+        @include respond-to("sm") {
+            padding: 12px;
+            margin-top: 16px;
+        }
 
         .historyHeader {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 16px;
+            flex-wrap: nowrap;
+            gap: 12px;
+
+            @include respond-to("sm") {
+                flex-wrap: nowrap;
+                gap: 12px;
+            }
 
             .historyTitleInfo {
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                min-width: 0;
 
                 .historyIcon {
                     border-radius: 8px;
@@ -206,6 +314,7 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    flex-shrink: 0;
                 }
 
                 span {
@@ -215,6 +324,11 @@
                     font-style: normal;
                     font-weight: 500;
                     line-height: 24px;
+                    white-space: nowrap;
+
+                    @include respond-to("sm") {
+                        font-size: 14px;
+                    }
                 }
             }
 
@@ -222,37 +336,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-
-                .filterBtn {
-                    overflow: hidden;
-                    color: #625F6E;
-                    border-radius: 8px;
-                    border: 1px solid #E6E8EA;
-                    background: #FFF;
-                    font-size: 14px;
-                    font-style: normal;
-                    font-weight: 500;
-                    line-height: 20px;
-                    padding: 11px 16px;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-
-                    &:hover {
-                        border-color: #6475F6;
-                        color: #6475F6;
-                        background: rgba(100, 117, 246, 0.05);
-                        transform: translateY(-1px);
-
-                        svg {
-                            path {
-                                stroke: #6475F6;
-                            }
-                        }
-                    }
-                }
+                flex-shrink: 0;
             }
         }
 
@@ -263,6 +347,7 @@
             height: auto;
             max-height: 340px;
             overflow: hidden;
+            min-width: 0;
         }
 
         .plainType {

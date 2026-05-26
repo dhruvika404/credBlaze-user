@@ -155,10 +155,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
           <Input label="First Name" labelChange value={form.first_name} placeholder="Enter first name" disabled />
           <Input label="Last Name" labelChange value={form.last_name} placeholder="Enter last name" disabled />
           <Input label="Email" labelChange value={form.email} placeholder="Enter email address" disabled />
-          <div className={styles.phoneReadonly}>
-            <label>Phone Number</label>
-            <PhoneInput international disabled value={form.phone || '+1'} className={styles.phoneInputDisabled} />
-          </div>
+          <Input label="Phone Number" labelChange value={form.phone} placeholder="Not specified" disabled />
           <Input label="Date of Birth" labelChange value={form.dob ? (() => { const [y, m, d] = form.dob.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })() : ''} placeholder="Date of birth" disabled />
           <Input label="Gender" labelChange value={capitaliseName(form.gender)} placeholder="Not specified" disabled />
           <Input label="Country" labelChange value={selectedCountry?.label || form.country}
@@ -223,7 +220,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
 
       <div className={styles.actions}>
         <button className={styles.cancelBtn} onClick={() => { setErrors({}); onSaved?.(null); }}>Cancel</button>
-        <Button text={saving ? 'Saving...' : 'Save Changes'} disabled={saving}
+        <Button text={saving ? 'Saving...' : 'Save'} disabled={saving}
           onClick={handleSave} type="button" />
       </div>
     </div>

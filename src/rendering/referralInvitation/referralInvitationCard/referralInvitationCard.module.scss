@@ -8,11 +8,29 @@
         gap: 20px;
         padding: 0 0 20px 0;
 
+        @include respond-to("tab") {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @include respond-to("sm") {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 0 0 14px 0;
+        }
+
+        // ⚠️ Critical: grid children min-width defaults to 'auto' which causes overflow
         .items {
+            min-width: 0;
+            overflow: hidden;
             padding: 20px;
             border-radius: 12px;
             border: 1px solid var(--Pale-Blue-1, #E1EAFF);
             background: rgba(89, 59, 242, 0.04);
+
+            @include respond-to("sm") {
+                padding: 16px;
+            }
 
             &:nth-child(2) {
                 border: 1px solid var(--Pale-Blue-1, #E1EAFF);
@@ -31,6 +49,16 @@
                 font-weight: 600;
                 padding-left: 20px;
                 line-height: 32px;
+
+                @include respond-to("tab") {
+                    font-size: 22px;
+                }
+
+                @include respond-to("sm") {
+                    font-size: 20px;
+                    padding-left: 12px;
+                    line-height: 28px;
+                }
             }
 
             .iconTextAlignment {
@@ -39,12 +67,27 @@
                 gap: 8px;
                 padding: 0 0 23px 0;
 
+                @include respond-to("sm") {
+                    padding: 0 0 16px 0;
+                }
+
+                img {
+                    flex-shrink: 0;
+                }
+
                 h3 {
                     color: var(--Black-100, #171717);
                     font-size: 16px;
                     font-style: normal;
                     font-weight: 600;
                     line-height: 24px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    @include respond-to("sm") {
+                        font-size: 14px;
+                    }
                 }
             }
         }

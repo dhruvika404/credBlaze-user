@@ -7,6 +7,16 @@
     flex-direction: column;
     gap: 20px;
     font-family: 'Manrope', sans-serif;
+
+    @include respond-to("tab") {
+        padding: 14px 20px;
+        gap: 16px;
+    }
+
+    @include respond-to("sm") {
+        padding: 10px 12px;
+        gap: 12px;
+    }
 }
 
 .supportTicketContent {
@@ -16,11 +26,23 @@
     padding: 16px;
     box-sizing: border-box;
 
+    @include respond-to("sm") {
+        padding: 12px;
+        border-radius: 8px;
+    }
+
     .tableHeader {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 16px;
+
+        @include respond-to("sm") {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
 
         .titleInfo {
             display: flex;
@@ -45,6 +67,10 @@
                 font-style: normal;
                 font-weight: 500;
                 line-height: 24px;
+
+                @include respond-to("sm") {
+                    font-size: 14px;
+                }
             }
         }
 
@@ -53,12 +79,26 @@
             align-items: center;
             gap: 10px;
 
+            @include respond-to("sm") {
+                width: 100%;
+            }
+
             .createBtnWrapper {
                 min-width: 150px;
+
+                @include respond-to("sm") {
+                    min-width: unset;
+                    width: 100%;
+                }
 
                 button {
                     padding: 10px 16px !important;
                     font-size: 14px !important;
+
+                    @include respond-to("sm") {
+                        width: 100%;
+                        justify-content: center;
+                    }
                 }
             }
         }

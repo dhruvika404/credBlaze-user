@@ -16,6 +16,11 @@
     position: relative;
     height: 230px;
     background: #f5f5f5;
+
+    @include respond-to("sm") {
+        height: 160px;
+        border-radius: 8px;
+    }
 }
 
 .slide {

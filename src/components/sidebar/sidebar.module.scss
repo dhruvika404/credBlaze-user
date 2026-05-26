@@ -12,6 +12,22 @@
     display: flex;
     flex-direction: column;
 
+    @include respond-to("md") {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 275px;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.1);
+
+        &.open {
+            transform: translateX(0);
+        }
+    }
+
     .logo {
         padding: 16px;
 
@@ -20,6 +36,41 @@
             cursor: pointer;
         }
     }
+
+.mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.mobileCloseBtn {
+    display: none;
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    cursor: pointer;
+    background: #F3F4F6;
+    border-radius: 50%;
+    padding: 6px;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 1001;
+
+    &:hover {
+        background: #E5E7EB;
+        transform: scale(1.08);
+    }
+
+    @include respond-to("md") {
+        display: flex;
+    }
+}
 
     .allMenubody {
         padding: 20px 12px;

@@ -9,6 +9,10 @@
     border: 1px solid #E9E9E9;
     background: #FFF;
 
+    @include respond-to("sm") {
+        padding: 16px;
+    }
+
     .notificationItem {
         display: flex;
         justify-content: space-between;

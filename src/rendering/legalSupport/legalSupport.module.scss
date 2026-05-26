@@ -10,6 +10,11 @@
     flex-direction: column;
     gap: 16px;
 
+    @include respond-to("sm") {
+        padding: 14px;
+        gap: 12px;
+    }
+
     .legalCard {
         display: flex;
         justify-content: space-between;
@@ -21,6 +26,10 @@
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         text-decoration: none;
+
+        @include respond-to("sm") {
+            padding: 12px;
+        }
 
         &:hover {
             background-color: #F9FAFB;
@@ -34,6 +43,11 @@
             font-style: normal;
             font-weight: 600;
             line-height: 24px;
+
+            @include respond-to("sm") {
+                font-size: 15px;
+                line-height: 20px;
+            }
         }
 
         .iconWrapper {

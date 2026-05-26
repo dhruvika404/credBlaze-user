@@ -11,6 +11,49 @@
     left: 0;
     z-index: 10;
 
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #E5E7EB;
+        border-radius: 3px;
+    }
+
+    @include respond-to("md") {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: visible;
+        max-height: none;
+        white-space: nowrap;
+        gap: 8px;
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid #F0F0F0;
+        padding: 8px 4px;
+        position: static;
+        margin-bottom: 4px;
+        background: transparent;
+        -webkit-overflow-scrolling: touch;
+
+        // Hide scrollbar completely across all mobile browsers
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+
     .menu {
         padding: 8px 12px;
         display: flex;
@@ -21,6 +64,34 @@
         transition: .3s ease-in-out;
         cursor: pointer;
         text-decoration: none;
+
+        @include respond-to("md") {
+            margin: 0;
+            flex-shrink: 0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+
+            svg {
+                @include respond-to("sm") {
+                    display: none;
+                }
+            }
+
+            @include respond-to("sm") {
+                padding: 6px 12px;
+            }
+
+            &.active {
+                background: #F3F4F6 !important;
+                border-color: #D1D5DB;
+
+                span {
+                    color: #111827;
+                }
+            }
+        }
 
         &:last-child {
             margin: 0;

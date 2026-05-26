@@ -7,54 +7,159 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
 
+        @include respond-to("tab") {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        // ⚠️ Critical: min-width:0 prevents grid children from overflowing
         .items {
+            min-width: 0;
+            overflow: hidden;
             border-radius: 20px;
             border-top: 1px solid var(--Black-500, #F5F5F5);
             background: #FFF;
             padding: 24px;
 
-            .benefits {
-                padding: 12px 0 0 0;
+            @include respond-to("sm") {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            // ── Refer & Earn / Invite & Earn header ─────────────────────────
+            .referEarn {
+                padding: 0 0 12px 0;
+                border-bottom: 1px solid #F5F5F5;
 
                 h3 {
-                    color: var(--Hyper-Blue-dark-blue, #1D1B27);
-                    font-size: 18px;
-                    font-style: normal;
+                    color: var(--Black-100, #171717);
+                    margin: 0 0 5px 0;
+                    font-size: 22px;
                     font-weight: 600;
                     line-height: normal;
-                    margin: 0 0 17px 0;
+
+                    @include respond-to("sm") {
+                        font-size: 18px;
+                    }
                 }
 
-                ul {
-                    margin: 0;
-                    padding: 0 0 0 20px;
+                p {
+                    color: rgba(0, 0, 0, 0.60);
+                    font-size: 14px;
+                    font-weight: 600;
+                    line-height: normal;
 
-                    li {
-                        color: var(--Black-200, #3D3D3D);
-                        font-size: 14px;
-                        font-style: normal;
-                        font-weight: 600;
-                        line-height: normal;
-                        padding: 0 0 11px 0;
+                    @include respond-to("sm") {
+                        font-size: 13px;
+                    }
+                }
+            }
 
-                        &:last-child {
-                            padding: 0;
+            // ── Referral link input + Share button ───────────────────────────
+            .referralLink {
+                padding: 12px 0 0 0;
+                // Prevent long URL from overflowing
+                overflow: hidden;
+                min-width: 0;
+
+                span {
+                    display: block;
+                    color: var(--Black-100, #171717);
+                    font-size: 16px;
+                    font-weight: 600;
+                    line-height: normal;
+                    padding: 0 0 8px 0;
+                }
+
+                .inputButton {
+                    display: grid;
+                    grid-template-columns: 1fr 110px;
+                    gap: 16px;
+                    padding: 0 0 22px 0;
+                    // ⚠️ Critical: grid children must have min-width:0
+                    min-width: 0;
+
+                    @include respond-to("sm") {
+                        grid-template-columns: 1fr;
+                        gap: 10px;
+                        padding: 0 0 16px 0;
+                    }
+
+                    // Input wrapper
+                    .inputRelative {
+                        position: relative;
+                        min-width: 0; // ⚠️ Critical for grid child
+
+                        .iconAlign {
+                            position: absolute;
+                            right: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            display: flex;
+                            align-items: center;
+                            z-index: 1;
+                        }
+
+                        input {
+                            width: 100%;
+                            min-width: 0; // ⚠️ Prevents long URL overflow
+                            height: 48px;
+                            border-radius: 8px;
+                            border: 1px solid var(--Black-500, #F5F5F5);
+                            background: var(--Black-500, #F5F5F5);
+                            padding-left: 16px;
+                            padding-right: 60px;
+                            color: var(--Black-200, #3D3D3D);
+                            font-size: 14px;
+                            font-weight: 600;
+                            line-height: normal;
+                            outline: none;
+                            box-sizing: border-box;
+                            // Prevent long URLs from stretching the input
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+
+                            @include respond-to("sm") {
+                                font-size: 12px;
+                                padding-right: 44px;
+                                height: 44px;
+                            }
+                        }
+
+                        ::placeholder {
+                            color: var(--Black-200, #3D3D3D);
+                            font-size: 14px;
+                            font-weight: 600;
+                            line-height: normal;
+                        }
+                    }
+
+                    // Share Link button — the Button component renders as <div><button>
+                    > div:last-child {
+                        min-width: 0;
+                        width: 100%;
+
+                        button {
+                            width: 100%;
+                            white-space: nowrap;
                         }
                     }
                 }
             }
 
+            // ── Share via icons ──────────────────────────────────────────────
             .shareViaText {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
                 width: 100%;
+                min-width: 0;
 
-                >p {
+                > p {
                     color: var(--Black-100, #171717);
                     font-family: 'Manrope', sans-serif;
                     font-size: 16px;
-                    font-style: normal;
                     font-weight: 600;
                     line-height: 22px;
                     margin: 0;
@@ -62,21 +167,47 @@
 
                 .iconAlignment {
                     display: flex;
-                    align-items: center;
                     flex-direction: row;
-                    padding: 0;
-                    gap: 20px;
-                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 8px;
                     width: 100%;
+                    flex-wrap: wrap;
+
+                    // On small screens: scroll horizontally, no wrap
+                    @include respond-to("sm") {
+                        flex-wrap: nowrap;
+                        overflow-x: auto;
+                        padding-bottom: 8px;
+                        gap: 6px;
+                        -webkit-overflow-scrolling: touch;
+                        scrollbar-width: none;
+                        -ms-overflow-style: none;
+
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
+                    }
 
                     .iconText {
                         display: flex;
                         flex-direction: column;
-                        justify-content: center;
                         align-items: center;
-                        gap: 8px;
+                        justify-content: center;
+                        gap: 6px;
                         flex: 1;
-                        transition: all 0.3s ease;
+                        min-width: 56px;
+                        max-width: 80px;
+                        transition: opacity 0.3s ease;
+                        cursor: pointer;
+
+                        @include respond-to("tab") {
+                            min-width: 52px;
+                        }
+
+                        @include respond-to("sm") {
+                            flex: 0 0 52px;
+                            min-width: 52px;
+                        }
 
                         &.disabled {
                             opacity: 0.4;
@@ -90,6 +221,18 @@
                             display: flex;
                             justify-content: center;
                             align-items: center;
+                            flex-shrink: 0;
+
+                            @include respond-to("sm") {
+                                width: 42px;
+                                height: 42px;
+
+                                // Scale down the react-share SVG icons
+                                svg {
+                                    width: 42px !important;
+                                    height: 42px !important;
+                                }
+                            }
 
                             button {
                                 display: flex;
@@ -98,6 +241,7 @@
                                 padding: 0;
                                 cursor: pointer;
                                 transition: transform 0.2s ease;
+                                line-height: 0;
 
                                 &:hover {
                                     transform: scale(1.1);
@@ -112,117 +256,57 @@
                         p {
                             color: #0F0F0F;
                             font-family: 'Manrope', sans-serif;
-                            font-size: 14.9324px;
-                            font-style: normal;
+                            font-size: 11px;
                             font-weight: 400;
-                            line-height: 20px;
-                            letter-spacing: 0.448px;
+                            line-height: 14px;
                             margin: 0;
                             text-align: center;
                             white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            max-width: 100%;
                         }
                     }
                 }
             }
 
-            @media (max-width: 600px) {
-                .shareViaText {
-                    .iconAlignment {
-                        gap: 12px;
-                        overflow-x: auto;
-                        padding-bottom: 10px;
-                        justify-content: flex-start;
-
-                        .iconText,
-                        .moreButton {
-                            flex: 0 0 auto;
-                        }
-                    }
-                }
-            }
-
-            .referralLink {
+            // ── Benefits list ────────────────────────────────────────────────
+            .benefits {
                 padding: 12px 0 0 0;
 
-                span {
-                    display: block;
-                    color: var(--Black-100, #171717);
-                    font-size: 16px;
-                    font-style: normal;
+                h3 {
+                    color: var(--Hyper-Blue-dark-blue, #1D1B27);
+                    font-size: 18px;
                     font-weight: 600;
                     line-height: normal;
-                    padding: 0 0 8px 0;
-                }
+                    margin: 0 0 17px 0;
 
-
-                .inputButton {
-                    display: grid;
-                    grid-template-columns: 1fr 110px;
-                    gap: 16px;
-                    padding: 0 0 22px 0;
-
-                    .inputRelative {
-                        position: relative;
-
-                        .iconAlign {
-                            position: absolute;
-                            right: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            display: flex;
-                            align-items: center;
-                        }
-
-                        input {
-                            width: 100%;
-                            height: 48px;
-                            border-radius: var(--Radius-8, 8px);
-                            border: 1px solid var(--Black-500, #F5F5F5);
-                            background: var(--Black-500, #F5F5F5);
-                            padding-left: 16px;
-                            padding-right: 60px;
-                            color: var(--Black-200, #3D3D3D);
-                            font-size: 14px;
-                            font-style: normal;
-                            outline: none;
-                            font-weight: 600;
-                            line-height: normal;
-                        }
-
-                        ::placeholder {
-                            color: var(--Black-200, #3D3D3D);
-                            font-size: 14px;
-                            font-style: normal;
-                            font-weight: 600;
-                            line-height: normal;
-                        }
-
-                        button {
-                            width: 100%;
-                        }
+                    @include respond-to("sm") {
+                        font-size: 16px;
+                        margin: 0 0 12px 0;
                     }
                 }
-            }
 
-            .referEarn {
-                padding: 0 0 12px 0;
-                border-bottom: 1px solid #F5F5F5;
+                ul {
+                    margin: 0;
+                    padding: 0 0 0 20px;
 
-                h3 {
-                    color: var(--Black-100, #171717);
-                    margin: 0 0 5px 0;
-                    font-size: 22px;
-                    font-style: normal;
-                    font-weight: 600;
-                    line-height: normal;
-                }
+                    li {
+                        color: var(--Black-200, #3D3D3D);
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 1.5;
+                        padding: 0 0 11px 0;
 
-                p {
-                    color: rgba(0, 0, 0, 0.60);
-                    font-size: 14px;
-                    font-style: normal;
-                    font-weight: 600;
-                    line-height: normal;
+                        @include respond-to("sm") {
+                            font-size: 13px;
+                            padding: 0 0 9px 0;
+                        }
+
+                        &:last-child {
+                            padding: 0;
+                        }
+                    }
                 }
             }
         }

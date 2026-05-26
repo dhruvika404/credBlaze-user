@@ -7,6 +7,10 @@
     background: #FFF;
     padding: 16px;
 
+    @include respond-to("sm") {
+        padding: 12px;
+    }
+
     .content {
         padding: 0 0 16px 0;
 
@@ -33,8 +37,17 @@
         grid-template-columns: 1fr 1fr;
         gap: 20px;
 
+        @include respond-to("tab") {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
         .colchange {
             grid-column: span 2;
+
+            @include respond-to("tab") {
+                grid-column: span 1;
+            }
         }
 
 

@@ -105,6 +105,26 @@ export default function Header() {
 
     return (
         <header className={styles.header}>
+            <div className={styles.mobileNavLeft}>
+                <button
+                    type="button"
+                    className={styles.burgerBtn}
+                    onClick={() => window.dispatchEvent(new CustomEvent('toggle-sidebar'))}
+                    aria-label="Toggle Sidebar"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div className={styles.mobileLogo}>
+                    <a href='/dashboard'>
+                        <img src='/assets/logo/black-logo.svg' alt='Logo' />
+                    </a>
+                </div>
+            </div>
+
             <div className={styles.leftsearch}>
                 <input type='text' placeholder='Search' value={searchValue} onChange={handleSearchChange} />
                 <div className={styles.lefticon}>

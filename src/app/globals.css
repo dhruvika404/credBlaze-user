@@ -34,6 +34,7 @@ p {
 .user-layout {
   min-height: 100dvh;
   display: flex;
+  overflow-x: clip;
 }
 
 .user-sidebar {
@@ -41,4 +42,15 @@ p {
 }
 .user-children {
   width: calc(100% - 275px);
+  min-width: 0;
+  overflow-x: clip;
+}
+
+@media (max-width: 1024px) {
+  .user-sidebar {
+    width: 0;
+  }
+  .user-children {
+    width: 100%;
+  }
 }
