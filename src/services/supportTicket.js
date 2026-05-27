@@ -1,7 +1,7 @@
 import api, { request } from './api';
 
-export const getSupportTickets = (userId, params) =>
-  request(() => api.get(`/support-tickets/user/${userId}`, { params }));
+export const getSupportTickets = (params) =>
+  request(() => api.get('/support-tickets/user', { params }));
 
 export const supportTicketUserReply = (ticketId, data) =>
   request(() => api.post(`/support-tickets/${ticketId}/user/reply`, data, {

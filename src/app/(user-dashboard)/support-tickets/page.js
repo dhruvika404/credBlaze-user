@@ -6,7 +6,6 @@ import moment from 'moment';
 import styles from './support-tickets.module.scss';
 import Button from '@/components/button';
 import DataTable from '@/components/dataTable';
-import { useAuth } from '@/context/AuthContext';
 import { getSupportTickets } from '@/services/supportTicket';
 import CreateTicketModal from '@/components/modal/supportTicketModal/CreateTicketModal';
 import TicketDetailsModal from '@/components/modal/supportTicketModal/TicketDetailsModal';
@@ -23,7 +22,6 @@ const ListviewIcon = () => (
 );
 
 export default function SupportTicketPage() {
-    const { user } = useAuth();
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTicket, setSelectedTicket] = useState(null);
@@ -41,7 +39,6 @@ export default function SupportTicketPage() {
     });
 
     const fetchTickets = useCallback(async (currentSelectedId = null) => {
-        if (!user?.user_id) return;
         try {
             setLoading(true);
             const offset = (pagination.page - 1) * pagination.limit;
@@ -58,7 +55,7 @@ export default function SupportTicketPage() {
                 sort_by: [sortByValue]
             };
 
-            const res = await getSupportTickets(user?.user_id, params);
+            const res = await getSupportTickets(params);
             if (res?.success) {
                 const resultData = res.data;
                 const fetchedTickets = resultData.tickets || res.data || [];
@@ -86,13 +83,11 @@ export default function SupportTicketPage() {
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id, pagination.page, pagination.limit, sort.key, sort.direction]);
+    }, [pagination.page, pagination.limit, sort.key, sort.direction]);
 
     useEffect(() => {
-        if (user?.user_id) {
-            fetchTickets();
-        }
-    }, [user?.user_id, fetchTickets]);
+        fetchTickets();
+    }, []);
 
     const handleSort = (key) => {
         setSort(prev => ({
