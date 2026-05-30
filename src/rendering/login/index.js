@@ -102,7 +102,7 @@ export default function Login() {
                 onChange={set('password')}
                 error={errors.password}
                 required
-                maxLength={12}
+                maxLength={30}
               />
               <div className={styles.forgotpassword}>
                 <Link href="/email-verify">Forgot Password?</Link>

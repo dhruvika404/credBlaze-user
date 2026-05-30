@@ -81,7 +81,7 @@ export default function ChangePassword() {
               value={form.currentPassword}
               onChange={set('currentPassword')}
               error={errors.currentPassword}
-              maxLength={12}
+              maxLength={30}
             />
             <Input
               labelChange
@@ -95,7 +95,7 @@ export default function ChangePassword() {
               value={form.newPassword}
               onChange={set('newPassword')}
               error={errors.newPassword}
-              maxLength={12}
+              maxLength={30}
             />
             <Input
               labelChange
@@ -109,7 +109,7 @@ export default function ChangePassword() {
               value={form.confirmPassword}
               onChange={set('confirmPassword')}
               error={errors.confirmPassword}
-              maxLength={12}
+              maxLength={30}
             />
           </div>
         </div>

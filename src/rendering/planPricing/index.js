@@ -98,7 +98,7 @@ export default function PlanPricing() {
                       .split('-')
                       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                       .join(' ')
-                    : 'Prime'}
+                    : 'Pro'}
               </h2>
               {isCurrentPlan ? (
                 <button className={styles.currentBtn}>Current Plan</button>

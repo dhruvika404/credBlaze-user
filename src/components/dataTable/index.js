@@ -27,10 +27,31 @@ export default function DataTable({
     const hasPagination = typeof totalPages === 'number';
 
     // Helper to resolve nested keys like "userType.type"
+    // Helper to resolve nested keys like "userType.type"
     const resolveValue = (obj, path) => {
         if (!path) return '';
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     };
+
+    // Check if a serial number column already exists in columns to avoid duplication
+    const hasSrNo = columns.some(col => {
+        const k = col.key?.toLowerCase() || '';
+        const l = col.label?.toLowerCase() || '';
+        return k === 'sr_no' || k === 'sno' || l.includes('sr') || l.includes('sno') || l.includes('serial');
+    });
+
+    const finalColumns = hasSrNo ? columns : [
+        {
+            label: 'Sr. No.',
+            key: 'sr_no',
+            render: (value, row, rowIndex) => {
+                const page = typeof currentPage === 'number' ? currentPage : 1;
+                const size = typeof pageSize === 'number' ? pageSize : 10;
+                return (page - 1) * size + rowIndex + 1;
+            }
+        },
+        ...columns
+    ];
 
     return (
         <div className={styles.dataTableSection}>
@@ -39,7 +60,7 @@ export default function DataTable({
                 <table className={styles.dataTable}>
                     <thead>
                         <tr>
-                            {columns.map((col, i) => (
+                            {finalColumns.map((col, i) => (
                                 <th
                                     key={i}
                                     className={`${col.className ? (styles[col.className] || col.className) : ''} ${col.isSorting ? styles.sortableHeader : ''}`}
@@ -63,7 +84,7 @@ export default function DataTable({
                             // Skeleton rows
                             Array.from({ length: pageSize > 5 ? 5 : pageSize }).map((_, ri) => (
                                 <tr key={`skeleton-${ri}`} className={styles.skeletonRow}>
-                                    {columns.map((_, ci) => (
+                                    {finalColumns.map((_, ci) => (
                                         <td key={ci}>
                                             <span className={styles.skeletonCell} />
                                         </td>
@@ -72,14 +93,14 @@ export default function DataTable({
                             ))
                         ) : data.length === 0 ? (
                             <tr>
-                                <td colSpan={columns.length} className={styles.emptyCell}>
+                                <td colSpan={finalColumns.length} className={styles.emptyCell}>
                                     {emptyMessage}
                                 </td>
                             </tr>
                         ) : (
                             data.map((row, rowIndex) => (
                                 <tr key={row[rowKey] ?? rowIndex}>
-                                    {columns.map((col, ci) => {
+                                    {finalColumns.map((col, ci) => {
                                         const cellValue = resolveValue(row, col.key);
                                         return (
                                             <td

@@ -3,7 +3,7 @@ import styles from './rewardSection.module.scss';
 import QuestionIcon from '@/icons/questionIcon';
 import Button from '@/components/button';
 import Spinner from '../spinner';
-import { getSpinRewards, getSpinStatus, getSpinHistory, playSpin } from '@/services/spin';
+import { getSpinRewards, getSpinStatus, getSpinHistory, playSpin, claimReward } from '@/services/spin';
 import { toast } from 'react-hot-toast';
 import SpinResultModal from '@/components/modal/spinResultModal';
 import ListviewIcon from '@/icons/listviewIcon';
@@ -103,18 +103,35 @@ export default function RewardSection() {
             const res = await playSpin();
             if (res) {
                 const winReward = res.data || res;
+                const pending_spin_id = winReward.pending_spin_id;
                 const actualReward = winReward.reward || winReward;
+                const reward_id = actualReward?.id || actualReward?.reward_id;
 
-                let targetIndex = rewards.findIndex(r => r.id === actualReward.reward_id || r.id === actualReward.id);
+
+                let targetIndex = rewards.findIndex(r => r.id === reward_id);
 
                 if (targetIndex === -1) {
                     targetIndex = 0;
                 }
 
                 if (spinnerRef.current) {
-                    spinnerRef.current.stopSpin(targetIndex, () => {
-                        updateState({ spinResult: actualReward, modalOpen: true, isSpinning: false });
-                        fetchData();
+                    spinnerRef.current.stopSpin(targetIndex, async () => {
+                        try {
+                            const claimRes = await claimReward({
+                                pending_spin_id,
+                                reward_id
+                            });
+
+                            if (claimRes) {
+                                updateState({ spinResult: actualReward, modalOpen: true, isSpinning: false });
+                                fetchData();
+                            } else {
+                                updateState({ isSpinning: false });
+                            }
+                        } catch (claimErr) {
+                            toast.error(claimErr?.message || 'Error claiming reward');
+                            updateState({ isSpinning: false });
+                        }
                     }, false);
                 }
             } else {
@@ -126,7 +143,7 @@ export default function RewardSection() {
                 }
             }
         } catch (error) {
-            toast.error('An error occurred while spinning.');
+            toast.error(error?.message || 'An error occurred while spinning.');
             if (spinnerRef.current) {
                 spinnerRef.current.stopSpin(0, () => {
                     updateState({ isSpinning: false });

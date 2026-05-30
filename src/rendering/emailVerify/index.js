@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './emailVerify.module.scss';
 import AuthSlider from '@/components/authSlider';
@@ -13,14 +13,28 @@ const Logo = '/assets/logo/logo.svg';
 export default function EmailVerify() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = searchParams.get('mode'); // 'verify' = first-time signup, otherwise forgot-password
+  const mode = searchParams.get('mode');
 
+  const [guarded, setGuarded] = useState(false);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // First-time signup: just redirect to OTP page, no email input needed
+  useEffect(() => {
+    if (mode === 'verify') {
+      const flag = sessionStorage.getItem('signup_pending');
+      if (!flag) {
+        router.replace('/signup');
+      } else {
+        setGuarded(true);
+      }
+    } else {
+      setGuarded(true);
+    }
+  }, [mode, router]);
+  if (!guarded) return null;
+
   if (mode === 'verify') {
     return (
       <div className={styles.flexbox}>

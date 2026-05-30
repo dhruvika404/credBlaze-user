@@ -14,3 +14,6 @@ export const getSpinStatus = () =>
 
 export const getSpinHistory = (params = {}) =>
   request(() => api.get('/spin/history', { params }));
+
+export const claimReward = (data) =>
+  request(() => api.post('/spin/claim-reward', data));

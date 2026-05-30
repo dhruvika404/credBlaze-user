@@ -74,7 +74,11 @@ export default function Signup() {
     if (lnErr) e.last_name = lnErr;
     const emailErr = validateEmail(form.email);
     if (emailErr) e.email = emailErr;
-    if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
+    if (!form.phone) {
+      e.phone = 'Phone number is required';
+    } else if (!isValidPhoneNumber(form.phone)) {
+      e.phone = 'Enter a valid phone number';
+    }
     if (!form.country) e.country = 'Country is required';
     const pwErr = validatePassword(form.password);
     if (pwErr) e.password = pwErr;
@@ -118,6 +122,7 @@ export default function Signup() {
           const token = res.data?.data?.access_token || res.data?.data?.token || res.data?.access_token || res.data?.token || '';
           const userData = res.data?.data?.user || res.data?.user || null;
           await authLogin(userData, token);
+          sessionStorage.setItem('signup_pending', 'true');
           router.push('/email-verify?mode=verify');
         } else {
           setApiError(res.error || 'Signup failed. Please try again.');
@@ -157,6 +162,7 @@ export default function Signup() {
               <div className={styles.phoneField}>
                 <label className={styles.phoneLabel}>
                   Phone Number
+                  <span className={styles.requiredStar} aria-hidden="true"> *</span>
                 </label>
                 <PhoneInput
                   international
@@ -176,11 +182,11 @@ export default function Signup() {
               <Input label="Password" placeholder="Password" name="password" heightChange
                 type={showPassword ? 'text' : 'password'} rightIcon={showPassword ? EyeFillIcon : EyeIcon}
                 onRightIconClick={() => setShowPassword(s => !s)}
-                value={form.password} onChange={set('password')} error={errors.password} required maxLength={12} />
+                value={form.password} onChange={set('password')} error={errors.password} required maxLength={30} />
               <Input label="Confirm Password" placeholder="Confirm password" name="confirm_password" heightChange
                 type={showConfirm ? 'text' : 'password'} rightIcon={showConfirm ? EyeFillIcon : EyeIcon}
                 onRightIconClick={() => setShowConfirm(s => !s)}
-                value={form.confirm_password} onChange={set('confirm_password')} error={errors.confirm_password} required maxLength={12} />
+                value={form.confirm_password} onChange={set('confirm_password')} error={errors.confirm_password} required maxLength={30} />
 
               <Input label="Referral Code (optional)" placeholder="Enter referral code" name="referralCode" heightChange
                 value={form.referralCode} onChange={set('referralCode')} sanitize={sanitizeCode} maxLength={20} />

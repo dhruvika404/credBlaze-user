@@ -11,9 +11,10 @@ const Logo = '/assets/logo/logo.svg';
 export default function EnterCode() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = searchParams.get('mode'); // 'forgot' or 'verify'
+  const mode = searchParams.get('mode'); 
   const email = searchParams.get('email') || '';
 
+  const [guarded, setGuarded] = useState(false);
   const [digits, setDigits] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState('');
@@ -23,6 +24,21 @@ export default function EnterCode() {
   const [countdown, setCountdown] = useState(59);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef([]);
+
+  useEffect(() => {
+    if (mode === 'verify') {
+      const flag = sessionStorage.getItem('signup_pending');
+      if (!flag) {
+        router.replace('/signup');
+      } else {
+        setGuarded(true);
+      }
+    } else {
+      setGuarded(true); 
+    }
+  }, [mode, router]);
+
+  if (!guarded) return null;
 
   useEffect(() => {
     if (countdown > 0) {
@@ -71,6 +87,7 @@ export default function EnterCode() {
         // mode === 'verify' (first-time signup email verification)
         const token = localStorage.getItem('token') || '';
         await verifyOtp({ otp }, token);
+        sessionStorage.removeItem('signup_pending'); // flow complete, flag clear
         router.push('/dashboard');
       }
     } catch (err) {

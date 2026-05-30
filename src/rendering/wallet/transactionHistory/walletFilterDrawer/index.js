@@ -78,7 +78,7 @@ export default function WalletFilterDrawer({ isOpen, onClose, onApply, initialFi
         { label: 'Add Amount', value: 'add_amount' },
         { label: 'Withdraw Amount', value: 'withdraw_amount' },
         { label: 'Signup Bonus', value: 'SIGNUP_BONUS' },
-        { label: 'Prime Referral Reward', value: 'PRIME_REFERRAL_REWARD' },
+        { label: 'Pro Referral Reward', value: 'PRIME_REFERRAL_REWARD' },
     ];
 
     const statusOptions = [

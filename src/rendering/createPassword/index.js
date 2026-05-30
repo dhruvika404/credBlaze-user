@@ -74,7 +74,7 @@ export default function CreatePassword() {
                 onChange={(v) => setForm(f => ({ ...f, new_password: v }))}
                 error={errors.new_password}
                 required
-                maxLength={12}
+                maxLength={30}
               />
             </div>
             <Input
@@ -89,7 +89,7 @@ export default function CreatePassword() {
               onChange={(v) => setForm(f => ({ ...f, confirm_password: v }))}
               error={errors.confirm_password}
               required
-              maxLength={12}
+              maxLength={30}
             />
             {apiError && <p className={styles.apiError} role="alert">{apiError}</p>}
             <div className={styles.topAlignment}>
