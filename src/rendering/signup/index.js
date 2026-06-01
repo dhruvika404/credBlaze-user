@@ -135,6 +135,15 @@ export default function Signup() {
     });
   };
 
+  const isFormIncomplete = !form.first_name.trim() ||
+    !form.last_name.trim() ||
+    !form.email.trim() ||
+    !form.phone ||
+    !form.country ||
+    !form.password ||
+    !form.confirm_password ||
+    !form.agreed;
+
   return (
     <div className={styles.flexbox}>
       <div className={styles.items}>
@@ -206,7 +215,7 @@ export default function Signup() {
             {errors.agreed && <p className={styles.errorMsg} role="alert">{errors.agreed}</p>}
             {apiError && <p className={styles.apiError} role="alert">{apiError}</p>}
 
-            <Button text={loading || isPending ? 'Creating account...' : 'Sign Up'} disabled={loading || isPending} />
+            <Button text={loading || isPending ? 'Creating account...' : 'Sign Up'} disabled={loading || isPending || isFormIncomplete} />
           </form>
           <div className={styles.bottomText}>
             <p>Already have an account?</p>

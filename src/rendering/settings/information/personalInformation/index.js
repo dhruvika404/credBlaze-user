@@ -9,7 +9,7 @@ import 'react-phone-number-input/style.css';
 import { Country } from 'country-state-city'; import toast from 'react-hot-toast';
 import { updateProfileDetails } from '@/services/profile';
 import { toFormData } from '@/utils/formData';
-import { sanitizeName, validateName } from '@/utils/validation';
+import { sanitizeName, validateName, validatePhone } from '@/utils/validation';
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
@@ -52,7 +52,8 @@ function validate(form) {
   if (fnErr) e.first_name = fnErr;
   const lnErr = validateName(form.last_name, 'Last name');
   if (lnErr) e.last_name = lnErr;
-  if (form.phone && !isValidPhoneNumber(form.phone)) e.phone = 'Enter a valid phone number';
+  const phoneErr = validatePhone(form.phone);
+  if (phoneErr) e.phone = phoneErr;
   return e;
 }
 
@@ -181,7 +182,10 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
           error={errors.last_name} maxLength={50} required sanitize={sanitizeName} />
 
         <div className={styles.phoneField}>
-          <label className={styles.phoneLabel}>Phone Number</label>
+          <label className={styles.phoneLabel}>
+            Phone Number
+            <span className={styles.requiredStar} aria-hidden="true"> *</span>
+          </label>
           <PhoneInput
             international
             defaultCountry="US"
