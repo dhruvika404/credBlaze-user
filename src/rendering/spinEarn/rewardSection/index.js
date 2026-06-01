@@ -103,11 +103,9 @@ export default function RewardSection() {
             const res = await playSpin();
             if (res) {
                 const winReward = res.data || res;
-                const pending_spin_id = winReward.pending_spin_id;
                 const actualReward = winReward.reward || winReward;
+                const pending_spin_id = winReward.pending_spin_id;
                 const reward_id = actualReward?.id || actualReward?.reward_id;
-
-
                 let targetIndex = rewards.findIndex(r => r.id === reward_id);
 
                 if (targetIndex === -1) {
@@ -143,7 +141,7 @@ export default function RewardSection() {
                 }
             }
         } catch (error) {
-            toast.error(error?.message || 'An error occurred while spinning.');
+            toast.error('An error occurred while spinning.');
             if (spinnerRef.current) {
                 spinnerRef.current.stopSpin(0, () => {
                     updateState({ isSpinning: false });
