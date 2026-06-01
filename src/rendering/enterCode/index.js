@@ -11,7 +11,7 @@ const Logo = '/assets/logo/logo.svg';
 export default function EnterCode() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = searchParams.get('mode'); 
+  const mode = searchParams.get('mode');
   const email = searchParams.get('email') || '';
 
   const [guarded, setGuarded] = useState(false);
@@ -34,11 +34,9 @@ export default function EnterCode() {
         setGuarded(true);
       }
     } else {
-      setGuarded(true); 
+      setGuarded(true);
     }
   }, [mode, router]);
-
-  if (!guarded) return null;
 
   useEffect(() => {
     if (countdown > 0) {
@@ -114,6 +112,8 @@ export default function EnterCode() {
       setResendLoading(false);
     }
   };
+
+  if (!guarded) return null;
 
   return (
     <div className={styles.flexbox}>
