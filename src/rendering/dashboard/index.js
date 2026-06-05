@@ -15,6 +15,20 @@ export default function Dashboard() {
     const [overviewData, setOverviewData] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const fetchOverview = async () => {
+        try {
+            setLoading(true);
+            const response = await getDashboardOverview();
+            if (response.success && response.data) {
+                setOverviewData(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching dashboard overview data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!hasShownPopUp) {
             const fetchPopUpAd = async () => {
@@ -32,26 +46,13 @@ export default function Dashboard() {
             fetchPopUpAd();
         }
 
-        const fetchOverview = async () => {
-            try {
-                setLoading(true);
-                const response = await getDashboardOverview();
-                if (response.success && response.data) {
-                    setOverviewData(response.data);
-                }
-            } catch (error) {
-                console.error('Error fetching dashboard overview data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchOverview();
     }, []);
 
     return (
         <div className={styles.dashboardPage}>
             <UserStories />
-            <CardList overviewData={overviewData} loading={loading} />
+            <CardList overviewData={overviewData} loading={loading} refreshOverview={fetchOverview} />
             <TutorialVideoModal
                 isOpen={isPopUpOpen}
                 onClose={() => setIsPopUpOpen(false)}

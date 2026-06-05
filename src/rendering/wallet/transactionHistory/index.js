@@ -8,7 +8,7 @@ import ListviewIcon from '@/icons/listviewIcon'
 import { getWalletTransactions } from '@/services/wallet'
 import WalletFilterDrawer from './walletFilterDrawer'
 
-export default function TransactionHistory() {
+export default function TransactionHistory({ refreshTrigger }) {
     const [loading, setLoading] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +51,7 @@ export default function TransactionHistory() {
 
     useEffect(() => {
         fetchTransactions();
-    }, [fetchTransactions]);
+    }, [fetchTransactions, refreshTrigger]);
 
     const columns = [
         {

@@ -5,7 +5,7 @@ import CloseIcon from '@/icons/closeIcon';
 import Input from '@/components/input';
 import InfoIcon from '@/icons/infoIcon';
 import Button from '@/components/button';
-import { createCryptoPayment, insertWithdraw } from '@/services/wallet';
+import { createCregisPayment, insertWithdraw } from '@/services/wallet';
 import toast from 'react-hot-toast';
 import WalletStatusModal from '@/components/modal/walletStatusModal';
 import { useAuth } from '@/context/AuthContext';
@@ -34,10 +34,16 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     }, []);
 
     useEffect(() => {
-        if (isOpen && type === 'plan' && planDetails) {
-            setAmount(planDetails.price.toString());
+        if (isOpen) {
+            setSelectedMethod(null);
+            setCoinAddress('');
+            if (type === 'plan' && planDetails) {
+                setAmount(planDetails.price.toString());
+            } else {
+                setAmount('');
+            }
         }
-    }, [isOpen, type, planDetails]);
+    }, [type, isOpen, planDetails]);
 
     const stopAllTimers = (messageHandler) => {
         if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
@@ -76,7 +82,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
         const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
         const top = Math.round(window.screenY + (window.outerHeight - h) / 2);
         const popup = window.open(
-            url, 'CradeBlaze_Payment',
+            url, 'CradeBlaze_Cregis_Payment',
             `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`
         );
         if (!popup) {
@@ -121,8 +127,8 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
         }
     };
 
-    const isDepositDisabled = !amount || !selectedMethod || loading;
-    const isPlanDisabled = !amount || !selectedMethod || loading;
+    const isDepositDisabled = !amount || loading;
+    const isPlanDisabled = !amount || loading;
     const isWithdrawDisabled = !amount || !selectedMethod || !coinAddress || loading;
 
     const handleSubmit = async () => {
@@ -132,29 +138,30 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
             setLoading(true);
             try {
                 const payload = type === 'deposit' ? {
-                    networkname: selectedMethod.networkname,
-                    coinname: selectedMethod.coinname,
+                    coinname: 'USD',
                     amount_usd: amount.toString(),
                     is_user_wallet_deposit: true,
                     is_user_wallet_withdraw: false
                 } : {
-                    networkname: selectedMethod.networkname,
-                    coinname: selectedMethod.coinname,
+                    coinname: 'USD',
                     amount_usd: amount.toString(),
                     is_prime_membership_payment: true,
                     plan_id: planDetails?.id
                 };
 
-                const response = await createCryptoPayment(payload);
+                const response = await createCregisPayment(payload);
 
-                if (response?.success && response?.data?.invoice_payment_url) {
-                    const expireMs = response.data.invoiceexpiretime || 300000;
+                if ((response?.success || response?.code === "00000") && response?.data?.checkout_url) {
+                    const expireMs = response.data.expire_time
+                        ? Math.max(0, response.data.expire_time - Date.now())
+                        : 300000;
+
                     const currentTime = Math.floor(Date.now() / 1000);
                     setExpiryTime(currentTime + Math.floor(expireMs / 1000));
 
-                    openPaymentPopup(response.data.invoice_payment_url, expireMs);
+                    openPaymentPopup(response.data.checkout_url, expireMs);
                 } else {
-                    toast.error('Failed to generate payment invoice');
+                    toast.error(response?.message || response?.error || 'Failed to generate payment invoice');
                 }
             } catch (error) {
                 toast.error(error?.message || 'Payment failed. Please try again.');
@@ -189,10 +196,15 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     };
 
     const handleClose = () => {
+        const wasSuccess = modalStatus === 'approved';
         setCoinAddress('');
         setSelectedMethod(null);
         setAmount('');
-        onClose();
+        setIsStatusModalOpen(false);
+        setModalStatus('pending');
+        if (onClose) {
+            onClose(wasSuccess);
+        }
     };
 
     if (!isOpen) return null;
@@ -226,7 +238,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 {type === 'plan' ? 'Plan price' : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
                             </span>
                         </div>
-                        {(type === 'deposit' || type === 'plan' || type === 'withdraw') && (
+                        {type === 'withdraw' && (
                             <div className={styles.withdrawal}>
                                 <div className={styles.withdrawalTitle}>
                                     <div className={styles.iconBox}>
@@ -281,7 +293,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                             <div className={styles.warnning}>
                                 <InfoIcon />
                                 <p>
-                                    A QR code invoice will open in a popup window. Scan it to complete the payment.
+                                    A checkout window will open in a new popup to complete the payment via Cregis.
                                 </p>
                             </div>
                         )}

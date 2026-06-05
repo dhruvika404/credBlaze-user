@@ -163,7 +163,18 @@ export default function PlanPricing() {
       })}
       <WithdrawMoney
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={async (wasSuccess) => {
+          setIsModalOpen(false);
+          if (wasSuccess) {
+            try {
+              if (fetchAndSetProfile) {
+                await fetchAndSetProfile();
+              }
+            } catch (error) {
+              console.error('Error fetching profile after plan upgrade:', error);
+            }
+          }
+        }}
         type="plan"
         planDetails={selectedPlanDetails}
       />

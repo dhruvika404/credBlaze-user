@@ -14,3 +14,7 @@ export const getWalletTransactions = (payload) =>
 
 export const convertCurrency = (toCountry, amount) =>
   request(() => api.get(`/wallet/currency-convert/?to_country=${toCountry}&amount=${amount}`));
+
+export const createCregisPayment = (payload) =>
+  request(() => api.post('/cregis-payment/create-payment', payload));
+

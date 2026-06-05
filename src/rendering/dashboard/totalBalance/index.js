@@ -22,8 +22,8 @@ function getFlagUrl(countryCode) {
 }
 
 
-export default function TotalBalance({ overviewData }) {
-    const { user } = useAuth();
+export default function TotalBalance({ overviewData, refreshOverview }) {
+    const { user, fetchAndSetProfile } = useAuth();
     const dropdownRef = useRef(null);
 
     const [state, setState] = useState({
@@ -241,7 +241,21 @@ export default function TotalBalance({ overviewData }) {
 
             <WithdrawMoney
                 isOpen={state.isModalOpen}
-                onClose={() => set({ isModalOpen: false })}
+                onClose={async (wasSuccess) => {
+                    set({ isModalOpen: false });
+                    if (wasSuccess) {
+                        try {
+                            if (fetchAndSetProfile) {
+                                await fetchAndSetProfile();
+                            }
+                        } catch (error) {
+                            console.error('Error refreshing profile after transaction:', error);
+                        }
+                        if (refreshOverview) {
+                            await refreshOverview();
+                        }
+                    }
+                }}
                 type={state.modalType}
             />
         </div>

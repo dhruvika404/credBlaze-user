@@ -22,7 +22,7 @@ function getFlagUrl(countryCode) {
     return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 }
 
-export default function OverviewInformation() {
+export default function OverviewInformation({ onTransactionSuccess }) {
     const { user } = useAuth();
     const dropdownRef = useRef(null);
 
@@ -181,7 +181,12 @@ export default function OverviewInformation() {
             </div>
             <WithdrawMoney
                 isOpen={state.isModalOpen}
-                onClose={() => set({ isModalOpen: false })}
+                onClose={(wasSuccess) => {
+                    set({ isModalOpen: false });
+                    if (wasSuccess && onTransactionSuccess) {
+                        onTransactionSuccess();
+                    }
+                }}
                 type={state.modalType}
             />
         </div>

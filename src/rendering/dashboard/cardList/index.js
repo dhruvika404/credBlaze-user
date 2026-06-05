@@ -7,7 +7,7 @@ import TotalBalance from '../totalBalance';
 import Earning from '../earning';
 import RecentTasks from '../recentTasks';
 
-export default function CardList({ overviewData, loading }) {
+export default function CardList({ overviewData, loading, refreshOverview }) {
     return (
         <div className={styles.cardListAlignment}>
             <div className={styles.grid}>
@@ -20,7 +20,7 @@ export default function CardList({ overviewData, loading }) {
                 <div className={styles.column}>
                     <AdsCard />
                     <div className={styles.balanceWrapper}>
-                        <TotalBalance overviewData={overviewData} />
+                        <TotalBalance overviewData={overviewData} refreshOverview={refreshOverview} />
                     </div>
                 </div>
             </div>
