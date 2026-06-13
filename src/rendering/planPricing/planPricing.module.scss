@@ -244,4 +244,311 @@
             }
         }
     }
+
+    .pendingCard {
+        width: 100%;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        padding: 24px;
+        box-sizing: border-box;
+        color: #F9FAFB;
+        font-family: 'Manrope', sans-serif;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        @include respond-to("sm") {
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .pendingHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+
+            @include respond-to("sm") {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .headerTitleSec {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+                .badge {
+                    align-self: flex-start;
+                    background: rgba(234, 179, 8, 0.15);
+                    color: #FBBF24;
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: 4px 10px;
+                    border-radius: 100px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                h2 {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #FFFFFF;
+                }
+
+                p {
+                    font-size: 14px;
+                    color: #9CA3AF;
+                }
+            }
+
+            .payRemainingBtn {
+                background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+                color: #FFFFFF;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+                transition: transform 0.2s ease, filter 0.2s ease;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+                white-space: nowrap;
+
+                @include respond-to("sm") {
+                    width: 100%;
+                    text-align: center;
+                }
+
+                &:hover {
+                    transform: translateY(-1px);
+                    filter: brightness(1.05);
+                }
+
+                &:active {
+                    transform: translateY(1px);
+                }
+            }
+        }
+
+        .pendingBody {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            .progressSection {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                .progressLabelRow {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 14px;
+                    color: #9CA3AF;
+                    font-weight: 500;
+
+                    .progressPercent {
+                        color: #10B981;
+                        font-weight: 700;
+                    }
+                }
+
+                .progressBarOuter {
+                    width: 100%;
+                    height: 8px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 4px;
+                    overflow: hidden;
+
+                    .progressBarInner {
+                        height: 100%;
+                        background: linear-gradient(90deg, #10B981 0%, #34D399 100%);
+                        border-radius: 4px;
+                        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                }
+            }
+
+            .statsGrid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+
+                @include respond-to("sm") {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                }
+
+                .statBox {
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    padding: 12px 16px;
+                    border-radius: 12px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+
+                    .statLabel {
+                        font-size: 12px;
+                        color: #9CA3AF;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+
+                    .statValue {
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: #FFFFFF;
+                    }
+                }
+            }
+
+            .historySection {
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding-top: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                .historyToggle {
+                    background: none;
+                    border: none;
+                    color: #D1D5DB;
+                    font-size: 14px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    padding: 0;
+                    width: fit-content;
+
+                    &:hover {
+                        color: #FFFFFF;
+                    }
+                }
+
+                .historyList {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 12px;
+                    padding: 12px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    border: 1px solid rgba(255, 255, 255, 0.04);
+
+                    .historyHeaderRow {
+                        display: grid;
+                        grid-template-columns: 2fr 1.5fr 3.5fr;
+                        gap: 8px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: #6B7280;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+                        @include respond-to("sm") {
+                            display: none;
+                        }
+                    }
+
+                    .historyItem {
+                        display: grid;
+                        grid-template-columns: 2fr 1.5fr 3.5fr;
+                        gap: 8px;
+                        align-items: center;
+                        font-size: 13.5px;
+                        padding: 8px 4px;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+                        &:last-child {
+                            border-bottom: none;
+                            padding-bottom: 0;
+                        }
+
+                        @include respond-to("sm") {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+                            gap: 4px;
+                            background: rgba(255, 255, 255, 0.02);
+                            padding: 8px;
+                            border-radius: 8px;
+                            border-bottom: none;
+                        }
+
+                        .instDate {
+                            color: #D1D5DB;
+                            font-weight: 500;
+                        }
+
+                        .instAmount {
+                            color: #10B981;
+                            font-weight: 600;
+                        }
+
+                        .txIdWrapper {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            overflow: hidden;
+
+                            @include respond-to("sm") {
+                                width: 100%;
+                                justify-content: space-between;
+                                margin-top: 4px;
+                                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                                padding-top: 4px;
+                            }
+
+                            .instTxId {
+                                color: #9CA3AF;
+                                font-family: monospace;
+                                font-size: 12.5px;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                white-space: nowrap;
+                            }
+
+                            .copyBtn {
+                                background: rgba(255, 255, 255, 0.05);
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                border-radius: 6px;
+                                padding: 4px;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: background 0.2s, border-color 0.2s;
+
+                                svg {
+                                    width: 14px;
+                                    height: 14px;
+                                    path {
+                                        stroke: #9CA3AF;
+                                    }
+                                }
+
+                                &:hover {
+                                    background: rgba(255, 255, 255, 0.15);
+                                    border-color: rgba(255, 255, 255, 0.2);
+
+                                    svg path {
+                                        stroke: #FFFFFF;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

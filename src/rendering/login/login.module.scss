@@ -119,12 +119,114 @@
               text-align: center;
             }
 
+            .errorMsg {
+                color: #E53935;
+                font-size: 12px;
+                font-weight: 500;
+                margin: 8px 0 0 0;
+                text-align: center;
+            }
+
+            .successMsg {
+                color: #2E7D32;
+                font-size: 13px;
+                font-weight: 500;
+                margin: 8px 0 0 0;
+                text-align: center;
+            }
+
+            .resendBtn {
+                background: none;
+                border: none;
+                padding: 0;
+                color: #00E;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                font-family: var(--font-manrope);
+                text-decoration: underline;
+
+                @include respond-to("sm") {
+                    font-size: 14px;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+            }
+
+            .backToLoginBtn {
+                display: block;
+                margin: 16px auto 0 auto;
+                background: none;
+                border: none;
+                color: #625F6E;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                text-decoration: underline;
+                font-family: var(--font-manrope);
+
+                &:hover {
+                    color: #0E121B;
+                }
+            }
+
+            .otp {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 12px;
+
+                @include respond-to("sm") {
+                    gap: 6px;
+                }
+
+                input {
+                    padding: 0 5px;
+                    text-align: center;
+                    outline: none;
+                    height: 40px;
+                    width: 100%;
+                    border-radius: 8px;
+                    border: 1px solid #E6E8EA;
+                    background: #FFF;
+                    color: #0E121B;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 20px;
+                    transition: .3s ease-in-out;
+
+                    &:focus {
+                        border: 1px solid #0040C1;
+                    }
+                }
+
+                ::placeholder {
+                    color: #0E121B;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 20px;
+                    transition: .3s ease-in-out;
+                }
+            }
+
+            .topAlignment {
+                padding: 20px 0 0 0;
+            }
+
+            .signInBtn {
+                margin-top: 16px;
+            }
+
             .bottomText {
                 display: flex;
                 align-items: center;
                 gap: 12px;
                 justify-content: center;
-                padding: 20px 0 0 0;
+                padding: 24px 0 0 0;
                 
                 @include respond-to("sm") {
                     gap: 8px;
@@ -159,7 +261,7 @@
                 grid-template-columns: 1fr 17px 1fr;
                 gap: 10px;
                 align-items: center;
-                padding: 10px 0 20px 0;
+                padding: 24px 0;
 
                 span {
                     display: block;

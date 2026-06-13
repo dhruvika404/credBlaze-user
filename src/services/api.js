@@ -58,7 +58,9 @@ api.interceptors.response.use(
         }
       }
     } else {
-      toast.error(message);
+      if (typeof window !== 'undefined' && toast?.error) {
+        toast.error(message);
+      }
     }
 
     return Promise.reject(error?.response?.data || error);

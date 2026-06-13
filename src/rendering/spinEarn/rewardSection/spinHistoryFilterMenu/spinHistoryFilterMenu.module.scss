@@ -43,27 +43,27 @@
 
     .dropdown {
         position: absolute;
-        top: calc(100% + 8px);
-        bottom: auto;
+        bottom: calc(100% + 8px);
+        top: auto;
         right: 0;
         width: 340px;
         max-height: calc(100vh - 120px);
         border-radius: 16px;
         background: #FFF;
         padding: 24px;
-        box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -4px 20px 0 rgba(0, 0, 0, 0.08);
         z-index: 1000;
-        transform-origin: top right;
+        transform-origin: bottom right;
         display: flex;
         flex-direction: column;
 
         @include respond-to("sm") {
             width: 288px;
-            left: 0;
-            right: auto;
+            left: auto;
+            right: 0;
             padding: 16px;
             border-radius: 12px;
-            transform-origin: top left;
+            transform-origin: bottom right;
         }
 
         .header {

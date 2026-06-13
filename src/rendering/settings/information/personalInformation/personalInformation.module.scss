@@ -158,23 +158,21 @@
     }
 
     .phoneInputDisabled {
+        @extend .phoneInput;
+
         :global(.PhoneInputInput) {
-            height: 40px;
-            border: 1px solid #F5F5F5;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 14px;
-            color: #6B7280;
+            color: #9CA3AF;
             background: #F9FAFB;
             cursor: not-allowed;
         }
 
         :global(.PhoneInputCountry) {
-            border: 1px solid #F5F5F5;
-            border-radius: 8px;
-            padding: 0 8px;
-            height: 40px;
             background: #F9FAFB;
+            cursor: not-allowed;
+        }
+
+        :global(.PhoneInputCountrySelect) {
+            cursor: not-allowed;
         }
     }
 

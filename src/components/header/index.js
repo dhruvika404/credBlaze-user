@@ -126,13 +126,13 @@ export default function Header() {
             </div>
 
             <div className={styles.leftsearch}>
-                <input type='text' placeholder='Search' value={searchValue} onChange={handleSearchChange} />
+                {/* <input type='text' placeholder='Search' value={searchValue} onChange={handleSearchChange} />
                 <div className={styles.lefticon}>
                     <SearchIcon />
                 </div>
                 <div className={styles.righticon}>
                     <img src={EscText} alt="EscText" />
-                </div>
+                </div> */}
             </div>
             <div className={styles.rightalignment}>
                 <div className={`${styles.walletItem} ${styles.green}`}>

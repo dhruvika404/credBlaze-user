@@ -196,6 +196,27 @@
                     text-transform: capitalize;
                 }
             }
+
+            &.pendingBox {
+                background: linear-gradient(90deg, #b45309 -4.55%, #d97706 102.73%);
+                
+                p {
+                    text-transform: none;
+                    strong {
+                        font-weight: 700;
+                    }
+                }
+
+                button {
+                    background-color: #FFF;
+                    color: #b45309;
+                    transition: background-color 0.2s ease;
+
+                    &:hover {
+                        background-color: #fef3c7;
+                    }
+                }
+            }
         }
 
     }

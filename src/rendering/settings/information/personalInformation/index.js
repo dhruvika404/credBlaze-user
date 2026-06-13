@@ -175,11 +175,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
       <div className={styles.twocol}>
         <Input label="First Name" labelChange placeholder="Enter first name" name="first_name"
           value={form.first_name} onChange={setName('first_name')}
-          error={errors.first_name} maxLength={50} required sanitize={sanitizeName} />
+          error={errors.first_name} maxLength={50} required sanitize={sanitizeName} disabled />
 
         <Input label="Last Name" labelChange placeholder="Enter last name" name="last_name"
           value={form.last_name} onChange={setName('last_name')}
-          error={errors.last_name} maxLength={50} required sanitize={sanitizeName} />
+          error={errors.last_name} maxLength={50} required sanitize={sanitizeName} disabled />
 
         <div className={styles.phoneField}>
           <label className={styles.phoneLabel}>
@@ -194,7 +194,8 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
             onChange={(val) => {
               set('phone')(val === '+1' ? '' : (val || ''));
             }}
-            className={errors.phone ? styles.phoneInputError : styles.phoneInput}
+            disabled
+            className={styles.phoneInputDisabled}
           />
           {errors.phone && <p className={styles.errorMsg} role="alert">{errors.phone}</p>}
         </div>

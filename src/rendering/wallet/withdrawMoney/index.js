@@ -25,6 +25,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     const popupRef = useRef(null);
     const pollRef = useRef(null);
     const expireTimerRef = useRef(null);
+    const paymentResultReceived = useRef(false);
 
     useEffect(() => {
         return () => {
@@ -52,9 +53,11 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     };
 
     const attachMessageListener = (popup) => {
+        paymentResultReceived.current = false;
         const handleMessage = (event) => {
             const { type: eventType } = event.data || {};
             if (eventType === 'PAYMENT_FAIL' || eventType === 'PAYMENT_SUCCESS') {
+                paymentResultReceived.current = true;
                 stopAllTimers(handleMessage);
                 if (!popup.closed) popup.close();
 
@@ -69,8 +72,12 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
 
         pollRef.current = setInterval(() => {
             if (popup.closed) {
-                stopAllTimers(handleMessage);
-                setModalStatus('rejected');
+                if (!paymentResultReceived.current) {
+                    stopAllTimers(handleMessage);
+                    setModalStatus('rejected');
+                } else {
+                    stopAllTimers(handleMessage);
+                }
             }
         }, 800);
 
@@ -97,9 +104,13 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
 
         if (expireMs && expireMs > 0) {
             expireTimerRef.current = setTimeout(() => {
-                stopAllTimers(handleMessage);
-                if (!popup.closed) popup.close();
-                setModalStatus('rejected');
+                if (!paymentResultReceived.current) {
+                    stopAllTimers(handleMessage);
+                    if (!popup.closed) popup.close();
+                    setModalStatus('rejected');
+                } else {
+                    stopAllTimers(handleMessage);
+                }
             }, expireMs);
         }
     };
@@ -107,16 +118,10 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
     const paymentMethods = [
         {
             id: 1,
-            coinname: "USDT",
-            networkname: "BEP20",
-            title: "BEP20",
-            description: "bnb chain"
-        },
-        {
-            id: 2,
-            coinname: "USDT",
-            networkname: "TRC20",
-            title: "TRC20",
+            coin_name: "USD",
+            network_name: "TRON",
+            currency_id: "198@198",
+            title: "TRON",
             description: "Tron"
         }
     ];
@@ -173,10 +178,11 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
             setLoading(true);
             try {
                 const payload = {
-                    coinname: "USDT",
-                    network_name: selectedMethod.networkname,
+                    coin_name: selectedMethod.coin_name,
+                    network_name: selectedMethod.network_name,
                     amount: amount.toString(),
-                    coinaddress: coinAddress
+                    coin_address: coinAddress,
+                    currency_id: selectedMethod.currency_id
                 };
 
                 const response = await insertWithdraw(payload);
@@ -214,7 +220,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
             <div className={styles.withdrawMoneyWrapper} style={{ display: isStatusModalOpen ? 'none' : 'flex' }}>
                 <div className={styles.modal}>
                     <div className={styles.modalHeader}>
-                        <h2>{type === 'deposit' ? 'Deposit Money' : type === 'plan' ? 'Upgrade Plan' : 'Withdraw Money'}</h2>
+                        <h2>{type === 'deposit' ? 'Deposit Money' : type === 'plan' ? (planDetails?.isRemainingPayment ? 'Pay Remaining Balance' : 'Upgrade Plan') : 'Withdraw Money'}</h2>
                         <div onClick={handleClose}>
                             <CloseIcon />
                         </div>
@@ -235,7 +241,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 disabled={type === 'plan'}
                             />
                             <span>
-                                {type === 'plan' ? 'Plan price' : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
+                                {type === 'plan' ? (planDetails?.isRemainingPayment ? 'Remaining balance' : 'Plan price') : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
                             </span>
                         </div>
                         {type === 'withdraw' && (
@@ -300,7 +306,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                         <div className={styles.buttonAlignment}>
                             <Button text="Cancel" lightbutton onClick={handleClose} />
                             <Button
-                                text={type === 'deposit' ? 'Deposit' : type === 'plan' ? 'Pay Now' : 'Withdraw'}
+                                text={type === 'deposit' ? 'Deposit' : type === 'plan' ? (planDetails?.isRemainingPayment ? 'Pay Remaining' : 'Pay Now') : 'Withdraw'}
                                 onClick={handleSubmit}
                                 disabled={type === 'deposit' ? isDepositDisabled : type === 'plan' ? isPlanDisabled : isWithdrawDisabled}
                             />
@@ -314,10 +320,7 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                 type={type}
                 amount={amount}
                 expiryTime={expiryTime}
-                onClose={() => {
-                    setIsStatusModalOpen(false);
-                    handleClose();
-                }}
+                onClose={handleClose}
             />
         </>
     )

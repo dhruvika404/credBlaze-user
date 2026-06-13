@@ -16,6 +16,82 @@
             padding: 16px;
         }
 
+        .pendingAlertBanner {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+            @include respond-to("sm") {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 14px 16px;
+            }
+
+            .alertContent {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                svg {
+                    width: 20px;
+                    height: 20px;
+                    flex-shrink: 0;
+                    path {
+                        stroke: #F59E0B;
+                    }
+                }
+
+                p {
+                    color: #E2E8F0;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    font-weight: 500;
+                    font-family: 'Manrope', sans-serif;
+
+                    strong {
+                        color: #FFFFFF;
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            .alertBtn {
+                background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+                color: #FFFFFF;
+                border: none;
+                padding: 8px 18px;
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: transform 0.2s ease, filter 0.2s ease;
+                white-space: nowrap;
+                font-family: 'Manrope', sans-serif;
+
+                @include respond-to("sm") {
+                    width: 100%;
+                    text-align: center;
+                }
+
+                &:hover {
+                    transform: translateY(-1px);
+                    filter: brightness(1.05);
+                }
+
+                &:active {
+                    transform: translateY(1px);
+                }
+            }
+        }
+
         .spacingGrid {
             display: grid;
             grid-template-columns: 1fr;

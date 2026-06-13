@@ -6,7 +6,9 @@ import PersonalInformation from './personalInformation';
 import { getProfileDetails } from '@/services/profile';
 import { useAuth } from '@/context/AuthContext';
 import UserIcon from '@/icons/userIcon';
+import InfoIcon from '@/icons/infoIcon';
 import { Country } from 'country-state-city';
+import { useRouter } from 'next/navigation';
 
 function capitalise(str) {
   if (!str) return '';
@@ -24,6 +26,7 @@ function normaliseProfile(raw) {
 }
 
 export default function Information() {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +78,7 @@ export default function Information() {
 
   const firstName = profile?.first_name || profile?.firstName || '';
   const lastName = profile?.last_name || profile?.lastName || '';
-  const fullName = loading ? 'Loading...' : (`${capitalise(firstName)} ${capitalise(lastName)}`.trim() || 'Naitik Kumar');
+  const fullName = loading ? 'Loading...' : (`${capitalise(firstName)} ${capitalise(lastName)}`.trim());
   const userId = profile?.user_id || profile?.userId || profile?.id || 'CB-2025-00847';
   const countryVal = profile?.country || '';
   let countryCode = '';
@@ -90,12 +93,30 @@ export default function Information() {
     }
   }
   const flagUrl = getFlagUrl(countryCode);
+  const pendingDetails = profile?.pending_prime_details;
+  const remainingAmount = pendingDetails?.remaining_amount || 0;
   const avatarSrc = previewUrl || profile?.profile_image || profile?.profileImage;
 
   return (
     <div className={styles.information}>
       <div className={styles.right}>
         <div className={styles.informationBox}>
+          {pendingDetails && (
+            <div className={styles.pendingAlertBanner}>
+              <div className={styles.alertContent}>
+                <InfoIcon />
+                <p>
+                  You have a pending balance of <strong>${Number(remainingAmount).toFixed(2)}</strong> for <strong>{pendingDetails.plan_name || 'Pro Membership'}</strong>. Complete payment to activate your plan.
+                </p>
+              </div>
+              <button 
+                className={styles.alertBtn} 
+                onClick={() => router.push('/settings/plan-pricing')}
+              >
+                Pay Now
+              </button>
+            </div>
+          )}
           <div className={styles.informationHeader}>
             <div className={styles.leftAlignment}>
               <div className={styles.profileImageWrap}>

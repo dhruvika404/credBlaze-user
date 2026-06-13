@@ -84,9 +84,9 @@ export default function SpinHistoryFilterMenu({ onApply, initialFilters, hideRew
                 {isOpen && (
                     <motion.div
                         className={styles.dropdown}
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
                     >
                         <div className={styles.header}>

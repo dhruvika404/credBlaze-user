@@ -1,7 +1,54 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { login, googleLogin, signup } from '@/services/auth';
+import { login, googleLogin, signup, loginOtp, verifyLoginOtp } from '@/services/auth';
+
+export async function loginOtpAction(credentials) {
+  try {
+    const data = await loginOtp(credentials);
+    return { success: true, data };
+  } catch (error) {
+    console.error('Login OTP action error:', error);
+    return {
+      success: false,
+      error: error?.message || error?.error || 'An unexpected error occurred while sending OTP.'
+    };
+  }
+}
+
+export async function verifyLoginOtpAction(payload) {
+  try {
+    const data = await verifyLoginOtp(payload);
+
+    const token = data?.data?.access_token || data?.access_token || data?.token;
+
+    if (!token) {
+      return {
+        success: false,
+        error: 'Authentication failed: No token received.'
+      };
+    }
+
+    const cookieStore = await cookies();
+
+    // Set cookie for server-side access
+    cookieStore.set('token', token, {
+      httpOnly: false, // Set to false so client-side axios can still read it if needed
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    });
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Verify login OTP action error:', error);
+    return {
+      success: false,
+      error: error?.message || error?.error || 'An unexpected error occurred during OTP verification.'
+    };
+  }
+}
 
 export async function loginAction(credentials) {
   try {
@@ -21,7 +68,7 @@ export async function loginAction(credentials) {
     // Set cookie for server-side access
     cookieStore.set('token', token, {
       httpOnly: false, // Set to false so client-side axios can still read it if needed
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 1 week
@@ -54,7 +101,7 @@ export async function googleLoginAction(credential, deviceId, fcmToken = '') {
 
     cookieStore.set('token', token, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 1 week
@@ -87,7 +134,7 @@ export async function signupAction(credentials) {
 
     cookieStore.set('token', token, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 1 week

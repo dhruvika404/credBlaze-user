@@ -32,12 +32,12 @@ export default function SettingsHeader() {
                 <h1>{title}</h1>
                 <p>{subtitle}</p>
             </div>
-            <div className={styles.watch}>
+            {/* <div className={styles.watch}>
                 <button onClick={() => setIsModalOpen(true)}>
                     <img src={YoutubeIcon} alt="Watch tutorial" />
                     Watch Tutorial video
                 </button>
-            </div>
+            </div> */}
             <TutorialVideoModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

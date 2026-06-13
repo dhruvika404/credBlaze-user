@@ -8,6 +8,12 @@ export const signup = (payload) =>
 export const login = (payload) =>
   request(() => api.post('/auth/login', payload));
 
+export const loginOtp = (payload) =>
+  request(() => api.post('/auth/login-otp', payload));
+
+export const verifyLoginOtp = (payload) =>
+  request(() => api.post('/auth/verify-login-otp', payload));
+
 export const verifyOtp = (payload) =>
   request(() => api.post('/auth/verify-otp', payload));
 

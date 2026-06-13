@@ -108,16 +108,29 @@ export default function Sidebar() {
                 <div>
                     <div className={styles.sidebarFooter}>
                         {!user?.is_prime && (
-                            <div className={styles.featuresBox}>
-                                <div className={styles.boxHeaderAlignment}>
-                                    <StarGroupIcon />
-                                    <h3>Unlock premium features</h3>
+                            user?.pending_prime_details ? (
+                                <div className={`${styles.featuresBox} ${styles.pendingBox}`}>
+                                    <div className={styles.boxHeaderAlignment}>
+                                        <StarGroupIcon />
+                                        <h3>Pending Activation</h3>
+                                    </div>
+                                    <p>
+                                        You have a pending balance of <strong>${Number(user.pending_prime_details.remaining_amount || 0).toFixed(2)}</strong> for {user.pending_prime_details.plan_name || 'Pro Membership'}.
+                                    </p>
+                                    <button onClick={() => router.push('/settings/plan-pricing')}>Pay Balance</button>
                                 </div>
-                                <p>
-                                    Get early access & high-paying tasks with Pro Membership
-                                </p>
-                                <button onClick={() => router.push('/settings/plan-pricing')}>Upgrade to Pro</button>
-                            </div>
+                            ) : (
+                                <div className={styles.featuresBox}>
+                                    <div className={styles.boxHeaderAlignment}>
+                                        <StarGroupIcon />
+                                        <h3>Unlock premium features</h3>
+                                    </div>
+                                    <p>
+                                        Get early access & high-paying tasks with Pro Membership
+                                    </p>
+                                    <button onClick={() => router.push('/settings/plan-pricing')}>Upgrade to Pro</button>
+                                </div>
+                            )
                         )}
                         <div className={styles.asideFooter}>
                             <Link

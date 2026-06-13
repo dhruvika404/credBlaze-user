@@ -7,7 +7,7 @@ export const getFilteredBalance = (payload) =>
   request(() => api.post('/crypto-payment/get-filtered-balance', payload));
 
 export const insertWithdraw = (payload) =>
-  request(() => api.post('/tp/Withdraw_insert', payload));
+  request(() => api.post('/tp/cregis_withdraw_insert', payload));
 
 export const getWalletTransactions = (payload) =>
   request(() => api.post('/wallet/transactions', payload));
