@@ -14,10 +14,18 @@ export const NotificationProvider = ({ children }) => {
         // Only connect if user is logged in and has an ID
         if (user?.user_id) {
             const userId = user.user_id;
-            // Ensure the WebSocket URL has the correct protocol
-            let wsUrl = socketUrl && `${socketUrl}/ws/${userId}`;
-            if (wsUrl.startsWith('http')) {
-                wsUrl = wsUrl.replace('http', 'ws');
+            // Remove trailing slash if present to avoid double slashes
+            const baseWsUrl = socketUrl.endsWith('/') ? socketUrl.slice(0, -1) : socketUrl;
+            let wsUrl = `${baseWsUrl}/ws/${userId}`;
+            
+            if (wsUrl.startsWith('http://')) {
+                wsUrl = wsUrl.replace('http://', 'ws://');
+            } else if (wsUrl.startsWith('https://')) {
+                wsUrl = wsUrl.replace('https://', 'wss://');
+            }
+            // Force wss:// if the current page is loaded over https:// (to prevent Mixed Content errors)
+            if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+                wsUrl = wsUrl.replace('ws://', 'wss://');
             }
 
             console.log(`Connecting to WebSocket: ${wsUrl}`);
@@ -26,8 +34,6 @@ export const NotificationProvider = ({ children }) => {
             ws.current.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    console.log("Socket Data received:", data);
-
                     // Flexible parsing to catch the count from various common structures
                     // Listening for 'get_unseen_count' as the primary event name
                     const isCorrectEvent = data?.type === 'get_unseen_count' ||
@@ -46,7 +52,6 @@ export const NotificationProvider = ({ children }) => {
             };
 
             ws.current.onopen = () => {
-                console.log('WebSocket connection established');
                 // Request initial unseen count
                 if (ws.current.readyState === WebSocket.OPEN) {
                     ws.current.send(JSON.stringify({ type: 'get_unseen_count' }));
