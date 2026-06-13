@@ -3,7 +3,7 @@ import "./globals.css";
 import ToastProvider from "@/components/toastProvider";
 import GoogleProvider from "@/components/googleProvider";
 import { AuthProvider } from "@/context/AuthContext";
-import { NotificationProvider } from "@/context/NotificationContext";
+// import { NotificationProvider } from "@/context/NotificationContext";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -23,12 +23,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${manrope.variable} `}>
       <body>
         <AuthProvider>
-          <NotificationProvider>
+          {/* <NotificationProvider> */}
             <GoogleProvider>
               <ToastProvider />
               {children}
             </GoogleProvider>
-          </NotificationProvider>
+          {/* </NotificationProvider> */}
         </AuthProvider>
       </body>
     </html>
