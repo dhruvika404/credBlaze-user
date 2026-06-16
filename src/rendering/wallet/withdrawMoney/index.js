@@ -10,6 +10,8 @@ import toast from 'react-hot-toast';
 import WalletStatusModal from '@/components/modal/walletStatusModal';
 import { useAuth } from '@/context/AuthContext';
 
+const MIN_GATEWAY_AMOUNT = 1.0;
+
 export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', planDetails }) {
     const { user } = useAuth();
     const cashWallet = user?.wallets?.find(w => w.wallet_type === 'REAL');
@@ -39,7 +41,11 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
             setSelectedMethod(null);
             setCoinAddress('');
             if (type === 'plan' && planDetails) {
-                setAmount(planDetails.price.toString());
+                if (planDetails.isRemainingPayment && Number(planDetails.price) < MIN_GATEWAY_AMOUNT) {
+                    setAmount(MIN_GATEWAY_AMOUNT.toFixed(2));
+                } else {
+                    setAmount(planDetails.price.toString());
+                }
             } else {
                 setAmount('');
             }
@@ -241,7 +247,13 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 disabled={type === 'plan'}
                             />
                             <span>
-                                {type === 'plan' ? (planDetails?.isRemainingPayment ? 'Remaining balance' : 'Plan price') : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
+                                {type === 'plan'
+                                    ? planDetails?.isRemainingPayment
+                                        ? Number(planDetails.price) < MIN_GATEWAY_AMOUNT
+                                            ? `Minimum transaction amount (Actual balance: $${Number(planDetails.price).toFixed(2)})`
+                                            : 'Remaining balance'
+                                        : 'Plan price'
+                                    : `Minimum ${type === 'deposit' ? 'deposit' : 'withdrawal'}`}
                             </span>
                         </div>
                         {type === 'withdraw' && (
@@ -300,6 +312,14 @@ export default function WithdrawMoney({ isOpen, onClose, type = 'withdraw', plan
                                 <InfoIcon />
                                 <p>
                                     A checkout window will open in a new popup to complete the payment via Cregis.
+                                </p>
+                            </div>
+                        )}
+                        {type === 'plan' && planDetails?.isRemainingPayment && Number(planDetails.price) < MIN_GATEWAY_AMOUNT && (
+                            <div className={styles.installmentWarning}>
+                                <InfoIcon stroke="#E11D48" />
+                                <p>
+                                    The remaining balance is <strong>${Number(planDetails.price).toFixed(2)}</strong>. However, our payment gateway requires a minimum transaction of <strong>${Number(MIN_GATEWAY_AMOUNT).toFixed(2)}</strong>. You will pay <strong>${Number(MIN_GATEWAY_AMOUNT).toFixed(2)}</strong> now, and the overpayment of <strong>${(MIN_GATEWAY_AMOUNT - Number(planDetails.price)).toFixed(2)}</strong> will be credited/paid back to you later.
                                 </p>
                             </div>
                         )}

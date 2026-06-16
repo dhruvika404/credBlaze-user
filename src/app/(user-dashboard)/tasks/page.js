@@ -325,8 +325,8 @@ export default function TasksPage() {
         <div className={styles.container}>
             <div className={styles.headerSection}>
                 <div className={styles.titleInfo}>
-                    <h1>Available Tasks</h1>
-                    <p>Complete tasks and earn coins.</p>
+                    <h1>{activeTab === 'available' ? 'Available Tasks' : 'My Tasks'}</h1>
+                    <p>{activeTab === 'available' ? 'Complete tasks and earn coins.' : 'Track your submitted tasks.'}</p>
                 </div>
                 <div className={styles.mainTabs}>
                     <button

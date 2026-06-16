@@ -60,7 +60,7 @@ function validate(form) {
 export default function PersonalInformation({ isEditing, profile, onSaved, selectedFile }) {
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
-    phone: '', dob: '', gender: '', country: '',
+    phone: '', dob: '', gender: '', country: 'IN',
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -81,7 +81,7 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
       phone: phoneVal,
       dob: toDateInput(pick(profile, 'birthday', 'dob', 'date_of_birth', 'dateOfBirth')),
       gender: pick(profile, 'gender'),
-      country: pick(profile, 'country'),
+      country: pick(profile, 'country') || 'IN',
     });
     setErrors({});
   }, [profile, isEditing]);
@@ -188,11 +188,11 @@ export default function PersonalInformation({ isEditing, profile, onSaved, selec
           </label>
           <PhoneInput
             international
-            defaultCountry="US"
+            defaultCountry="IN"
             placeholder="(555) 000-0000"
-            value={form.phone || '+1'}
+            value={form.phone || '+91'}
             onChange={(val) => {
-              set('phone')(val === '+1' ? '' : (val || ''));
+              set('phone')(val === '+91' ? '' : (val || ''));
             }}
             disabled
             className={styles.phoneInputDisabled}

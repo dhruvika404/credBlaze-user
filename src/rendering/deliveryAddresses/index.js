@@ -19,7 +19,7 @@ const AddIcon = '/assets/icons/add.svg';
 
 const EMPTY_FORM = {
   first_name: '', last_name: '', phone: '', countryCode: '',
-  address: '', city: '', state: '', country: '', zip_code: '', is_default: false,
+  address: '', city: '', state: '', country: 'IN', zip_code: '', is_default: false,
 };
 
 function validate(form) {
@@ -124,7 +124,7 @@ export default function DeliveryAddresses() {
       address: addr.address || '',
       city: addr.city || '',
       state: addr.state || '',
-      country: addr.country || '',
+      country: addr.country || 'IN',
       zip_code: addr.zip_code || '',
       is_default: addr.is_default || false,
     });
@@ -260,7 +260,7 @@ export default function DeliveryAddresses() {
                 <label className={styles.phoneLabel}>Phone number <span className={styles.requiredStar} aria-hidden="true">*</span></label>
                 <PhoneInput
                   international
-                  defaultCountry="US"
+                  defaultCountry="IN"
                   placeholder="Enter your number"
                   value={form.phone || ''}
                   onChange={(val) => {

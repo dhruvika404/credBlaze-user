@@ -28,7 +28,7 @@ export default function Signup() {
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
     password: '', confirm_password: '',
-    phone: '', country: '', referralCode: '', agreed: false,
+    phone: '', country: 'IN', referralCode: '', agreed: false,
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
@@ -175,7 +175,7 @@ export default function Signup() {
                 </label>
                 <PhoneInput
                   international
-                  defaultCountry="US"
+                  defaultCountry="IN"
                   placeholder="Enter phone number"
                   value={form.phone}
                   onChange={set('phone')}
@@ -184,7 +184,7 @@ export default function Signup() {
                 {errors.phone && <p className={styles.errorMsg} role="alert">{errors.phone}</p>}
               </div>
 
-              <Dropdown label="Country" labelChange options={countryOptions} searchable heightChange
+              <Dropdown label="Country" options={countryOptions} searchable heightChange
                 value={selectedCountry} onChange={(opt) => set('country')(opt?.value || '')}
                 placeholder="Select Country" error={errors.country} required />
 

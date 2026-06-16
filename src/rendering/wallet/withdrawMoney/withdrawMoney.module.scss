@@ -94,6 +94,30 @@
                 }
             }
 
+            .installmentWarning {
+                border-left: 1px solid #E11D48;
+                background: #FFF1F2;
+                display: grid;
+                grid-template-columns: 20px 1fr;
+                gap: 12px;
+                align-items: center;
+                padding: 16px 20px;
+                margin-top: 12px;
+
+                p {
+                    color: #E11D48;
+                    font-size: 14px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: 1.4;
+                    margin: 0;
+
+                    strong {
+                        font-weight: 700;
+                    }
+                }
+            }
+
             .withdrawal {
                 border-radius: 12px;
                 border: 1px solid var(--Black-500, #F5F5F5);

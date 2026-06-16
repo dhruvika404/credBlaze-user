@@ -80,7 +80,7 @@ export default function Information() {
   const lastName = profile?.last_name || profile?.lastName || '';
   const fullName = loading ? 'Loading...' : (`${capitalise(firstName)} ${capitalise(lastName)}`.trim());
   const userId = profile?.user_id || profile?.userId || profile?.id || 'CB-2025-00847';
-  const countryVal = profile?.country || '';
+  const countryVal = profile?.country || 'IN';
   let countryCode = '';
   if (countryVal.length === 2) {
     countryCode = countryVal;
