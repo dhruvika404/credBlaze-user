@@ -6,6 +6,7 @@ const nextConfig = {
         'app.credblaze.com',
         'uatapp.credblaze.com',
         'localhost:3000',
+        'cred-blaze-user.vercel.app'
       ],
     },
   },
