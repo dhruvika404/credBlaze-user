@@ -134,18 +134,20 @@ export default function DateRangePicker({ isOpen, onClose, onApply, initialFrom,
             const isStart = isSameDay(date, startDate);
             const isEnd = isSameDay(date, endDate);
             const inRange = isInRange(date, startDate, endDate);
+            const isFuture = date > today;
 
             let cellClass = styles.dayCell;
             if (isStart || isEnd) cellClass += ` ${styles.selectedDay}`;
             if (inRange) cellClass += ` ${styles.inRange}`;
             if (isStart && endDate) cellClass += ` ${styles.rangeStart}`;
             if (isEnd) cellClass += ` ${styles.rangeEnd}`;
+            if (isFuture) cellClass += ` ${styles.disabledDay}`;
 
             cells.push(
                 <div
                     key={day}
                     className={cellClass}
-                    onClick={() => handleDayClick(year, month, day)}
+                    onClick={() => !isFuture && handleDayClick(year, month, day)}
                 >
                     <span>{day}</span>
                 </div>
@@ -166,11 +168,14 @@ export default function DateRangePicker({ isOpen, onClose, onApply, initialFrom,
                     <span className={styles.monthLabel}>{MONTHS[month]}</span>
 
                     {navType === 'right' ? (
-                        <button className={styles.navBtn} onClick={handleNextMonth}>
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M7.5 15L12.5 10L7.5 5" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </button>
+                        (rightMonth.year < today.getFullYear() ||
+                        (rightMonth.year === today.getFullYear() && rightMonth.month <= today.getMonth())) ? (
+                            <button className={styles.navBtn} onClick={handleNextMonth}>
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M7.5 15L12.5 10L7.5 5" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+                        ) : <div className={styles.navSpacer} />
                     ) : <div className={styles.navSpacer} />}
                 </div>
 

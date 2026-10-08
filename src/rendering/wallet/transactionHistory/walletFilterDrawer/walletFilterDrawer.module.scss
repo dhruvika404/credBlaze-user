@@ -240,9 +240,36 @@
         width: 100%;
         padding-top: 14px;
         flex-shrink: 0;
+        display: flex;
+        gap: 10px;
+
+        .resetBtn {
+                flex: 1;
+                height: 46px;
+                border-radius: 8px;
+                border: 1px solid rgba(89, 59, 242, 0.10);
+                background: #F5F5F5;
+                color: #171717;
+                font-family: 'Manrope', sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                line-height: 22px;
+                transition: .3s ease-in-out;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+                min-width: 0;
+
+                &:hover {
+                    background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
+                    color: #fff;
+                }
+            }
 
         .applyBtn {
-            width: 100%;
+            flex: 1;
             height: 46px;
             background: linear-gradient(90deg, #0040C1 -4.55%, #6475F6 102.73%);
             border-radius: 8px;

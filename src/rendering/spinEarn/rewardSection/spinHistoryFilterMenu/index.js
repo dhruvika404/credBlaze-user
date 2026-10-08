@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import styles from './spinHistoryFilterMenu.module.scss'
 import FilterIcon from '@/icons/filterIcon'
 import { motion, AnimatePresence } from 'framer-motion'
-import Button from '@/components/button'
 import DateRangePicker from '@/components/dateRangePicker'
 
 const FilterCheckbox = ({ label, checked, onClick }) => (
@@ -62,6 +61,15 @@ export default function SpinHistoryFilterMenu({ onApply, initialFilters, hideRew
             rewardTypes
         });
         setIsOpen(false);
+    }
+
+    const handleReset = () => {
+        setDateRange({ from: '', to: '' });
+        setRewardTypes([]);
+        onApply({
+            dateRange: { from: '', to: '' },
+            rewardTypes: []
+        });
     }
 
     const formatDisplayDate = (dateStr) => {
@@ -142,10 +150,12 @@ export default function SpinHistoryFilterMenu({ onApply, initialFilters, hideRew
                         </div>
 
                         <div className={styles.applyBtnWrapper}>
-                            <Button
-                                text="Apply Filters"
-                                onClick={handleApply}
-                            />
+                            <button className={styles.resetBtn} onClick={handleReset}>
+                                Reset
+                            </button>
+                            <button className={styles.applyBtn} onClick={handleApply}>
+                                Apply Filters
+                            </button>
                         </div>
                     </motion.div>
                 )}

@@ -5,8 +5,8 @@ export const getTermsConditions = async () => {
     return response.data;
 };
 
-export const getFaqs = async () => {
-    const response = await api.get('/legal/faqs');
+export const getFaqs = async (params = { limit: 30 }) => {
+    const response = await api.get('/legal/faqs', { params });
     return response.data;
 };
 

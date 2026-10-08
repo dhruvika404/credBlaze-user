@@ -74,6 +74,22 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
         onClose();
     };
 
+    const handleReset = () => {
+        setSelectedTaskTypes([]);
+        setSelectedPlatforms([]);
+        setMinPrice('');
+        setMaxPrice('');
+        setTaskTypesState({ pro: false, nonPro: false });
+        onApplyFilters?.({
+            taskTypes: [],
+            platforms: [],
+            minPrice: '',
+            maxPrice: '',
+            pro: false,
+            nonPro: false,
+        });
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -177,6 +193,9 @@ export default function FilterDrawer({ isOpen, onClose, initialFilters, onApplyF
                 </div>
 
                 <div className={styles.footer}>
+                    <button className={styles.resetBtn} onClick={handleReset}>
+                        Reset
+                    </button>
                     <button className={styles.applyBtn} onClick={handleApply}>
                         Apply Filters
                     </button>

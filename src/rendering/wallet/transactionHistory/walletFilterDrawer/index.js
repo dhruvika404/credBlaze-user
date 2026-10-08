@@ -100,6 +100,21 @@ export default function WalletFilterDrawer({ isOpen, onClose, onApply, initialFi
         onClose();
     }
 
+    const handleReset = () => {
+        setDateRange({ from: '', to: '' });
+        setWalletTypes([]);
+        setTransactionTypes([]);
+        setEarningTypes([]);
+        setStatuses([]);
+        onApply({
+            dateRange: { from: '', to: '' },
+            walletTypes: [],
+            transactionTypes: [],
+            earningTypes: [],
+            statuses: []
+        });
+    }
+
     const formatDisplayDate = (dateStr) => {
         if (!dateStr) return 'dd/mm/yyyy';
         const parts = dateStr.split('-');
@@ -178,6 +193,9 @@ export default function WalletFilterDrawer({ isOpen, onClose, onApply, initialFi
                     </div>
 
                     <div className={styles.footer}>
+                        <button className={styles.resetBtn} onClick={handleReset}>
+                            Reset
+                        </button>
                         <button className={styles.applyBtn} onClick={handleApply}>
                             Apply Filters
                         </button>

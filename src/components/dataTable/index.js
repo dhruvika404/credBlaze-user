@@ -25,8 +25,6 @@ export default function DataTable({
     sortDirection,
 }) {
     const hasPagination = typeof totalPages === 'number';
-
-    // Helper to resolve nested keys like "userType.type"
     // Helper to resolve nested keys like "userType.type"
     const resolveValue = (obj, path) => {
         if (!path) return '';

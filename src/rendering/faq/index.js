@@ -10,7 +10,7 @@ export default function Faq() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getFaqs()
+        getFaqs({ limit: 30 })
             .then((res) => {
                 if (res.success) {
                     setFaqData(res?.data?.items);
