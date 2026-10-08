@@ -1,24 +1,14 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  const authToken = request.cookies.get('token');
   const { pathname } = request.nextUrl;
-  const isPublicRoute =
-    pathname === '/' ||
-    pathname === '/signup' ||
-    pathname === '/forgot-password' ||
-    pathname.startsWith('/email-verify') ||
-    pathname.startsWith('/enter-code') ||
-    pathname.startsWith('/successfully-message') ||
-    pathname.startsWith('/create-password') ||
-    pathname.startsWith('/mobile-capture');
 
-  if (!authToken && !isPublicRoute) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
+  // Bypass all authentication checks
+  // const authToken = request.cookies.get('token');
+  // const isPublicRoute = ...
 
-  // If already logged in, redirect away from root (login)
-  if (authToken && pathname === '/') {
+  // Always redirect root to dashboard if we are bypassing login
+  if (pathname === '/') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

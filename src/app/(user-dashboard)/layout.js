@@ -10,7 +10,7 @@ export default async function layout({ children }) {
   const token = cookieStore.get('token');
 
   if (!token) {
-    redirect('/');
+    // redirect('/');
   }
 
   return (

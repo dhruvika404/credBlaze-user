@@ -45,17 +45,18 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized or 403 Forbidden (Expired, Invalid or Blocked Token)
     if (error?.response?.status === 401 || error?.response?.status === 403) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
+        // localStorage.removeItem('token');
+        // localStorage.removeItem('user');
+        // document.cookie.split(";").forEach((c) => {
+        //   document.cookie = c
+        //     .replace(/^ +/, "")
+        //     .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        // });
 
-        if (window.location.pathname !== '/') {
-          window.location.href = '/';
-        }
+        // Bypass redirect to login for access without login
+        // if (window.location.pathname !== '/') {
+        //   window.location.href = '/';
+        // }
       }
     } else {
       if (typeof window !== 'undefined' && toast?.error) {
